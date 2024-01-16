@@ -39,7 +39,7 @@ int tokenizeLine(std::string line, std::unordered_map<char, TokenType> symbol_to
 			int distance = cursor_two - cursor_one;
 			if (distance > 0 && !std::isspace(line[cursor_one])) {
 				token_value = line.substr(cursor_one, distance);
-				std::cout << token_value << "- \n";
+				std::cout << token_value << std::endl;
 				// Send this token to check if it is a keyword, number, identifier, etc.
 			}
 			cursor_one = cursor_two + 1;
@@ -54,9 +54,9 @@ int tokenizeLine(std::string line, std::unordered_map<char, TokenType> symbol_to
 			token_char = line[cursor_two];
 			// print the previous token and the symbol
 			if (!std::isspace(token_value[0])) {
-				std::cout << token_value << "- \n"; //check that this isnt empty
+				std::cout << token_value << std::endl; //check that this isnt empty
 			}
-			std::cout << token_char << "- \n";
+			std::cout << token_char << std::endl;
 
 			cursor_one = cursor_two + 1;
 
@@ -120,6 +120,7 @@ int main(int argc, char* argv[]) {
 	std::string line;
 	std::ifstream source_file;
 	source_file.open(argv[1]); // add measuring time
+
 	while (std::getline(source_file, line)) {
 		tokenizeLine(line, symbol_tokens);
 	}

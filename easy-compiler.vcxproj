@@ -133,6 +133,7 @@
     <Text Include="tests\example.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitignore" />
     <None Include="tests\Test1.cp" />
     <None Include="tests\Test2.cp" />
     <None Include="tests\Test3.cp" />
