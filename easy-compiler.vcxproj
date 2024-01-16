@@ -132,6 +132,17 @@
   <ItemGroup>
     <Text Include="tests\example.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="tests\Test1.cp" />
+    <None Include="tests\Test2.cp" />
+    <None Include="tests\Test3.cp" />
+    <None Include="tests\Test4.cp" />
+    <None Include="tests\Test5.cp" />
+    <None Include="tests\Test6.cp" />
+    <None Include="tests\Test7.cp" />
+    <None Include="tests\Test8.cp" />
+    <None Include="tests\Test9.cp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
