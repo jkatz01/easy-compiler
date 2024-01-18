@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <unordered_map>
+#include <chrono>
 
 enum TokenType {
 	T_semicolon,
@@ -53,8 +54,8 @@ int tokenizeLine(std::string line, std::unordered_map<char, TokenType> symbol_to
 			token_value = line.substr(cursor_one, distance);
 			token_char = line[cursor_two];
 			// print the previous token and the symbol
-			if (!std::isspace(token_value[0])) {
-				std::cout << token_value << std::endl; //check that this isnt empty
+			if (token_value.compare("")) {
+				std::cout << token_value << std::endl; //check that this isnt empty (empty string?)
 			}
 			std::cout << token_char << std::endl;
 
@@ -115,17 +116,24 @@ int main(int argc, char* argv[]) {
 		{"int", T_keyword},
 		{"double", T_keyword},
 	};
+	// Measure time
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 	// Read file
+
 	std::string line;
 	std::ifstream source_file;
 	source_file.open(argv[1]); // add measuring time
-
+	// Change this to read entire file/page
 	while (std::getline(source_file, line)) {
 		tokenizeLine(line, symbol_tokens);
 	}
 	source_file.close();
 
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+	
 	return 0;
 }
 
