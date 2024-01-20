@@ -27,7 +27,6 @@ typedef struct Token {
 	std::string token_value;
 } Token;
 
-int g_token_count;
 
 TokenType findTokenType(std::string str, std::unordered_map<std::string, TokenType> &keywords) {
 	std::regex r_identifier("[a-zA-Z_][a-zA-z0-9]*");
@@ -63,7 +62,6 @@ int addToken(std::string line, bool last_is_symbol, int start, int distance, std
 		current_token->token_type = t_val_type;
 		current_token->token_value = token_value;
 		v_tokens.push_back(current_token);
-		g_token_count++;
 	}
 	if (last_is_symbol == true) {
 		std::string s(1, last_char);
@@ -73,7 +71,6 @@ int addToken(std::string line, bool last_is_symbol, int start, int distance, std
 		current_token->token_type = char_val_type;
 		current_token->token_value = s;
 		v_tokens.push_back(current_token);
-		g_token_count++;
 	}
 	return 0;
 }
@@ -182,11 +179,14 @@ int main(int argc, char* argv[]) {
 	std::string line;
 	std::ifstream source_file;
 	source_file.open(argv[1]); // add measuring time
+	if (!source_file.is_open()) {
+		std::cout << "Failed to open file.\n";
+	}
 
 	std::vector<Token*> v_tokens;
 	// Change this to read entire file/page with rdbuf
 	// and make a method to feed lines into the function
-	g_token_count = 0;
+	int token_count = 0;
 	while (std::getline(source_file, line)) {
 		tokenizeLine(line, v_tokens, symbols, keywords);
 	}
@@ -196,7 +196,7 @@ int main(int argc, char* argv[]) {
 	double time_taken = (double)std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
 	time_taken = time_taken / 1000;
 
-	std::cout << "Generated " << g_token_count << " tokens in : " << time_taken << "[ms]" << std::endl;
+	std::cout << "Generated " << token_count << " tokens in : " << time_taken << "[ms]" << std::endl;
 
 	for (Token* i : v_tokens) {
 		std::cout << "\t" << i->token_value << "\t\t-\t" << enum_names[i->token_type] << std::endl;
