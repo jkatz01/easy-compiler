@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <chrono>
+#include <regex>
 
 enum TokenType {
 	T_semicolon,
@@ -17,31 +18,59 @@ enum TokenType {
 	T_int,
 	T_double,
 	T_identifier,
-	T_temp
+	T_temp,
+	T_invalid
 };
 
-struct Token {
+typedef struct Token {
 	TokenType token_type;
 	std::string token_value;
-};
+} Token;
 
 int g_token_count;
 
-int addToken(std::string line, bool last_is_symbol, int start, int distance, std::vector<Token*> &v_tokens) {
+TokenType findTokenType(std::string str, std::unordered_map<std::string, TokenType> &keywords) {
+	std::regex r_identifier("[a-zA-Z_][a-zA-z0-9]*");
+	std::regex r_double("[0-9]+\\.[0-9]+");
+	std::regex r_int("[0-9]+");
+	auto search = keywords.find(str);
+	if (search != keywords.end()) {
+		return T_keyword;
+	}
+	else if (std::regex_match(str, r_identifier)) {
+		return T_identifier;
+	}
+	else if (std::regex_match(str, r_int)) {
+		return T_int;
+	}
+	else if (std::regex_match(str, r_double)) {
+		return T_double;
+	}
+	else {
+		return T_temp;
+	}
+	
+}
+
+int addToken(std::string line, bool last_is_symbol, int start, int distance, std::vector<Token*> &v_tokens, std::unordered_map<std::string, TokenType> &keywords, TokenType symbol_type) {
 	std::string token_value = line.substr(start, distance);
 	char last_char = line[start + distance];
 
 	if (token_value.compare("")) {
+		TokenType t_val_type = findTokenType(token_value, keywords);
+
 		Token* current_token = new Token;
-		current_token->token_type = T_temp;
+		current_token->token_type = t_val_type;
 		current_token->token_value = token_value;
 		v_tokens.push_back(current_token);
 		g_token_count++;
 	}
 	if (last_is_symbol == true) {
-		Token* current_token = new Token;
-		current_token->token_type = T_temp;
 		std::string s(1, last_char);
+		TokenType char_val_type = symbol_type;
+
+		Token* current_token = new Token;
+		current_token->token_type = char_val_type;
 		current_token->token_value = s;
 		v_tokens.push_back(current_token);
 		g_token_count++;
@@ -49,7 +78,7 @@ int addToken(std::string line, bool last_is_symbol, int start, int distance, std
 	return 0;
 }
 
-int tokenizeLine(std::string line, std::unordered_map<char, TokenType> symbol_tokens, std::vector<Token*> &v_tokens) {
+int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered_map<char, TokenType> &symbols, std::unordered_map<std::string, TokenType> &keywords) {
 	// add another parameter vector<Token> to append tokens to.
 	// Return 0 on success, EXIT_FAILURE otherwise
 	int cursor_one = 0;
@@ -61,17 +90,18 @@ int tokenizeLine(std::string line, std::unordered_map<char, TokenType> symbol_to
 	size_t line_length = line.length();
 
 	while (cursor_two <= line_length) {
+		auto search = symbols.find(line[cursor_two]);
 		if (std::isspace(line[cursor_two]) || cursor_two == line_length) {
 			distance = cursor_two - cursor_one;
 			if (distance > 0 && !std::isspace(line[cursor_one])) {
-				success = addToken(line, false, cursor_one, distance, v_tokens);
+				success = addToken(line, false, cursor_one, distance, v_tokens, keywords, T_temp);
 			}
 			cursor_one = cursor_two + 1;
 		}
 		else if (std::isalnum(line[cursor_two])) {
 			//check keyword or identifier
 		}
-		else if (symbol_tokens.find(line[cursor_two]) != symbol_tokens.end()) {
+		else if (search != symbols.end()) {
 			// special case for a dot: double
 			distance = cursor_two - cursor_one;
 			token_char = line[cursor_two];
@@ -84,14 +114,14 @@ int tokenizeLine(std::string line, std::unordered_map<char, TokenType> symbol_to
 				;
 			}
 			else {
-				success = addToken(line, true, cursor_one, distance, v_tokens);
+				success = addToken(line, true, cursor_one, distance, v_tokens, keywords, search->second);
 				cursor_one = cursor_two + 1;
 			}
 		}
 		else {
 			int distance = cursor_two - cursor_one;
 			token_char = line[cursor_two];
-			addToken(line, false, cursor_one, distance, v_tokens);
+			addToken(line, false, cursor_one, distance, v_tokens, keywords, T_invalid);
 			//std::cout << "Bad character " << token_char << std::endl;
 			cursor_one = cursor_two + 1;
 		}
@@ -110,7 +140,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	// Define a hashmap with all the tokens
-	std::unordered_map<char, TokenType> symbol_tokens = {
+	std::unordered_map<char, TokenType> symbols = {
 		{';', T_semicolon},
 		{'.', T_semicolon},
 		{'_', T_underscore},
@@ -127,7 +157,7 @@ int main(int argc, char* argv[]) {
 		{',', T_comma},
 	};
 
-	std::unordered_map<std::string, TokenType> key_words = {
+	std::unordered_map<std::string, TokenType> keywords = {
 		{"def", T_keyword},
 		{"fed", T_keyword},
 		{"if", T_keyword},
@@ -158,7 +188,7 @@ int main(int argc, char* argv[]) {
 	// and make a method to feed lines into the function
 	g_token_count = 0;
 	while (std::getline(source_file, line)) {
-		tokenizeLine(line, symbol_tokens, v_tokens);
+		tokenizeLine(line, v_tokens, symbols, keywords);
 	}
 	source_file.close();
 
@@ -169,7 +199,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "Generated " << g_token_count << " tokens in : " << time_taken << "[ms]" << std::endl;
 
 	for (Token* i : v_tokens) {
-		std::cout << "\t" << i->token_value << "\t- " << enum_names[i->token_type] << std::endl;
+		std::cout << "\t" << i->token_value << "\t\t-\t" << enum_names[i->token_type] << std::endl;
 	}
 	
 	return 0;
