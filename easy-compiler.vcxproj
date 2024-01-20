@@ -130,6 +130,7 @@
     <ClCompile Include="src\Lexer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="tests\bad_file.txt" />
     <Text Include="tests\example.txt" />
   </ItemGroup>
   <ItemGroup>

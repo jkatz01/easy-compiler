@@ -51,13 +51,16 @@ TokenType findTokenType(std::string str, std::unordered_map<std::string, TokenTy
 	
 }
 
-int addToken(std::string line, bool last_is_symbol, int start, int distance, std::vector<Token*> &v_tokens, std::unordered_map<std::string, TokenType> &keywords, TokenType symbol_type) {
+int addToken(std::string line, bool last_is_symbol, int start, int distance, std::vector<Token*> &v_tokens, std::unordered_map<std::string, TokenType> &keywords, TokenType symbol_type, std::ofstream& error_file, int line_num) {
 	std::string token_value = line.substr(start, distance);
 	char last_char = line[start + distance];
 
 	if (token_value.compare("")) {
 		TokenType t_val_type = findTokenType(token_value, keywords);
-
+		if (t_val_type == T_invalid) {
+			error_file << "Bad token \t" << token_value << "\t\tat line " << line_num << std::endl;
+			return -1;
+		}
 		Token* current_token = new Token;
 		current_token->token_type = t_val_type;
 		current_token->token_value = token_value;
@@ -66,7 +69,6 @@ int addToken(std::string line, bool last_is_symbol, int start, int distance, std
 	if (last_is_symbol == true) {
 		std::string s(1, last_char);
 		TokenType char_val_type = symbol_type;
-
 		Token* current_token = new Token;
 		current_token->token_type = char_val_type;
 		current_token->token_value = s;
@@ -75,7 +77,7 @@ int addToken(std::string line, bool last_is_symbol, int start, int distance, std
 	return 0;
 }
 
-int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered_map<char, TokenType> &symbols, std::unordered_map<std::string, TokenType> &keywords, int line_num) {
+int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered_map<char, TokenType> &symbols, std::unordered_map<std::string, TokenType> &keywords, int line_num, std::ofstream &error_file) {
 	// add another parameter vector<Token> to append tokens to.
 	// Return 0 on success, EXIT_FAILURE otherwise
 	int cursor_one = 0;
@@ -92,7 +94,7 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 		if (std::isspace(line[cursor_two]) || cursor_two == line_length) {
 			distance = cursor_two - cursor_one;
 			if (distance > 0 && !std::isspace(line[cursor_one])) {
-				success = addToken(line, false, cursor_one, distance, v_tokens, keywords, T_temp);
+				success = addToken(line, false, cursor_one, distance, v_tokens, keywords, T_temp, error_file, line_num);
 				token_count++;
 			}
 			cursor_one = cursor_two + 1;
@@ -113,7 +115,7 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 				;
 			}
 			else {
-				success = addToken(line, true, cursor_one, distance, v_tokens, keywords, search->second);
+				success = addToken(line, true, cursor_one, distance, v_tokens, keywords, search->second, error_file, line_num);
 				token_count += 2;
 
 				cursor_one = cursor_two + 1;
@@ -122,9 +124,9 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 		else {
 			int distance = cursor_two - cursor_one;
 			token_char = line[cursor_two];
-			addToken(line, false, cursor_one, distance, v_tokens, keywords, T_invalid);
+			addToken(line, false, cursor_one, distance, v_tokens, keywords, T_invalid, error_file, line_num);
 			token_count++;
-			std::cout << "Bad character " << token_char <<  " at line " << line_num << std::endl;
+			error_file << "Bad character \t" << token_char <<  "\t\tat line " << line_num << std::endl;
 			cursor_one = cursor_two + 1;
 		}
 		cursor_two++;
@@ -184,8 +186,14 @@ int main(int argc, char* argv[]) {
 	std::string line;
 	std::ifstream source_file;
 	source_file.open(argv[1]); // add measuring time
+	std::ofstream output_file;
+	output_file.open("Tokens.txt", std::ios::out | std::ios::trunc);
+	std::ofstream error_file;
+	error_file.open("Lexical-Errors.txt", std::ios::out | std::ios::trunc);
+
 	if (!source_file.is_open()) {
 		std::cout << "Failed to open file.\n";
+		return EXIT_FAILURE;
 	}
 
 	std::vector<Token*> v_tokens;
@@ -194,7 +202,7 @@ int main(int argc, char* argv[]) {
 	int token_count = 0;
 	int line_num = 0;
 	while (std::getline(source_file, line)) {
-		token_count += tokenizeLine(line, v_tokens, symbols, keywords, line_num);
+		token_count += tokenizeLine(line, v_tokens, symbols, keywords, line_num, error_file);
 		line_num++;
 	}
 	source_file.close();
@@ -206,11 +214,17 @@ int main(int argc, char* argv[]) {
 	std::cout << "Generated " << token_count << " tokens in : " << time_taken << "[ms]" << std::endl;
 
 	for (Token* i : v_tokens) {
-		std::cout << "\t" << i->token_value << "\t\t-\t" << enum_names[i->token_type] << std::endl;
+		//TODO: add tabs based on string length
+		output_file << "\t" << i->token_value << "\t\t\t-\t" << enum_names[i->token_type] << std::endl;
 	}
+	output_file.close();
+	error_file.close();
 	
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu
+// 
+// TODO: 
+// Fix reading non-ascii files

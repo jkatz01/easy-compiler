@@ -5,6 +5,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="tests\example.txt" />
+    <Text Include="tests\bad_file.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="tests\Test1.cp" />
