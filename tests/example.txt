@@ -1,4 +1,5 @@
-Hello
-this: is (a file) for; some*thing+     plus
-  a
-example
+hello
+bad thing: this is bad;
+int plop = 75.698
+75.7aaa;()
+plap(x, y).

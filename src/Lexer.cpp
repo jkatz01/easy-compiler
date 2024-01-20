@@ -24,52 +24,69 @@ typedef struct Token {
 	std::string token_value;
 } Token;
 
-int tokenizeLine(std::string line, std::unordered_map<char, TokenType> symbol_tokens) {
+int printToken(std::string line, bool last_is_symbol, int start, int distance, std::vector<Token> v_tokens) {
+	std::string token_value = line.substr(start, distance);
+	char last_char = line[start + distance];
+	if (token_value.compare("")) {
+		std::cout << token_value << std::endl;
+	}
+	if (last_is_symbol == true) {
+		std::cout << last_char << std::endl;
+	}
+	return 0;
+}
+
+int tokenizeLine(std::string line, std::unordered_map<char, TokenType> symbol_tokens, std::vector<Token> v_tokens) {
 	// add another parameter vector<Token> to append tokens to.
 	// Return 0 on success, EXIT_FAILURE otherwise
 	int cursor_one = 0;
 	int cursor_two = 0;
 	std::string token_value = "";
 	char token_char = 0;
-	int line_length = line.length();
-	/* cursor two continues until it finds a token that isnt a digit / letter
-	* identify digits first to check for number */
+	int distance;
+	int success;
+	size_t line_length = line.length();
 
 	while (cursor_two <= line_length) {
 		if (std::isspace(line[cursor_two]) || cursor_two == line_length) {
-			int distance = cursor_two - cursor_one;
+			distance = cursor_two - cursor_one;
 			if (distance > 0 && !std::isspace(line[cursor_one])) {
-				token_value = line.substr(cursor_one, distance);
-				std::cout << token_value << std::endl;
-				// Send this token to check if it is a keyword, number, identifier, etc.
+				success = printToken(line, false, cursor_one, distance, v_tokens);
 			}
 			cursor_one = cursor_two + 1;
 		}
-		else if (std::isalpha(line[cursor_two])) {
+		else if (std::isalnum(line[cursor_two])) {
 			//check keyword or identifier
 		}
 		else if (symbol_tokens.find(line[cursor_two]) != symbol_tokens.end()) {
-			//std::cout << std::endl << "Found symbol " << line[cursor_two] << std::endl;
+			// special case for a dot: double
+			distance = cursor_two - cursor_one;
+			token_char = line[cursor_two];
+
+			// print the previous token and the symbol
+			if (token_char == '.' && cursor_two < line_length && std::isdigit(line[cursor_two + 1])) {
+				;
+			}
+			else if (token_char == '_') {
+				;
+			}
+			else {
+				success = printToken(line, true, cursor_one, distance, v_tokens);
+				cursor_one = cursor_two + 1;
+			}
+		}
+		else {
 			int distance = cursor_two - cursor_one;
 			token_value = line.substr(cursor_one, distance);
 			token_char = line[cursor_two];
-			// print the previous token and the symbol
-			if (token_value.compare("")) {
-				std::cout << token_value << std::endl; //check that this isnt empty (empty string?)
-			}
-			std::cout << token_char << std::endl;
 
+			if (token_value.compare("") != 0) std::cout << token_value << std::endl;
+			std::cout << "Bad character " << token_char << std::endl;
 			cursor_one = cursor_two + 1;
-
-		}
-		else {
-			//std::cout << "bad character: " << line[cursor_two] << " not allowed\n";
-			//return -1;
 		}
 		cursor_two++;
 
 	}
-	//std::cout << std::endl;
 
 	return 0;
 }
@@ -120,13 +137,15 @@ int main(int argc, char* argv[]) {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 	// Read file
-
 	std::string line;
 	std::ifstream source_file;
 	source_file.open(argv[1]); // add measuring time
-	// Change this to read entire file/page
+
+	std::vector<Token> v_tokens;
+	// Change this to read entire file/page with rdbuf
+	// and make a method to feed lines into the function
 	while (std::getline(source_file, line)) {
-		tokenizeLine(line, symbol_tokens);
+		tokenizeLine(line, symbol_tokens, v_tokens);
 	}
 	source_file.close();
 
