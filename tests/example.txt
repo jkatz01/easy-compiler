@@ -4,10 +4,10 @@ bad thing: this $ is bad;
 int plop = 75.698
 if 75.7aaa;()
 
-while do
+while do $ %324 zubzububu
 55.2
 55
-od
+od |||
 not.
 plap(x, y).
 x + y;

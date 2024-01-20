@@ -46,7 +46,7 @@ TokenType findTokenType(std::string str, std::unordered_map<std::string, TokenTy
 		return T_double;
 	}
 	else {
-		return T_temp;
+		return T_invalid;
 	}
 	
 }
@@ -75,13 +75,14 @@ int addToken(std::string line, bool last_is_symbol, int start, int distance, std
 	return 0;
 }
 
-int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered_map<char, TokenType> &symbols, std::unordered_map<std::string, TokenType> &keywords) {
+int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered_map<char, TokenType> &symbols, std::unordered_map<std::string, TokenType> &keywords, int line_num) {
 	// add another parameter vector<Token> to append tokens to.
 	// Return 0 on success, EXIT_FAILURE otherwise
 	int cursor_one = 0;
 	int cursor_two = 0;
 	std::string token_value = "";
 	char token_char = 0;
+	int token_count = 0;
 	int distance;
 	int success;
 	size_t line_length = line.length();
@@ -92,6 +93,7 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 			distance = cursor_two - cursor_one;
 			if (distance > 0 && !std::isspace(line[cursor_one])) {
 				success = addToken(line, false, cursor_one, distance, v_tokens, keywords, T_temp);
+				token_count++;
 			}
 			cursor_one = cursor_two + 1;
 		}
@@ -112,6 +114,8 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 			}
 			else {
 				success = addToken(line, true, cursor_one, distance, v_tokens, keywords, search->second);
+				token_count += 2;
+
 				cursor_one = cursor_two + 1;
 			}
 		}
@@ -119,14 +123,15 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 			int distance = cursor_two - cursor_one;
 			token_char = line[cursor_two];
 			addToken(line, false, cursor_one, distance, v_tokens, keywords, T_invalid);
-			//std::cout << "Bad character " << token_char << std::endl;
+			token_count++;
+			std::cout << "Bad character " << token_char <<  " at line " << line_num << std::endl;
 			cursor_one = cursor_two + 1;
 		}
 		cursor_two++;
 
 	}
 
-	return 0;
+	return token_count;
 }
 
 int main(int argc, char* argv[]) {
@@ -171,7 +176,7 @@ int main(int argc, char* argv[]) {
 		{"int", T_keyword},
 		{"double", T_keyword},
 	};
-	std::string enum_names[] = { "T_semicolon","T_dot","T_comp","T_underscore","T_operator","T_open_par","T_close_par","T_comma","T_keyword","T_int","T_double","T_identifier","T_temp"};
+	std::string enum_names[] = { "T_semicolon","T_dot","T_comp","T_underscore","T_operator","T_open_par","T_close_par","T_comma","T_keyword","T_int","T_double","T_identifier","T_temp", "T_invalid"};
 	// Measure time
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
@@ -187,8 +192,10 @@ int main(int argc, char* argv[]) {
 	// Change this to read entire file/page with rdbuf
 	// and make a method to feed lines into the function
 	int token_count = 0;
+	int line_num = 0;
 	while (std::getline(source_file, line)) {
-		tokenizeLine(line, v_tokens, symbols, keywords);
+		token_count += tokenizeLine(line, v_tokens, symbols, keywords, line_num);
+		line_num++;
 	}
 	source_file.close();
 
