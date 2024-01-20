@@ -16,27 +16,40 @@ enum TokenType {
 	T_keyword,
 	T_int,
 	T_double,
-	T_identifier
+	T_identifier,
+	T_temp
 };
 
-typedef struct Token {
+struct Token {
 	TokenType token_type;
 	std::string token_value;
-} Token;
+};
 
-int printToken(std::string line, bool last_is_symbol, int start, int distance, std::vector<Token> v_tokens) {
+int g_token_count;
+
+int addToken(std::string line, bool last_is_symbol, int start, int distance, std::vector<Token*> &v_tokens) {
 	std::string token_value = line.substr(start, distance);
 	char last_char = line[start + distance];
+
 	if (token_value.compare("")) {
-		std::cout << token_value << std::endl;
+		Token* current_token = new Token;
+		current_token->token_type = T_temp;
+		current_token->token_value = token_value;
+		v_tokens.push_back(current_token);
+		g_token_count++;
 	}
 	if (last_is_symbol == true) {
-		std::cout << last_char << std::endl;
+		Token* current_token = new Token;
+		current_token->token_type = T_temp;
+		std::string s(1, last_char);
+		current_token->token_value = s;
+		v_tokens.push_back(current_token);
+		g_token_count++;
 	}
 	return 0;
 }
 
-int tokenizeLine(std::string line, std::unordered_map<char, TokenType> symbol_tokens, std::vector<Token> v_tokens) {
+int tokenizeLine(std::string line, std::unordered_map<char, TokenType> symbol_tokens, std::vector<Token*> &v_tokens) {
 	// add another parameter vector<Token> to append tokens to.
 	// Return 0 on success, EXIT_FAILURE otherwise
 	int cursor_one = 0;
@@ -51,7 +64,7 @@ int tokenizeLine(std::string line, std::unordered_map<char, TokenType> symbol_to
 		if (std::isspace(line[cursor_two]) || cursor_two == line_length) {
 			distance = cursor_two - cursor_one;
 			if (distance > 0 && !std::isspace(line[cursor_one])) {
-				success = printToken(line, false, cursor_one, distance, v_tokens);
+				success = addToken(line, false, cursor_one, distance, v_tokens);
 			}
 			cursor_one = cursor_two + 1;
 		}
@@ -71,17 +84,15 @@ int tokenizeLine(std::string line, std::unordered_map<char, TokenType> symbol_to
 				;
 			}
 			else {
-				success = printToken(line, true, cursor_one, distance, v_tokens);
+				success = addToken(line, true, cursor_one, distance, v_tokens);
 				cursor_one = cursor_two + 1;
 			}
 		}
 		else {
 			int distance = cursor_two - cursor_one;
-			token_value = line.substr(cursor_one, distance);
 			token_char = line[cursor_two];
-
-			if (token_value.compare("") != 0) std::cout << token_value << std::endl;
-			std::cout << "Bad character " << token_char << std::endl;
+			addToken(line, false, cursor_one, distance, v_tokens);
+			//std::cout << "Bad character " << token_char << std::endl;
 			cursor_one = cursor_two + 1;
 		}
 		cursor_two++;
@@ -133,6 +144,7 @@ int main(int argc, char* argv[]) {
 		{"int", T_keyword},
 		{"double", T_keyword},
 	};
+	std::string enum_names[] = { "T_semicolon","T_dot","T_comp","T_underscore","T_operator","T_open_par","T_close_par","T_comma","T_keyword","T_int","T_double","T_identifier","T_temp"};
 	// Measure time
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
@@ -141,17 +153,24 @@ int main(int argc, char* argv[]) {
 	std::ifstream source_file;
 	source_file.open(argv[1]); // add measuring time
 
-	std::vector<Token> v_tokens;
+	std::vector<Token*> v_tokens;
 	// Change this to read entire file/page with rdbuf
 	// and make a method to feed lines into the function
+	g_token_count = 0;
 	while (std::getline(source_file, line)) {
 		tokenizeLine(line, symbol_tokens, v_tokens);
 	}
 	source_file.close();
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	double time_taken = (double)std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
+	time_taken = time_taken / 1000;
 
-	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+	std::cout << "Generated " << g_token_count << " tokens in : " << time_taken << "[ms]" << std::endl;
+
+	for (Token* i : v_tokens) {
+		std::cout << "\t" << i->token_value << "\t- " << enum_names[i->token_type] << std::endl;
+	}
 	
 	return 0;
 }
