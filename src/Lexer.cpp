@@ -146,7 +146,7 @@ int main(int argc, char* argv[]) {
 	// Define a hashmap with all the tokens
 	std::unordered_map<char, TokenType> symbols = {
 		{';', T_semicolon},
-		{'.', T_semicolon},
+		{'.', T_dot},
 		{'_', T_underscore},
 		{'=', T_comp},
 		{'<', T_comp},
@@ -228,3 +228,4 @@ int main(int argc, char* argv[]) {
 // 
 // TODO: 
 // Fix reading non-ascii files
+// Fix: dot getting assigned semicolon type
