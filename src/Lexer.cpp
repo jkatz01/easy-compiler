@@ -28,11 +28,15 @@ typedef struct Token {
 	std::string token_value;
 } Token;
 
+//Maybe make this thing a class so i dont have global variables
 
-TokenType findTokenType(std::string str, std::unordered_map<std::string, TokenType> &keywords) {
-	std::regex r_identifier("[a-zA-Z_][a-zA-z0-9]*");
-	std::regex r_double("-?[0-9]+(\\.[0-9]+)?(e-?[0-9]+)?");
-	std::regex r_int("-?[0-9]+");
+std::regex r_identifier("[a-zA-Z_][a-zA-z0-9]*");
+std::regex r_double("-?[0-9]+(\\.[0-9]+)?(e-?[0-9]+)?");
+std::regex r_int("-?[0-9]+");
+
+TokenType findTokenType(std::string &str, std::unordered_map<std::string, TokenType> &keywords) {
+	//return T_temp;
+	
 	auto search = keywords.find(str);
 	if (search != keywords.end()) {
 		return T_keyword;
@@ -49,10 +53,10 @@ TokenType findTokenType(std::string str, std::unordered_map<std::string, TokenTy
 	else {
 		return T_invalid;
 	}
-	
+
 }
 
-int addToken(std::string line, bool last_is_symbol, int start, int distance, std::vector<Token*> &v_tokens, std::unordered_map<std::string, TokenType> &keywords, TokenType symbol_type, std::ofstream& error_file, int line_num) {
+int addToken(std::string &line, bool last_is_symbol, int start, int distance, std::vector<Token*> &v_tokens, std::unordered_map<std::string, TokenType> &keywords, TokenType symbol_type, std::ofstream& error_file, int line_num) {
 	std::string token_value = line.substr(start, distance);
 	char last_char = line[start + distance];
 
@@ -78,13 +82,14 @@ int addToken(std::string line, bool last_is_symbol, int start, int distance, std
 	return 0;
 }
 
-int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered_map<char, TokenType> &symbols, std::unordered_map<std::string, TokenType> &keywords, int line_num, std::ofstream &error_file) {
+int tokenizeLine(std::string &line, std::vector<Token*> &v_tokens, std::unordered_map<char, TokenType> &symbols, std::unordered_map<std::string, TokenType> &keywords, int line_num, std::ofstream &error_file) {
 	// add another parameter vector<Token> to append tokens to.
 	// Return 0 on success, EXIT_FAILURE otherwise
 	int cursor_one = 0;
 	int cursor_two = 0;
 	std::string token_value = "";
 	char token_char = 0;
+	char cur_char;
 	int token_count = 0;
 	bool last_is_alnum = 0;
 	int distance;
@@ -194,12 +199,15 @@ int main(int argc, char* argv[]) {
 	};
 	std::string enum_names[] = { "T_semicolon","T_dot","T_comp","T_underscore","T_operator","T_open_par","T_close_par","T_comma","T_keyword","T_int","T_double","T_identifier","T_temp", "T_invalid"};
 	// Measure time
+	std::cout << "starting: \n";
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 	// Read file
 	std::string line;
 	std::ifstream source_file;
 	source_file.open(argv[1]); // add measuring time
+	std::string content((std::istreambuf_iterator<char>(source_file)), std::istreambuf_iterator<char>());
+
 	std::ofstream output_file;
 	output_file.open("Tokens.txt", std::ios::out | std::ios::trunc);
 	std::ofstream error_file;
@@ -215,10 +223,14 @@ int main(int argc, char* argv[]) {
 	// and make a method to feed lines into the function
 	int token_count = 0;
 	int line_num = 0;
+	/*
 	while (std::getline(source_file, line)) {
 		token_count += tokenizeLine(line, v_tokens, symbols, keywords, line_num, error_file);
 		line_num++;
 	}
+	*/
+	token_count += tokenizeLine(content, v_tokens, symbols, keywords, line_num, error_file);
+
 	source_file.close();
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
