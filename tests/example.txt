@@ -1,15 +1,9 @@
 _H_iden;
 Se_iden;
-bad thing: this $ is bad;
-int plop = 75.698
-if 75.7aaa;()
-
-while do $ %324 zubzububu
-55.2
-55
-od |||
-not.blublub
-44.5oobobowowb
-432iunji
-plap(x, y).
-x + y;
+BadSymbol: %% 32 $
+x + y; []{}lpo
+-75.3  75.3   89   40e10  42.1e-5 -45.1e-10 
+schloop;
+55-10
+-55.5-10
+blublublublu.

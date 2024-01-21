@@ -19,7 +19,8 @@ enum TokenType {
 	T_double,
 	T_identifier,
 	T_temp,
-	T_invalid
+	T_invalid,
+	T_dash
 };
 
 typedef struct Token {
@@ -30,7 +31,7 @@ typedef struct Token {
 
 TokenType findTokenType(std::string str, std::unordered_map<std::string, TokenType> &keywords) {
 	std::regex r_identifier("[a-zA-Z_][a-zA-z0-9]*");
-	std::regex r_double("[0-9]+\\.[0-9]+");
+	std::regex r_double("-?[0-9]+(\\.[0-9]+)?(e-?[0-9]+)?");
 	std::regex r_int("[0-9]+");
 	auto search = keywords.find(str);
 	if (search != keywords.end()) {
@@ -85,9 +86,12 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 	std::string token_value = "";
 	char token_char = 0;
 	int token_count = 0;
+	bool last_is_digit = 0;
 	int distance;
 	int success;
 	size_t line_length = line.length();
+
+	// More cases: letter after number, split token
 
 	while (cursor_two <= line_length) {
 		auto search = symbols.find(line[cursor_two]);
@@ -98,9 +102,14 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 				token_count++;
 			}
 			cursor_one = cursor_two + 1;
+			last_is_digit = false;
 		}
-		else if (std::isalnum(line[cursor_two])) {
+		else if (std::isalpha(line[cursor_two])) {
 			//check keyword or identifier
+			last_is_digit = false;
+		}
+		else if (std::isdigit(line[cursor_two])) {
+			last_is_digit = true;
 		}
 		else if (search != symbols.end()) {
 			// special case for a dot: double
@@ -109,16 +118,22 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 
 			// print the previous token and the symbol
 			if (token_char == '.' && cursor_two < line_length && std::isdigit(line[cursor_two + 1])) {
-				;
+				last_is_digit = false;
 			}
-			else if (token_char == '_') {
-				;
+			else if (token_char == '-' && last_is_digit == true) {
+				last_is_digit = false;
+				success = addToken(line, true, cursor_one, distance, v_tokens, keywords, search->second, error_file, line_num);
+				cursor_one = cursor_two + 1;
+				token_count += 2;
+			}
+			else if (token_char == '_' || token_char == '-') {
+				last_is_digit = false;
 			}
 			else {
 				success = addToken(line, true, cursor_one, distance, v_tokens, keywords, search->second, error_file, line_num);
 				token_count += 2;
-
 				cursor_one = cursor_two + 1;
+				last_is_digit = false;
 			}
 		}
 		else {
@@ -128,6 +143,7 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 			token_count++;
 			error_file << "Bad character \t" << token_char <<  "\t\tat line " << line_num << std::endl;
 			cursor_one = cursor_two + 1;
+			last_is_digit = false;
 		}
 		cursor_two++;
 
@@ -159,6 +175,7 @@ int main(int argc, char* argv[]) {
 		{'(', T_open_par},
 		{')', T_close_par},
 		{',', T_comma},
+		{'-', T_dash}
 	};
 
 	std::unordered_map<std::string, TokenType> keywords = {
@@ -229,3 +246,5 @@ int main(int argc, char* argv[]) {
 // TODO: 
 // Fix reading non-ascii files
 // Fix: dot getting assigned semicolon type
+// Fix: doubles can -200.2 or -2e10 or -2.39e6
+// Fix: ints can be -200 or 200 

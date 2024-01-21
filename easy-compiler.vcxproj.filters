@@ -18,5 +18,6 @@
     <None Include="tests\Test8.cp" />
     <None Include="tests\Test9.cp" />
     <None Include=".gitignore" />
+    <None Include="README.md" />
   </ItemGroup>
 </Project>
