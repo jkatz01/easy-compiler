@@ -230,10 +230,26 @@ int main(int argc, char* argv[]) {
 
 	std::cout << "Generated " << token_count << " tokens in : " << time_taken << "[ms]" << std::endl;
 
-	for (Token* i : v_tokens) {
-		//TODO: add tabs based on string length
-		output_file << "\t" << i->token_value << "\t\t\t-\t" << enum_names[i->token_type] << std::endl;
+	bool nice_printing = true;
+
+	if (nice_printing == true) {
+		for (Token* i : v_tokens) {
+			int tab_num = 3 - (i->token_value.length() / 4);
+			output_file << "\t";
+			output_file << i->token_value;
+			for (int j = 0; j <= tab_num; j++) {
+				output_file << "\t";
+			}
+			output_file << "-\t" << enum_names[i->token_type] << std::endl;
+		}
 	}
+	else {
+		for (Token* i : v_tokens) {
+			//TODO: add tabs based on string length
+			output_file << "\t" << i->token_value << "\t\t\t-\t" << enum_names[i->token_type] << std::endl;
+		}
+	}
+	
 	output_file.close();
 	error_file.close();
 	
