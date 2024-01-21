@@ -32,7 +32,7 @@ typedef struct Token {
 TokenType findTokenType(std::string str, std::unordered_map<std::string, TokenType> &keywords) {
 	std::regex r_identifier("[a-zA-Z_][a-zA-z0-9]*");
 	std::regex r_double("-?[0-9]+(\\.[0-9]+)?(e-?[0-9]+)?");
-	std::regex r_int("[0-9]+");
+	std::regex r_int("-?[0-9]+");
 	auto search = keywords.find(str);
 	if (search != keywords.end()) {
 		return T_keyword;
@@ -86,7 +86,7 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 	std::string token_value = "";
 	char token_char = 0;
 	int token_count = 0;
-	bool last_is_digit = 0;
+	bool last_is_alnum = 0;
 	int distance;
 	int success;
 	size_t line_length = line.length();
@@ -102,14 +102,11 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 				token_count++;
 			}
 			cursor_one = cursor_two + 1;
-			last_is_digit = false;
+			last_is_alnum = false;
 		}
-		else if (std::isalpha(line[cursor_two])) {
+		else if (std::isalnum(line[cursor_two])) {
 			//check keyword or identifier
-			last_is_digit = false;
-		}
-		else if (std::isdigit(line[cursor_two])) {
-			last_is_digit = true;
+			last_is_alnum = (line[cursor_two] != 'e') ? true : false;
 		}
 		else if (search != symbols.end()) {
 			// special case for a dot: double
@@ -118,22 +115,22 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 
 			// print the previous token and the symbol
 			if (token_char == '.' && cursor_two < line_length && std::isdigit(line[cursor_two + 1])) {
-				last_is_digit = false;
+				last_is_alnum = false;
 			}
-			else if (token_char == '-' && last_is_digit == true) {
-				last_is_digit = false;
+			else if (token_char == '-' && last_is_alnum == true) {
+				last_is_alnum = false;
 				success = addToken(line, true, cursor_one, distance, v_tokens, keywords, search->second, error_file, line_num);
 				cursor_one = cursor_two + 1;
 				token_count += 2;
 			}
 			else if (token_char == '_' || token_char == '-') {
-				last_is_digit = false;
+				last_is_alnum = false;
 			}
 			else {
 				success = addToken(line, true, cursor_one, distance, v_tokens, keywords, search->second, error_file, line_num);
 				token_count += 2;
 				cursor_one = cursor_two + 1;
-				last_is_digit = false;
+				last_is_alnum = false;
 			}
 		}
 		else {
@@ -143,7 +140,7 @@ int tokenizeLine(std::string line, std::vector<Token*> &v_tokens, std::unordered
 			token_count++;
 			error_file << "Bad character \t" << token_char <<  "\t\tat line " << line_num << std::endl;
 			cursor_one = cursor_two + 1;
-			last_is_digit = false;
+			last_is_alnum = false;
 		}
 		cursor_two++;
 
