@@ -128,10 +128,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Lexer.cpp" />
+    <ClCompile Include="src\Lexer_temp.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="tests\bad_file.txt" />
     <Text Include="tests\example.txt" />
+    <Text Include="tests\example_big.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
