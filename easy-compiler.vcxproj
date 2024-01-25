@@ -149,6 +149,9 @@
     <None Include="tests\Test8.cp" />
     <None Include="tests\Test9.cp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\definitions.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

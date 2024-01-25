@@ -23,4 +23,7 @@
     <None Include=".gitignore" />
     <None Include="README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\definitions.h" />
+  </ItemGroup>
 </Project>

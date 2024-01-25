@@ -1,6 +1,7 @@
 #include "Lexer.cpp"
 
 int main() {
-	Lexer lexical("example.txt", "Tokens.txt", "Lexical-Errors.txt");
+	Lexer lexical(".\\tests\\example.txt", "Tokens.txt", "Lexical-Errors.txt");
 	lexical.generateTokens();
+	;;
 }
