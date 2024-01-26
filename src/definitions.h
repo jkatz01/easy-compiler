@@ -39,6 +39,10 @@ enum States {
 struct TokenError {
 	std::string value;
 	int line;
+	TokenError() {
+		value = "";
+		line = -1;
+	}
 	TokenError(std::string err_value, int err_line) {
 		value = err_value;
 		line = err_line;
@@ -48,6 +52,10 @@ struct TokenError {
 struct Token {
 	TokenType token_type;
 	std::string token_value;
+	Token() {
+		token_type = T_temp;
+		token_value = "";
+	}
 	Token(TokenType type, std::string value) {
 		token_type = type;
 		token_value = value;

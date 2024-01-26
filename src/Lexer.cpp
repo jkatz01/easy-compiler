@@ -8,6 +8,7 @@ class Lexer {
 	public: 
 		int line_number = 0;
 		int token_count = 0;
+		int error_count = 0;
 		/// <summary>
 		/// Holds all tokens for future use
 		/// </summary>
@@ -65,6 +66,7 @@ class Lexer {
 			std::streamsize file_size = source_file.tellg();
 			source_file.seekg(0, std::ios::beg);
 			char buffer[PAGE_SIZE];
+			error_log.reserve(PAGE_SIZE);
 
 			// Time measuring
 			std::cout << "starting: \n";
@@ -75,7 +77,11 @@ class Lexer {
 				source_file.read(buffer, sizeof(buffer));
 				bytes_read = source_file.gcount();
 				std::string content(buffer, sizeof(char) * bytes_read);
-				v_tokens.reserve(sizeof(char) * bytes_read);
+				size_t res_size = (sizeof(char) * bytes_read) - (token_count % PAGE_SIZE);
+				v_tokens.reserve(v_tokens.size() + res_size);
+				if (error_count >= error_log.capacity() - 1) {
+					error_log.reserve(error_log.size() + PAGE_SIZE);
+				}
 
 				tokenizeLine(content, bytes_read);
 			}
@@ -99,7 +105,7 @@ class Lexer {
 			error_file.close();
 
 			if (error_log.size() > 0) {
-				return error_log.size();
+				return (int)error_log.size();
 			}
 
 			return EXIT_SUCCESS;
@@ -288,20 +294,19 @@ class Lexer {
 				TokenType t_val_type = findTokenType(token_value);
 				if (t_val_type == T_invalid || state == S_bad) {
 					TokenError terr(token_value, line_number);
-					error_log.push_back(terr);
+					error_log.insert(error_log.begin() + error_count, terr);
+					error_count++;
 					state = S_first;
 					return -1;
 				}
 				Token current_token(t_val_type, token_value);
-				v_tokens[token_count] = current_token;
-				//v_tokens.push_back(current_token);
+				v_tokens.insert(v_tokens.begin() + token_count, current_token);
 				token_count++;
 			}
 			if (last_is_symbol == true) {
 				std::string s(1, last_char);
 				Token current_token(symbol_type, s);
-				v_tokens[token_count] = current_token;
-				//v_tokens.push_back(current_token);
+				v_tokens.insert(v_tokens.begin() + token_count, current_token);
 				token_count++;
 			}
 			state = S_first;
