@@ -92,8 +92,8 @@ class Lexer {
 			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 			double time_taken = (double)std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
 			time_taken = time_taken / 1000;
-			std::cout << "Line count: " << line_number << std::endl;
-			std::cout << "Generated " << token_count << " tokens in : " << time_taken << "[ms]" << std::endl;
+			std::cout << "Line count: " << line_number + 1 << std::endl;
+			std::cout << "Generated " << token_count << " tokens in: " << time_taken << "[ms]" << std::endl;
 
 			output_file.open(output_file_name, std::ios::out | std::ios::trunc);
 			error_file.open(error_file_name, std::ios::out | std::ios::trunc);
@@ -215,7 +215,7 @@ class Lexer {
 		/// <param name="size">Size of text</param>
 		/// <returns></returns>
 		int tokenizeLine(std::string& line, size_t size) {
-			size_t line_len = size - 1;
+			size_t line_len = size;
 			char cur_char;
 			int distance;
 			int success;
