@@ -27,7 +27,11 @@ enum TokenType {
 	T_invalid
 };
 
-typedef struct Token {
+struct Token {
 	TokenType token_type;
 	std::string token_value;
-} Token;
+	Token(TokenType type, std::string value) {
+		token_type = type;
+		token_value = value;
+	}
+};
