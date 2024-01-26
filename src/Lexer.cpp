@@ -5,6 +5,7 @@ class Lexer {
 		int line_number;
 		int token_count;
 		std::vector<Token> v_tokens;
+		std::vector<std::string> error_log;
 
 		Lexer() {
 			source_file_name = "src_file.txt";
@@ -51,9 +52,11 @@ class Lexer {
 			source_file.seekg(0, std::ios::beg);
 			char buffer[PAGE_SIZE];
 
-			output_file.open(output_file_name, std::ios::out | std::ios::trunc);
-			error_file.open(error_file_name, std::ios::out | std::ios::trunc);
+			// Time measuring
+			std::cout << "starting: \n";
+			std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
+			// Main loop
 			while (!source_file.eof()) {
 				source_file.read(buffer, sizeof(buffer));
 				bytes_read = source_file.gcount();
@@ -61,7 +64,18 @@ class Lexer {
 				tokenizeLine(content, bytes_read);
 			}
 
+			// Time measuring
+			std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+			double time_taken = (double)std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count();
+			time_taken = time_taken / 1000;
+			std::cout << "Line count: " << line_number << std::endl;
+			std::cout << "Generated " << token_count << " tokens in : " << time_taken << "[ms]" << std::endl;
+
+			output_file.open(output_file_name, std::ios::out | std::ios::trunc);
+			error_file.open(error_file_name, std::ios::out | std::ios::trunc);
+
 			printTokens();
+			printErrors();
 			
 			source_file.close();
 			output_file.close();
@@ -72,9 +86,8 @@ class Lexer {
 
 		int printTokens() {
 			for (Token i : v_tokens) {
-				std::cout << i.token_value << std::endl;
 				int tab_num;
-				if ((tab_num = 3 - (i.token_value.length() / 4)) < 0) {
+				if ((tab_num = 3 - ((int)i.token_value.length() / 4)) < 0) {
 					tab_num = 0;
 				}
 
@@ -82,13 +95,20 @@ class Lexer {
 					std::cout << "File not open" << std::endl;
 					return EXIT_FAILURE;
 				}
+
 				output_file << "\t";
 				output_file << i.token_value;
-				std::cout << tab_num << std::endl;
 				for (int j = 0; j <= tab_num; j++) {
 					output_file << "\t";
 				}
 				output_file << "-\t" << enum_names[i.token_type] << std::endl;
+			}
+			return 0;
+		}
+
+		int printErrors() {
+			for (std::string i : error_log) {
+				error_file << i.data() << std::endl;
 			}
 			return 0;
 		}
@@ -138,8 +158,7 @@ class Lexer {
 			{"int", T_keyword},
 			{"double", T_keyword},
 		};
-		const std::string enum_names[NUM_TOKEN_TYPES] = { "T_semicolon","T_dot","T_comp","T_underscore","T_operator","T_open_par","T_close_par","T_comma","T_keyword","T_int","T_double","T_identifier","T_temp", "T_invalid" };
-		enum States {S_first, S_number, S_identifier, S_other};
+		const std::string enum_names[NUM_TOKEN_TYPES] = { "T_semicolon","T_dot","T_comp","T_underscore","T_operator","T_open_par","T_close_par","T_comma","T_keyword","T_number","T_int","T_double","T_identifier","T_temp", "T_invalid" };
 
 		int tokenizeLine(std::string& line, size_t size) {
 			size_t line_len = size - 1;
@@ -165,14 +184,15 @@ class Lexer {
 					if (distance > 0 && !std::isspace(line[cursor_one])) {
 						success = addToken(line, false, cursor_one, distance, T_temp);
 					}
+					else {
+						state = S_first;
+					}
 					cursor_one = cursor_two + 1;
 				}
 				else if (std::isalpha(cur_char)) {
 					if (state == S_number && cur_char != 'e') {
 						// Bad identifier
-						distance = cursor_two - cursor_one;
-						success = addToken(line, true, cursor_one, distance, T_invalid);
-						cursor_one = cursor_two + 1;
+						state = S_bad;
 					}
 				}
 				else if (std::isdigit(cur_char)) {
@@ -183,6 +203,7 @@ class Lexer {
 					if (search != symbols.end()) {
 						distance = cursor_two - cursor_one;
 						if (state == S_number && cur_char == '.') {
+							// NOTE: we still need to determine if a dash before makes this number negative
 							;
 						}
 						else if (cur_char == '_') {
@@ -210,8 +231,10 @@ class Lexer {
 			char last_char = line[start + distance];
 			if (token_value.compare("")) {
 				TokenType t_val_type = findTokenType(token_value);
-				if (t_val_type == T_invalid) {
-					error_file << "Bad token \t" << token_value << "\t\tat line " << line_number << std::endl;
+				if (t_val_type == T_invalid || state == S_bad) {
+					std::string t_err = "Bad token \t" + token_value + "\t\tat line " + std::to_string(line_number) + "\n";
+					error_log.push_back(t_err);
+					state = S_first;
 					return -1;
 				}
 				Token current_token(t_val_type, token_value);
@@ -229,7 +252,19 @@ class Lexer {
 		}
 
 		TokenType findTokenType(std::string& str) {
-			return T_temp;
+			if (state == S_number) {
+				return T_number;
+			}
+			auto search = keywords.find(str);
+			if (search != keywords.end()) {
+				return T_keyword;
+			}
+			else if (state == S_identifier) {
+				return T_identifier;
+			}
+			else {
+				return T_temp;
+			}
 		}
 
 };

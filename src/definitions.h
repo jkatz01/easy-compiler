@@ -7,7 +7,7 @@
 #include <chrono>
 #include <regex>
 
-#define NUM_TOKEN_TYPES 14
+#define NUM_TOKEN_TYPES 15
 #define PAGE_SIZE 4096
 
 enum TokenType {
@@ -20,11 +20,20 @@ enum TokenType {
 	T_close_par,
 	T_comma,
 	T_keyword,
+	T_number,
 	T_int,
 	T_double,
 	T_identifier,
 	T_temp,
 	T_invalid
+};
+
+enum States { 
+	S_first,
+	S_number,
+	S_identifier,
+	S_other,
+	S_bad
 };
 
 struct Token {
