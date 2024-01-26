@@ -271,7 +271,7 @@ class Lexer {
 					else {
 						// Invalid symbol found
 						distance = cursor_two - cursor_one;
-						success = addToken(line, true, cursor_one, distance, T_invalid);
+						success = addToken(line, false, cursor_one, distance, T_invalid);
 						cursor_one = cursor_two + 1;
 					}
 				}
