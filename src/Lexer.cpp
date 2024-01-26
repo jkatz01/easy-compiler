@@ -1,12 +1,22 @@
 #include "definitions.h"
 
+/// <summary>
+/// Lexer class provides functions to perform lexical analysis on a file
+/// and output tokens and errors
+/// </summary>
 class Lexer {
 	public: 
 		int line_number;
 		int token_count;
+		/// <summary>
+		/// Holds all tokens for future use
+		/// </summary>
 		std::vector<Token> v_tokens;
 		std::vector<TokenError> error_log;
 
+		/// <summary>
+		/// Default constructor for Lexer class
+		/// </summary>
 		Lexer() {
 			source_file_name = "src_file.txt";
 			output_file_name = "out_file.txt";
@@ -18,6 +28,12 @@ class Lexer {
 			bytes_read = 0;
 		}
 
+		/// <summary>
+		/// Constructor for Lexer using filenames
+		/// </summary>
+		/// <param name="src_file">Input file to analyze</param>
+		/// <param name="out_file">Output file for tokens</param>
+		/// <param name="error_file">Output file for errors</param>
 		Lexer(std::string src_file, std::string out_file, std::string error_file) {
 			source_file_name = src_file;
 			output_file_name = out_file;
@@ -29,6 +45,9 @@ class Lexer {
 			bytes_read = 0;
 		}
 
+		/// <summary>
+		/// Default destructor for Lexer class in case files are left open
+		/// </summary>
 		~Lexer() {
 			// Destructor
 			if (source_file.is_open()) {
@@ -42,6 +61,11 @@ class Lexer {
 			}
 		}
 
+		/// <summary>
+		/// Main function of Lexer, this generates tokens and errors from the input file 
+		/// for future processes to use
+		/// </summary>
+		/// <returns>Number of errors occurred</returns>
 		int generateTokens() {
 			source_file.open(source_file_name);
 			if (!source_file.is_open()) {
@@ -89,6 +113,10 @@ class Lexer {
 			return EXIT_SUCCESS;
 		}
 
+		/// <summary>
+		/// Prints all tokens from v_tokens into file
+		/// </summary>
+		/// <returns></returns>
 		int printTokens() {
 			for (Token i : v_tokens) {
 				int tab_num;
@@ -110,6 +138,10 @@ class Lexer {
 			return 0;
 		}
 
+		/// <summary>
+		/// Prints all errors from error_log into file
+		/// </summary>
+		/// <returns></returns>
 		int printErrors() {
 			for (TokenError i : error_log) {
 				error_file << "Bad token \t" << i.value.data();
@@ -176,6 +208,12 @@ class Lexer {
 		};
 		const std::string enum_names[NUM_TOKEN_TYPES] = { "T_semicolon","T_dot","T_comp","T_underscore","T_operator","T_open_par","T_close_par","T_comma","T_keyword","T_number","T_int","T_double","T_identifier","T_temp", "T_invalid" };
 
+		/// <summary>
+		/// Main function for tokenizing a block of text into tokens
+		/// </summary>
+		/// <param name="line">Block of text to analyze</param>
+		/// <param name="size">Size of text</param>
+		/// <returns></returns>
 		int tokenizeLine(std::string& line, size_t size) {
 			size_t line_len = size - 1;
 			char cur_char;
@@ -242,6 +280,15 @@ class Lexer {
 			return 0;
 		}
 
+		/// <summary>
+		/// Adds appropriate tokens into v_tokens
+		/// </summary>
+		/// <param name="line">Input text</param>
+		/// <param name="last_is_symbol">If the token was delimited by a symbol, set to true</param>
+		/// <param name="start"></param>
+		/// <param name="distance"></param>
+		/// <param name="symbol_type">Type of symbol for the last character, if last_is_symbol == true</param>
+		/// <returns></returns>
 		int addToken(std::string& line, bool last_is_symbol, int start, int distance, TokenType symbol_type) {
 			std::string token_value = line.substr(start, distance);
 			char last_char = line[start + distance];
@@ -267,6 +314,11 @@ class Lexer {
 			return 0;
 		}
 
+		/// <summary>
+		/// Finds the TokenType of a token, includes searching for keywords
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns>Type of token</returns>
 		TokenType findTokenType(std::string& str) {
 			if (state == S_number) {
 				return T_number;
