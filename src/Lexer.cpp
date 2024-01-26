@@ -6,8 +6,8 @@
 /// </summary>
 class Lexer {
 	public: 
-		int line_number;
-		int token_count;
+		int line_number = 0;
+		int token_count = 0;
 		/// <summary>
 		/// Holds all tokens for future use
 		/// </summary>
@@ -21,11 +21,6 @@ class Lexer {
 			source_file_name = "src_file.txt";
 			output_file_name = "out_file.txt";
 			error_file_name = "error_file.txt";
-			line_number = 0;
-			token_count = 0;
-			cursor_one = 0;
-			cursor_two = 0;
-			bytes_read = 0;
 		}
 
 		/// <summary>
@@ -38,11 +33,6 @@ class Lexer {
 			source_file_name = src_file;
 			output_file_name = out_file;
 			error_file_name = error_file;
-			line_number = 0;
-			token_count = 0;
-			cursor_one = 0;
-			cursor_two = 0;
-			bytes_read = 0;
 		}
 
 		/// <summary>
@@ -84,7 +74,9 @@ class Lexer {
 			while (!source_file.eof()) {
 				source_file.read(buffer, sizeof(buffer));
 				bytes_read = source_file.gcount();
-				std::string content(buffer, bytes_read);
+				std::string content(buffer, sizeof(char) * bytes_read);
+				v_tokens.reserve(sizeof(char) * bytes_read);
+
 				tokenizeLine(content, bytes_read);
 			}
 
@@ -162,10 +154,10 @@ class Lexer {
 		}
 
 	private:
-		int cursor_one;
-		int cursor_two;
-		int state;
-		size_t bytes_read;
+		int cursor_one = 0;
+		int cursor_two = 0;
+		int state = 0;
+		size_t bytes_read = 0;
 		std::string source_file_name;
 		std::string output_file_name;
 		std::string error_file_name;
@@ -301,13 +293,15 @@ class Lexer {
 					return -1;
 				}
 				Token current_token(t_val_type, token_value);
-				v_tokens.push_back(current_token);
+				v_tokens[token_count] = current_token;
+				//v_tokens.push_back(current_token);
 				token_count++;
 			}
 			if (last_is_symbol == true) {
 				std::string s(1, last_char);
 				Token current_token(symbol_type, s);
-				v_tokens.push_back(current_token);
+				v_tokens[token_count] = current_token;
+				//v_tokens.push_back(current_token);
 				token_count++;
 			}
 			state = S_first;
