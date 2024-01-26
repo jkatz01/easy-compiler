@@ -82,7 +82,11 @@ class Lexer {
 			output_file.close();
 			error_file.close();
 
-			return 0;
+			if (error_log.size() > 0) {
+				return error_log.size();
+			}
+
+			return EXIT_SUCCESS;
 		}
 
 		int printTokens() {
