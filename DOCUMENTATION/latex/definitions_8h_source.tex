@@ -1,0 +1,61 @@
+\doxysection{definitions.\+h}
+\hypertarget{definitions_8h_source}{}\label{definitions_8h_source}\index{D:/Documents/easy-\/compiler/src/definitions.h@{D:/Documents/easy-\/compiler/src/definitions.h}}
+\mbox{\hyperlink{definitions_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00001}00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00003}00003\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00004}00004\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00005}00005\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00006}00006\ \textcolor{preprocessor}{\#include\ <unordered\_map>}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00007}00007\ \textcolor{preprocessor}{\#include\ <chrono>}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00008}00008\ \textcolor{preprocessor}{\#include\ <regex>}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00009}00009\ }
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00010}\mbox{\hyperlink{definitions_8h_a4b1d2275fffa570f951d743b6b6c2537}{00010}}\ \textcolor{preprocessor}{\#define\ NUM\_TOKEN\_TYPES\ 15}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00011}\mbox{\hyperlink{definitions_8h_a7d467c1d283fdfa1f2081ba1e0d01b6e}{00011}}\ \textcolor{preprocessor}{\#define\ PAGE\_SIZE\ 4096}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00012}00012\ }
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00013}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921}{00013}}\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921}{TokenType}}\ \{}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00014}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a9501e3069468765a968e8cc108d34509}{00014}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a9501e3069468765a968e8cc108d34509}{T\_semicolon}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00015}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a1f89c43d38491a94e24a3b8bc714e5c8}{00015}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a1f89c43d38491a94e24a3b8bc714e5c8}{T\_dot}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00016}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921ae8d8d2b478d20d12270f3fc44d4ce218}{00016}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921ae8d8d2b478d20d12270f3fc44d4ce218}{T\_comp}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00017}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a93cf2c4b4594129ea6765ba0d12bfdd4}{00017}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a93cf2c4b4594129ea6765ba0d12bfdd4}{T\_underscore}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00018}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a3f088644e560fb2ece46a278c493b80e}{00018}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a3f088644e560fb2ece46a278c493b80e}{T\_operator}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00019}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921af8d18184e9a406b4f1e13bd38a2e41a9}{00019}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921af8d18184e9a406b4f1e13bd38a2e41a9}{T\_open\_par}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00020}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a0e378e36639d95f9aa122b7348839d75}{00020}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a0e378e36639d95f9aa122b7348839d75}{T\_close\_par}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00021}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a953a763dbeee0866c2885f5d7a6cbf61}{00021}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a953a763dbeee0866c2885f5d7a6cbf61}{T\_comma}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00022}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a4585a0a77b1a5cccce06f5fd0756e68f}{00022}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a4585a0a77b1a5cccce06f5fd0756e68f}{T\_keyword}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00023}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a19e98df103e26e8de2737c3e8135e487}{00023}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a19e98df103e26e8de2737c3e8135e487}{T\_number}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00024}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a7dbc98aa564ebe808eea9668c15bce73}{00024}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a7dbc98aa564ebe808eea9668c15bce73}{T\_int}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00025}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921ae69496c8c5ac0359ebd6b8742ebbe281}{00025}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921ae69496c8c5ac0359ebd6b8742ebbe281}{T\_double}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00026}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921ae0ce21134760172f222c63994c572c61}{00026}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921ae0ce21134760172f222c63994c572c61}{T\_identifier}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00027}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a5eea1818ab304339704e50373f3650dd}{00027}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a5eea1818ab304339704e50373f3650dd}{T\_temp}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00028}00028\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a2e0f95dfd59580a92ba85f775defd010}{T\_invalid}}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00029}\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921a2e0f95dfd59580a92ba85f775defd010}{00029}}\ \};}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00030}00030\ }
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00031}\mbox{\hyperlink{definitions_8h_a808e5cd4979462d3bbe3070d7d147444}{00031}}\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{definitions_8h_a808e5cd4979462d3bbe3070d7d147444}{States}}\ \{\ }
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00032}\mbox{\hyperlink{definitions_8h_a808e5cd4979462d3bbe3070d7d147444a21659e2fb5b5415d2abfc4037c248f16}{00032}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_a808e5cd4979462d3bbe3070d7d147444a21659e2fb5b5415d2abfc4037c248f16}{S\_first}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00033}\mbox{\hyperlink{definitions_8h_a808e5cd4979462d3bbe3070d7d147444a4165a064df4abfb2fa97a9dbb165056d}{00033}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_a808e5cd4979462d3bbe3070d7d147444a4165a064df4abfb2fa97a9dbb165056d}{S\_number}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00034}\mbox{\hyperlink{definitions_8h_a808e5cd4979462d3bbe3070d7d147444a4aa18be03af9e4b616313243bea8f596}{00034}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_a808e5cd4979462d3bbe3070d7d147444a4aa18be03af9e4b616313243bea8f596}{S\_identifier}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00035}\mbox{\hyperlink{definitions_8h_a808e5cd4979462d3bbe3070d7d147444a2e1673215220d22f51f3b7866d31d5b6}{00035}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_a808e5cd4979462d3bbe3070d7d147444a2e1673215220d22f51f3b7866d31d5b6}{S\_other}},}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00036}00036\ \ \ \ \ \mbox{\hyperlink{definitions_8h_a808e5cd4979462d3bbe3070d7d147444afc6b584e289461718f748cd45715480b}{S\_bad}}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00037}\mbox{\hyperlink{definitions_8h_a808e5cd4979462d3bbe3070d7d147444afc6b584e289461718f748cd45715480b}{00037}}\ \};}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00038}00038\ }
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00039}\mbox{\hyperlink{struct_token_error}{00039}}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_token_error}{TokenError}}\ \{}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00040}\mbox{\hyperlink{struct_token_error_ad5c5da414f5d55ebe866c4172d232bbf}{00040}}\ \ \ \ \ std::string\ \mbox{\hyperlink{struct_token_error_ad5c5da414f5d55ebe866c4172d232bbf}{value}};}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00041}\mbox{\hyperlink{struct_token_error_a1cc645cbbb3b32ba1f6042b0532896a5}{00041}}\ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_token_error_a1cc645cbbb3b32ba1f6042b0532896a5}{line}};}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00042}\mbox{\hyperlink{struct_token_error_ab38375c3da5c7b5aefd639302fc367d2}{00042}}\ \ \ \ \ \mbox{\hyperlink{struct_token_error_ab38375c3da5c7b5aefd639302fc367d2}{TokenError}}(std::string\ err\_value,\ \textcolor{keywordtype}{int}\ err\_line)\ \{}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00043}00043\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_token_error_ad5c5da414f5d55ebe866c4172d232bbf}{value}}\ =\ err\_value;}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00044}00044\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_token_error_a1cc645cbbb3b32ba1f6042b0532896a5}{line}}\ =\ err\_line;}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00045}00045\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00046}00046\ \};}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00047}00047\ }
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00048}\mbox{\hyperlink{struct_token}{00048}}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_token}{Token}}\ \{}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00049}\mbox{\hyperlink{struct_token_a954cead907fd8e257a34467ad4e0fbc5}{00049}}\ \ \ \ \ \mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921}{TokenType}}\ \mbox{\hyperlink{struct_token_a954cead907fd8e257a34467ad4e0fbc5}{token\_type}};}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00050}\mbox{\hyperlink{struct_token_a983f6e0138248cd4603fa058840f59f4}{00050}}\ \ \ \ \ std::string\ \mbox{\hyperlink{struct_token_a983f6e0138248cd4603fa058840f59f4}{token\_value}};}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00051}\mbox{\hyperlink{struct_token_a46324edc3351443f4b2edc20069b544a}{00051}}\ \ \ \ \ \mbox{\hyperlink{struct_token_a46324edc3351443f4b2edc20069b544a}{Token}}(\mbox{\hyperlink{definitions_8h_aa520fbf142ba1e7e659590c07da31921}{TokenType}}\ type,\ std::string\ value)\ \{}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00052}00052\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_token_a954cead907fd8e257a34467ad4e0fbc5}{token\_type}}\ =\ type;}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00053}00053\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_token_a983f6e0138248cd4603fa058840f59f4}{token\_value}}\ =\ value;}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00054}00054\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{definitions_8h_source_l00055}00055\ \};}
+
+\end{DoxyCode}
