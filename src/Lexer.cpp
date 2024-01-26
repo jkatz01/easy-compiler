@@ -5,7 +5,7 @@ class Lexer {
 		int line_number;
 		int token_count;
 		std::vector<Token> v_tokens;
-		std::vector<std::string> error_log;
+		std::vector<TokenError> error_log;
 
 		Lexer() {
 			source_file_name = "src_file.txt";
@@ -74,6 +74,7 @@ class Lexer {
 			output_file.open(output_file_name, std::ios::out | std::ios::trunc);
 			error_file.open(error_file_name, std::ios::out | std::ios::trunc);
 
+			std::cout << "Printing: " << std::endl;
 			printTokens();
 			printErrors();
 			
@@ -96,7 +97,6 @@ class Lexer {
 					return EXIT_FAILURE;
 				}
 
-				output_file << "\t";
 				output_file << i.token_value;
 				for (int j = 0; j <= tab_num; j++) {
 					output_file << "\t";
@@ -107,8 +107,20 @@ class Lexer {
 		}
 
 		int printErrors() {
-			for (std::string i : error_log) {
-				error_file << i.data() << std::endl;
+			for (TokenError i : error_log) {
+				error_file << "Bad token \t" << i.value.data();
+				int tab_num;
+				if ((tab_num = 3 - ((int)i.value.length() / 4)) < 0) {
+					tab_num = 0;
+				}
+				if (!error_file.is_open()) {
+					std::cout << "File not open" << std::endl;
+					return EXIT_FAILURE;
+				}
+				for (int j = 0; j <= tab_num; j++) {
+					error_file << "\t";
+				}
+				error_file << "at line " << i.line << std::endl;
 			}
 			return 0;
 		}
@@ -232,8 +244,8 @@ class Lexer {
 			if (token_value.compare("")) {
 				TokenType t_val_type = findTokenType(token_value);
 				if (t_val_type == T_invalid || state == S_bad) {
-					std::string t_err = "Bad token \t" + token_value + "\t\tat line " + std::to_string(line_number) + "\n";
-					error_log.push_back(t_err);
+					TokenError terr(token_value, line_number);
+					error_log.push_back(terr);
 					state = S_first;
 					return -1;
 				}

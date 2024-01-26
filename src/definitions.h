@@ -36,6 +36,15 @@ enum States {
 	S_bad
 };
 
+struct TokenError {
+	std::string value;
+	int line;
+	TokenError(std::string err_value, int err_line) {
+		value = err_value;
+		line = err_line;
+	}
+};
+
 struct Token {
 	TokenType token_type;
 	std::string token_value;
