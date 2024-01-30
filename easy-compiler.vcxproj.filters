@@ -5,7 +5,6 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="tests\example_big.txt" />
     <Text Include="tests\bad_file.txt" />
     <Text Include="tests\example.txt" />
   </ItemGroup>

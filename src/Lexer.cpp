@@ -142,19 +142,24 @@ class Lexer {
 		/// <returns></returns>
 		int printErrors() {
 			for (TokenError i : error_log) {
-				error_file << "Bad token \t" << i.value.data();
-				int tab_num;
-				if ((tab_num = 3 - ((int)i.value.length() / 4)) < 0) {
-					tab_num = 0;
+				if (i.err_type == E_bad_token) {
+					error_file << "Bad token \t" << i.value.data();
+					int tab_num;
+					if ((tab_num = 3 - ((int)i.value.length() / 4)) < 0) {
+						tab_num = 0;
+					}
+					if (!error_file.is_open()) {
+						std::cout << "File not open" << std::endl;
+						return EXIT_FAILURE;
+					}
+					for (int j = 0; j <= tab_num; j++) {
+						error_file << "\t";
+					}
+					error_file << "at line " << i.line << std::endl;
 				}
-				if (!error_file.is_open()) {
-					std::cout << "File not open" << std::endl;
-					return EXIT_FAILURE;
+				else if (i.err_type == E_bad_symbol) {
+					error_file << "Bad symbol \t" << i.value.data() << "\tat line " << i.line << std::endl;
 				}
-				for (int j = 0; j <= tab_num; j++) {
-					error_file << "\t";
-				}
-				error_file << "at line " << i.line << std::endl;
 			}
 			return 0;
 		}
@@ -271,6 +276,11 @@ class Lexer {
 						distance = cursor_two - cursor_one;
 						success = addToken(line, false, cursor_one, distance, T_invalid);
 						cursor_one = cursor_two + 1;
+
+						std::string s(1, cur_char);
+						TokenError terr(s, line_number, E_bad_symbol);
+						error_log.insert(error_log.begin() + error_count, terr);
+						error_count++;
 					}
 				}
 				cursor_two++;
@@ -293,7 +303,7 @@ class Lexer {
 			if (token_value.compare("")) {
 				TokenType t_val_type = findTokenType(token_value);
 				if (t_val_type == T_invalid || state == S_bad) {
-					TokenError terr(token_value, line_number);
+					TokenError terr(token_value, line_number, E_bad_token);
 					error_log.insert(error_log.begin() + error_count, terr);
 					error_count++;
 					state = S_first;

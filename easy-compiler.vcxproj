@@ -133,7 +133,6 @@
   <ItemGroup>
     <Text Include="tests\bad_file.txt" />
     <Text Include="tests\example.txt" />
-    <Text Include="tests\example_big.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

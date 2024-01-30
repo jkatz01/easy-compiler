@@ -36,22 +36,31 @@ enum States {
 	S_bad
 };
 
+enum ErrorType {
+	E_bad_token,
+	E_bad_symbol
+};
+
 struct TokenError {
 	std::string value;
 	int line;
+	ErrorType err_type;
 	TokenError() {
 		value = "";
 		line = -1;
+		err_type = E_bad_symbol;
 	}
-	TokenError(std::string err_value, int err_line) {
+	TokenError(std::string err_value, int err_line, ErrorType e_type) {
 		value = err_value;
 		line = err_line;
+		err_type = e_type;
 	}
 };
 
 struct Token {
 	TokenType token_type;
 	std::string token_value;
+	
 	Token() {
 		token_type = T_temp;
 		token_value = "";
