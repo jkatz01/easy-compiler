@@ -5,6 +5,7 @@
 
 
 # My ignores:
+DOCUMENTATION
 example*
 Tokens.txt
 Lexical-errors.txt
