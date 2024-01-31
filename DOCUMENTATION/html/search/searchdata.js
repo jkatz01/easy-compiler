@@ -5,8 +5,8 @@ var indexSectionsWithContent =
   2: "dlm",
   3: "acfglmpt~",
   4: "bceklostv",
-  5: "st",
-  6: "st",
+  5: "est",
+  6: "est",
   7: "np"
 };
 

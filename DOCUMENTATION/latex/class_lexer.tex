@@ -23,9 +23,11 @@ int \mbox{\hyperlink{class_lexer_ae052987091f952c1159575fc1e7d5022}{print\+Error
 \doxysubsubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
-int \mbox{\hyperlink{class_lexer_a8494e460e74ab2304065e30e5765e957}{line\+\_\+number}}
+int \mbox{\hyperlink{class_lexer_a8494e460e74ab2304065e30e5765e957}{line\+\_\+number}} = 0
 \item 
-int \mbox{\hyperlink{class_lexer_a02dd104e3f6fa17d6ed7f4c9bf8898b7}{token\+\_\+count}}
+int \mbox{\hyperlink{class_lexer_a02dd104e3f6fa17d6ed7f4c9bf8898b7}{token\+\_\+count}} = 0
+\item 
+int \mbox{\hyperlink{class_lexer_abd9ac23be0ad91e21a87b4886b31f85b}{error\+\_\+count}} = 0
 \item 
 std\+::vector$<$ \mbox{\hyperlink{struct_token}{Token}} $>$ \mbox{\hyperlink{class_lexer_af2f7be703fbf002c1dbfc10fc0f8f576}{v\+\_\+tokens}}
 \begin{DoxyCompactList}\small\item\em Holds all tokens for future use. \end{DoxyCompactList}\item 
@@ -43,13 +45,13 @@ int \mbox{\hyperlink{class_lexer_aa45e1f5fc79a8b95e5266445ab976148}{add\+Token}}
 \doxysubsubsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
-int \mbox{\hyperlink{class_lexer_a525a250e20da930001090f86013462c2}{cursor\+\_\+one}}
+int \mbox{\hyperlink{class_lexer_a525a250e20da930001090f86013462c2}{cursor\+\_\+one}} = 0
 \item 
-int \mbox{\hyperlink{class_lexer_a486a0c52918f2a94f5da421d382d6f6b}{cursor\+\_\+two}}
+int \mbox{\hyperlink{class_lexer_a486a0c52918f2a94f5da421d382d6f6b}{cursor\+\_\+two}} = 0
 \item 
-int \mbox{\hyperlink{class_lexer_aae86c9c93695ff08ea7949dc5a96e318}{state}}
+int \mbox{\hyperlink{class_lexer_aae86c9c93695ff08ea7949dc5a96e318}{state}} = 0
 \item 
-size\+\_\+t \mbox{\hyperlink{class_lexer_a7d5d69c651ea066fb6caaedf557347f0}{bytes\+\_\+read}}
+size\+\_\+t \mbox{\hyperlink{class_lexer_a7d5d69c651ea066fb6caaedf557347f0}{bytes\+\_\+read}} = 0
 \item 
 std\+::string \mbox{\hyperlink{class_lexer_a9ef2fda03f0368f5ed366ed57e105aa9}{source\+\_\+file\+\_\+name}}
 \item 
@@ -91,7 +93,7 @@ Default constructor for \doxylink{class_lexer}{Lexer} class.
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00020}{20}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00021}{21}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_ac63820a61be5f5d7056b48aea811e583}\label{class_lexer_ac63820a61be5f5d7056b48aea811e583} 
 \index{Lexer@{Lexer}!Lexer@{Lexer}}
@@ -114,7 +116,7 @@ Constructor for \doxylink{class_lexer}{Lexer} using filenames.
 \end{DoxyParams}
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00037}{37}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00033}{33}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_ad26a84af23d8d303723e36e83fc4e556}\label{class_lexer_ad26a84af23d8d303723e36e83fc4e556} 
 \index{Lexer@{Lexer}!````~Lexer@{\texorpdfstring{$\sim$}{\string~}Lexer}}
@@ -128,7 +130,7 @@ Default destructor for \doxylink{class_lexer}{Lexer} class in case files are lef
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00051}{51}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00042}{42}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 
 
@@ -161,7 +163,7 @@ Adds appropriate tokens into v\+\_\+tokens.
 \end{DoxyReturn}
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00292}{292}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00300}{300}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_adb9a583e0a4cb34460dc131a3d7ad699}\label{class_lexer_adb9a583e0a4cb34460dc131a3d7ad699} 
 \index{Lexer@{Lexer}!findTokenType@{findTokenType}}
@@ -183,7 +185,7 @@ Type of token
 \end{DoxyReturn}
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00322}{322}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00331}{331}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a9ee0af93385e31796ee0345175556dfe}\label{class_lexer_a9ee0af93385e31796ee0345175556dfe} 
 \index{Lexer@{Lexer}!generateTokens@{generateTokens}}
@@ -200,7 +202,7 @@ Number of errors occurred
 \end{DoxyReturn}
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00069}{69}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00060}{60}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_ae052987091f952c1159575fc1e7d5022}\label{class_lexer_ae052987091f952c1159575fc1e7d5022} 
 \index{Lexer@{Lexer}!printErrors@{printErrors}}
@@ -217,7 +219,7 @@ Prints all errors from error\+\_\+log into file.
 \end{DoxyReturn}
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00145}{145}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00143}{143}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a5bb1af00a2dee31323405fce90c3a057}\label{class_lexer_a5bb1af00a2dee31323405fce90c3a057} 
 \index{Lexer@{Lexer}!printTokens@{printTokens}}
@@ -234,7 +236,7 @@ Prints all tokens from v\+\_\+tokens into file.
 \end{DoxyReturn}
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00120}{120}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00118}{118}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a794e2bc25a29390af3c9cea1ef69a99b}\label{class_lexer_a794e2bc25a29390af3c9cea1ef69a99b} 
 \index{Lexer@{Lexer}!tokenizeLine@{tokenizeLine}}
@@ -258,7 +260,7 @@ Main function for tokenizing a block of text into tokens.
 \end{DoxyReturn}
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00217}{217}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00220}{220}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 
 
@@ -267,31 +269,31 @@ Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00217}{217}} of file \mb
 \index{Lexer@{Lexer}!bytes\_read@{bytes\_read}}
 \index{bytes\_read@{bytes\_read}!Lexer@{Lexer}}
 \doxysubsubsection{\texorpdfstring{bytes\_read}{bytes\_read}}
-{\footnotesize\ttfamily size\+\_\+t Lexer\+::bytes\+\_\+read\hspace{0.3cm}{\ttfamily [private]}}
+{\footnotesize\ttfamily size\+\_\+t Lexer\+::bytes\+\_\+read = 0\hspace{0.3cm}{\ttfamily [private]}}
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00168}{168}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00171}{171}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a525a250e20da930001090f86013462c2}\label{class_lexer_a525a250e20da930001090f86013462c2} 
 \index{Lexer@{Lexer}!cursor\_one@{cursor\_one}}
 \index{cursor\_one@{cursor\_one}!Lexer@{Lexer}}
 \doxysubsubsection{\texorpdfstring{cursor\_one}{cursor\_one}}
-{\footnotesize\ttfamily int Lexer\+::cursor\+\_\+one\hspace{0.3cm}{\ttfamily [private]}}
+{\footnotesize\ttfamily int Lexer\+::cursor\+\_\+one = 0\hspace{0.3cm}{\ttfamily [private]}}
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00165}{165}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00168}{168}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a486a0c52918f2a94f5da421d382d6f6b}\label{class_lexer_a486a0c52918f2a94f5da421d382d6f6b} 
 \index{Lexer@{Lexer}!cursor\_two@{cursor\_two}}
 \index{cursor\_two@{cursor\_two}!Lexer@{Lexer}}
 \doxysubsubsection{\texorpdfstring{cursor\_two}{cursor\_two}}
-{\footnotesize\ttfamily int Lexer\+::cursor\+\_\+two\hspace{0.3cm}{\ttfamily [private]}}
+{\footnotesize\ttfamily int Lexer\+::cursor\+\_\+two = 0\hspace{0.3cm}{\ttfamily [private]}}
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00166}{166}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00169}{169}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a2f73a95e0af11c6195547a9fb72ab081}\label{class_lexer_a2f73a95e0af11c6195547a9fb72ab081} 
 \index{Lexer@{Lexer}!enum\_names@{enum\_names}}
@@ -301,7 +303,17 @@ Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00166}{166}} of file \mb
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00209}{209}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00212}{212}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+
+\Hypertarget{class_lexer_abd9ac23be0ad91e21a87b4886b31f85b}\label{class_lexer_abd9ac23be0ad91e21a87b4886b31f85b} 
+\index{Lexer@{Lexer}!error\_count@{error\_count}}
+\index{error\_count@{error\_count}!Lexer@{Lexer}}
+\doxysubsubsection{\texorpdfstring{error\_count}{error\_count}}
+{\footnotesize\ttfamily int Lexer\+::error\+\_\+count = 0}
+
+
+
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00011}{11}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a6d88b4eda95501bccac7f25316c4eb36}\label{class_lexer_a6d88b4eda95501bccac7f25316c4eb36} 
 \index{Lexer@{Lexer}!error\_file@{error\_file}}
@@ -311,7 +323,7 @@ Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00209}{209}} of file \mb
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00174}{174}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00177}{177}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a1a00b64ab7a158de90109799bf5a5241}\label{class_lexer_a1a00b64ab7a158de90109799bf5a5241} 
 \index{Lexer@{Lexer}!error\_file\_name@{error\_file\_name}}
@@ -321,7 +333,7 @@ Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00174}{174}} of file \mb
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00171}{171}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00174}{174}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a6f4f9b2fea009780381d6d1afcfb541b}\label{class_lexer_a6f4f9b2fea009780381d6d1afcfb541b} 
 \index{Lexer@{Lexer}!error\_log@{error\_log}}
@@ -331,7 +343,7 @@ Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00171}{171}} of file \mb
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00015}{15}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00016}{16}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a95851de950cf773cef315823b7cef2d8}\label{class_lexer_a95851de950cf773cef315823b7cef2d8} 
 \index{Lexer@{Lexer}!keywords@{keywords}}
@@ -362,13 +374,13 @@ Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00015}{15}} of file \mbo
 \end{DoxyCode}
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00192}{192}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00195}{195}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a8494e460e74ab2304065e30e5765e957}\label{class_lexer_a8494e460e74ab2304065e30e5765e957} 
 \index{Lexer@{Lexer}!line\_number@{line\_number}}
 \index{line\_number@{line\_number}!Lexer@{Lexer}}
 \doxysubsubsection{\texorpdfstring{line\_number}{line\_number}}
-{\footnotesize\ttfamily int Lexer\+::line\+\_\+number}
+{\footnotesize\ttfamily int Lexer\+::line\+\_\+number = 0}
 
 
 
@@ -382,7 +394,7 @@ Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00009}{9}} of file \mbox
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00173}{173}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00176}{176}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a1e04bffd99506668b5f3ba8f172d9935}\label{class_lexer_a1e04bffd99506668b5f3ba8f172d9935} 
 \index{Lexer@{Lexer}!output\_file\_name@{output\_file\_name}}
@@ -392,7 +404,7 @@ Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00173}{173}} of file \mb
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00170}{170}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00173}{173}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a510a8d6070873881f0f71aba868b3981}\label{class_lexer_a510a8d6070873881f0f71aba868b3981} 
 \index{Lexer@{Lexer}!source\_file@{source\_file}}
@@ -402,7 +414,7 @@ Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00170}{170}} of file \mb
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00172}{172}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00175}{175}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a9ef2fda03f0368f5ed366ed57e105aa9}\label{class_lexer_a9ef2fda03f0368f5ed366ed57e105aa9} 
 \index{Lexer@{Lexer}!source\_file\_name@{source\_file\_name}}
@@ -412,17 +424,17 @@ Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00172}{172}} of file \mb
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00169}{169}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00172}{172}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_aae86c9c93695ff08ea7949dc5a96e318}\label{class_lexer_aae86c9c93695ff08ea7949dc5a96e318} 
 \index{Lexer@{Lexer}!state@{state}}
 \index{state@{state}!Lexer@{Lexer}}
 \doxysubsubsection{\texorpdfstring{state}{state}}
-{\footnotesize\ttfamily int Lexer\+::state\hspace{0.3cm}{\ttfamily [private]}}
+{\footnotesize\ttfamily int Lexer\+::state = 0\hspace{0.3cm}{\ttfamily [private]}}
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00167}{167}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00170}{170}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a7addb8010433f1bc9977465d0620373d}\label{class_lexer_a7addb8010433f1bc9977465d0620373d} 
 \index{Lexer@{Lexer}!symbols@{symbols}}
@@ -452,13 +464,13 @@ Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00167}{167}} of file \mb
 \end{DoxyCode}
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00176}{176}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00179}{179}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 \Hypertarget{class_lexer_a02dd104e3f6fa17d6ed7f4c9bf8898b7}\label{class_lexer_a02dd104e3f6fa17d6ed7f4c9bf8898b7} 
 \index{Lexer@{Lexer}!token\_count@{token\_count}}
 \index{token\_count@{token\_count}!Lexer@{Lexer}}
 \doxysubsubsection{\texorpdfstring{token\_count}{token\_count}}
-{\footnotesize\ttfamily int Lexer\+::token\+\_\+count}
+{\footnotesize\ttfamily int Lexer\+::token\+\_\+count = 0}
 
 
 
@@ -476,7 +488,7 @@ Holds all tokens for future use.
 
 
 
-Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00014}{14}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
+Definition at line \mbox{\hyperlink{_lexer_8cpp_source_l00015}{15}} of file \mbox{\hyperlink{_lexer_8cpp_source}{Lexer.\+cpp}}.
 
 
 

@@ -183,33 +183,40 @@ class Lexer {
 			{'=', T_comp},
 			{'<', T_comp},
 			{'>', T_comp},
-			{'+', T_operator},
-			{'-', T_operator},
-			{'*', T_operator},
-			{'/', T_operator},
-			{'%', T_operator},
+			{'+', T_plus},
+			{'-', T_minus},
+			{'*', T_star},
+			{'/', T_slash},
+			{'%', T_mod},
 			{'(', T_open_par},
 			{')', T_close_par},
 			{',', T_comma}
 		};
 		const std::unordered_map<std::string, TokenType> keywords = {
-			{"def", T_keyword},
-			{"fed", T_keyword},
-			{"if", T_keyword},
-			{"else", T_keyword},
-			{"fi", T_keyword},
-			{"while", T_keyword},
-			{"do", T_keyword},
-			{"od", T_keyword},
-			{"print", T_keyword},
-			{"return", T_keyword},
-			{"or", T_keyword},
-			{"and", T_keyword},
-			{"not", T_keyword},
-			{"int", T_keyword},
-			{"double", T_keyword},
+			{"def", T_def},
+			{"fed", T_fed},
+			{"if", T_if},
+			{"fi", T_fi},
+			{"else", T_else},
+			{"while", T_while},
+			{"do", T_do},
+			{"od", T_od},
+			{"print", T_print},
+			{"return", T_return},
+			{"or", T_or},
+			{"and", T_and},
+			{"not", T_not},
+			{"int", T_kw_int},
+			{"double", T_kw_double},
 		};
-		const std::string enum_names[NUM_TOKEN_TYPES] = { "T_semicolon","T_dot","T_comp","T_underscore","T_operator","T_open_par","T_close_par","T_comma","T_keyword","T_number","T_int","T_double","T_identifier","T_temp", "T_invalid" };
+		const std::string enum_names[NUM_TOKEN_TYPES] = { 
+			"T_semicolon","T_dot","T_comp","T_underscore","T_operator","T_plus",
+			"T_minus","T_star","T_slash","T_mod","T_open_par","T_close_par",
+			"T_comma","T_keyword","T_def","T_fed","T_if","T_fi","T_else","T_while",
+			"T_do","T_od","T_print","T_return","T_or","T_and","T_not","T_kw_int",
+			"T_kw_double","T_number","T_int","T_double","T_identifier",
+			"T_exp","T_temp", "T_invalid" 
+		};
 
 		/// <summary>
 		/// Main function for tokenizing a block of text into tokens
@@ -247,8 +254,13 @@ class Lexer {
 					cursor_one = cursor_two + 1;
 				}
 				else if (std::isalpha(cur_char)) {
-					if (state == S_number && cur_char != 'e') {
+					if (state == S_number && cur_char == 'e') {
 						// Bad identifier
+						distance = cursor_two - cursor_one;
+						success = addToken(line, true, cursor_one, distance, T_exp);
+						cursor_one = cursor_two + 1;
+					}
+					else if (state == S_number) {
 						state = S_bad;
 					}
 				}
@@ -259,11 +271,7 @@ class Lexer {
 					auto search = symbols.find(cur_char);
 					if (search != symbols.end()) {
 						distance = cursor_two - cursor_one;
-						if (state == S_number && cur_char == '.') {
-							// NOTE: we still need to determine if a dash before makes this number negative
-							;
-						}
-						else if (cur_char == '_') {
+						if (cur_char == '_') {
 							;
 						}
 						else {
@@ -334,7 +342,7 @@ class Lexer {
 			}
 			auto search = keywords.find(str);
 			if (search != keywords.end()) {
-				return T_keyword;
+				return search->second;
 			}
 			else if (state == S_identifier) {
 				return T_identifier;

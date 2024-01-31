@@ -7,7 +7,7 @@
 #include <chrono>
 #include <regex>
 
-#define NUM_TOKEN_TYPES 15
+#define NUM_TOKEN_TYPES 36
 #define PAGE_SIZE 4096
 
 enum TokenType {
@@ -16,14 +16,35 @@ enum TokenType {
 	T_comp,
 	T_underscore,
 	T_operator,
+	T_plus,
+	T_minus,
+	T_star,
+	T_slash,
+	T_mod,
 	T_open_par,
 	T_close_par,
 	T_comma,
 	T_keyword,
+	T_def,
+	T_fed,
+	T_if,
+	T_fi,
+	T_else,
+	T_while,
+	T_do,
+	T_od,
+	T_print,
+	T_return,
+	T_or,
+	T_and,
+	T_not,
+	T_kw_int,
+	T_kw_double,
 	T_number,
 	T_int,
 	T_double,
 	T_identifier,
+	T_exp,
 	T_temp,
 	T_invalid
 };
