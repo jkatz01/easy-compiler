@@ -49,6 +49,11 @@ enum TokenType {
 	T_invalid
 };
 
+enum NonTerminal {
+	G_PROGRAM = NUM_TOKEN_TYPES, // Start at the end of TokenType so we can use both together
+	G_FDECLS
+};
+
 enum States { 
 	S_first,
 	S_number,
