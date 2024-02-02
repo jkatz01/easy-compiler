@@ -1,13 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <unordered_map>
-#include <chrono>
-#include <regex>
 
-#define NUM_TOKEN_TYPES 36
+#define NUM_TOKEN_TYPES T_invalid + 1
 #define PAGE_SIZE 4096
 
 enum TokenType {
@@ -51,7 +46,33 @@ enum TokenType {
 
 enum NonTerminal {
 	G_PROGRAM = NUM_TOKEN_TYPES, // Start at the end of TokenType so we can use both together
-	G_FDECLS
+	G_FDECLS,
+	G_FDEC,
+	G_PARAMS,
+	G_FNAME,
+	G_DECLARATIONS,
+	G_DECL,
+	G_TYPE,
+	G_VARLIST,
+	G_STATEMENT_SEQ,
+	G_STATEMENT,
+	G_EXPR,
+	G_P_EXPR,
+	G_TERM,
+	G_P_TERM,
+	G_FACTOR,
+	G_EXPRSEQ,
+	G_BEXPR,
+	G_P_BEXPR,
+	G_BTERM,
+	G_P_BTERM,
+	G_BFACTOR,
+	G_COMP,
+	G_VAR,
+	G_ID,
+	G_DOUBLE,
+	G_DECIMAL,
+	G_NUMBER
 };
 
 enum States { 

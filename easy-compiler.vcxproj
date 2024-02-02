@@ -129,8 +129,10 @@
   <ItemGroup>
     <ClCompile Include="src\Lexer.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="..\cp471\P1\tests\example.txt" />
     <Text Include="tests\bad_file.txt" />
     <Text Include="tests\example.txt" />
   </ItemGroup>

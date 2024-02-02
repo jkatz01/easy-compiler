@@ -1,5 +1,11 @@
 #include "definitions.h"
 
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <unordered_map>
+#include <chrono>
+
 /// <summary>
 /// Lexer class provides functions to perform lexical analysis on a file
 /// and output tokens and errors

@@ -1,5 +1,6 @@
 #include "Lexer.cpp"
-int coolFunction(int n);
+
+#include <iostream>
 
 int main(int argc, char* argv[]) {
 	// Assert number of arguments
@@ -13,16 +14,5 @@ int main(int argc, char* argv[]) {
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
-	coolFunction(5);
 	return 0;
-}
-
-/// <summary>
-/// This doesn't do anything i just dont know how to use doxygen
-/// </summary>
-/// <param name="n"></param>
-/// <returns></returns>
-int coolFunction(int n) {
-	n = n + n;
-	return n;
 }
