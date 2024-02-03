@@ -12,7 +12,9 @@
 enum TokenType {
 	T_semicolon,
 	T_dot,
-	T_comp,
+	T_eq,
+	T_lt,
+	T_gt,
 	T_underscore,
 	T_operator,
 	T_plus,
@@ -29,6 +31,7 @@ enum TokenType {
 	T_if,
 	T_fi,
 	T_else,
+	T_then,
 	T_while,
 	T_do,
 	T_od,
