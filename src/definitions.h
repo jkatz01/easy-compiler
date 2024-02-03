@@ -64,6 +64,7 @@ enum NonTerminal {
 	G_VARLIST,
 	G_STATEMENT_SEQ,
 	G_STATEMENT,
+	G_P_STREPLC,
 	G_EXPR,
 	G_P_EXPR,
 	G_TERM,
@@ -125,4 +126,9 @@ struct Token {
 		token_type = type;
 		token_value = value;
 	}
+};
+
+struct Rule {
+	const int size;
+	const int* data;
 };
