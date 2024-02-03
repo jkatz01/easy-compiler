@@ -2,8 +2,10 @@
 
 #include <iostream>
 
-#define NUM_TOKEN_TYPES T_null + 1
-#define PAGE_SIZE 4096
+#define NUM_TOKEN_TYPES		T_null + 1
+#define NUM_TERMINALS		NUM_TOKEN_TYPES
+#define NUM_NONTERIMNALS	G_NUMBER - T_null
+#define PAGE_SIZE			4096
 
 enum TokenType {
 	T_semicolon,
