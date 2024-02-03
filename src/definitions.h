@@ -80,7 +80,8 @@ enum NonTerminal {
 	G_ID,
 	G_DOUBLE,
 	G_DECIMAL,
-	G_NUMBER
+	G_NUMBER,
+	G_POSNUMBER
 };
 
 enum States { 
