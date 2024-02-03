@@ -14,5 +14,8 @@ int main(int argc, char* argv[]) {
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
+
+	// TODO
+	// Make lexer combine semicolon at the end of word??
 	return 0;
 }

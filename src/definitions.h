@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#define NUM_TOKEN_TYPES T_invalid + 1
+#define NUM_TOKEN_TYPES T_null + 1
 #define PAGE_SIZE 4096
 
 enum TokenType {
@@ -41,7 +41,8 @@ enum TokenType {
 	T_identifier,
 	T_exp,
 	T_temp,
-	T_invalid
+	T_invalid,
+	T_null
 };
 
 enum NonTerminal {
