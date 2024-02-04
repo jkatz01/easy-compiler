@@ -1,6 +1,7 @@
 #pragma once
 
-#include <iostream>
+#include <vector>
+#include <string>
 
 #define ARR_SIZE(X) (int)(sizeof(X) / sizeof(X[0]))
 

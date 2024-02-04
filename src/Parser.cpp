@@ -1,7 +1,16 @@
 #include "definitions.h"
-#include <iostream>
+
 
 class LLTable;
+
+class Parser {
+public:
+	std::vector<Token> tokens;
+
+	Parser(std::vector<Token> const& token_list) {
+		tokens = token_list;
+	}
+};
 
 /// <summary>
 /// Class to manage the LL1 parsing table
@@ -31,7 +40,7 @@ public:
 
 	const int r17[4] = { G_STATEMENT,		G_VAR, T_eq, G_EXPR };
 	const int r18[7] = { G_STATEMENT,		T_if, G_BEXPR, T_then, G_STATEMENT_SEQ, G_P_STREPLC, T_fi};
-	const int r19[3] = { G_P_STREPLC,		T_else, G_STATEMENT_SEQ, };
+	const int r19[3] = { G_P_STREPLC,		T_else, G_STATEMENT_SEQ };
 	const int r20[3] = { G_P_STREPLC,		T_null};
 	const int r21[6] = { G_STATEMENT,		T_while, G_BEXPR, T_do, G_STATEMENT_SEQ, T_od };
 	const int r22[3] = { G_STATEMENT,		T_print, G_EXPR };
