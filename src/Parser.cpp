@@ -5,10 +5,10 @@ class LLTable;
 
 class Parser {
 public:
-	std::vector<Token> tokens;
+	std::vector<Token> const* tokens;
 
 	Parser(std::vector<Token> const& token_list) {
-		tokens = token_list;
+		tokens = &token_list;
 	}
 };
 
