@@ -1,4 +1,5 @@
 #include "Lexer.cpp"
+#include "Parser.cpp"
 
 #include <iostream>
 
@@ -14,6 +15,9 @@ int main(int argc, char* argv[]) {
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
+	;
+	Parser parsing(lexical.v_tokens);
+
 
 	// TODO
 	// Make lexer combine semicolon at the end of word??

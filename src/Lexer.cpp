@@ -124,7 +124,7 @@ public:
 	int printTokens() {
 		for (Token i : v_tokens) {
 			int tab_num;
-			if ((tab_num = 3 - ((int)i.token_value.length() / 4)) < 0) {
+			if ((tab_num = 3 - ((int)i.token_value.length() / TAB_SIZE)) < 0) {
 				tab_num = 0;
 			}
 
@@ -151,7 +151,7 @@ public:
 			if (i.err_type == E_bad_token) {
 				error_file << "Bad token \t" << i.value.data();
 				int tab_num;
-				if ((tab_num = 3 - ((int)i.value.length() / 4)) < 0) {
+				if ((tab_num = 3 - ((int)i.value.length() / TAB_SIZE)) < 0) {
 					tab_num = 0;
 				}
 				if (!error_file.is_open()) {

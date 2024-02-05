@@ -1,14 +1,46 @@
 #include "definitions.h"
-
+#include <iostream>
 
 class LLTable;
+class TokTree;
 
 class Parser {
 public:
 	std::vector<Token> const* tokens;
+	std::vector<Token> t_stack;
 
 	Parser(std::vector<Token> const& token_list) {
 		tokens = &token_list;
+	}
+
+	int parse() {
+		std::cout << "implement this\n";
+		return 0;
+	}
+
+	int pushRule(const int* rule) {
+		std::cout << "implement this\n";
+		return 0;
+	}
+
+
+};
+
+class TokTree {
+public:
+	int depth;
+	struct TokNode {
+		TokNode* next;
+		TokNode* first_child;
+		Token token;
+	};
+
+	void addNode(Token token) {
+		std::cout << "implement this\n";
+	}
+
+	void printTree() {
+		std::cout << "implement this\n";
 	}
 };
 
@@ -23,7 +55,7 @@ public:
 	const int r1[5] = { G_PROGRAM,			G_FDECLS, G_DECLARATIONS, G_STATEMENT_SEQ, T_dot };
 	const int r2[3] = { G_FDECLS,			G_FDEC, T_semicolon };
 	const int r3[4] = { G_FDECLS,			G_FDEC, T_semicolon, G_FDECLS };
-	const int r4[10] = { G_FDEC,			T_def, G_TYPE, G_FNAME, T_open_par, G_PARAMS, T_close_par, G_DECLARATIONS, G_STATEMENT_SEQ, T_fed };
+	const int r4[10]= { G_FDEC,			T_def, G_TYPE, G_FNAME, T_open_par, G_PARAMS, T_close_par, G_DECLARATIONS, G_STATEMENT_SEQ, T_fed };
 	const int r5[3] = { G_PARAMS,			G_TYPE, G_VAR };
 	const int r6[5] = { G_PARAMS,			G_TYPE, G_VAR, T_comma, G_PARAMS };
 	const int r7[2] = { G_FNAME,			G_ID };
@@ -35,8 +67,8 @@ public:
 	const int r12[2] = { G_TYPE,			T_kw_double };
 	const int r13[4] = { G_VARLIST,			G_VAR, T_comma, G_VARLIST };
 	const int r14[2] = { G_VARLIST,			G_VAR };
-	const int r15[2] = { G_STATEMENT_SEQ,	G_STATEMENT };
-	const int r16[4] = { G_STATEMENT_SEQ,	G_STATEMENT, T_semicolon, G_STATEMENT_SEQ };
+	const int r15[2] = { G_STATEMENT_SEQ,		G_STATEMENT };
+	const int r16[4] = { G_STATEMENT_SEQ,		G_STATEMENT, T_semicolon, G_STATEMENT_SEQ };
 
 	const int r17[4] = { G_STATEMENT,		G_VAR, T_eq, G_EXPR };
 	const int r18[7] = { G_STATEMENT,		T_if, G_BEXPR, T_then, G_STATEMENT_SEQ, G_P_STREPLC, T_fi};
@@ -86,7 +118,7 @@ public:
 	// G_VAR can be an array???
 	// const r54
 	
-	const int r55[2] = { G_ID,				T_identifier };
+	const int r55[2] = { G_ID,			T_identifier };
 	const int r56[4] = { G_DOUBLE,			G_NUMBER, T_exp, G_NUMBER };
 	const int r57[4] = { G_DOUBLE,			G_DECIMAL, T_exp, G_NUMBER };
 	const int r58[2] = { G_DOUBLE,			G_DECIMAL };
