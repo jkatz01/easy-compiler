@@ -26,6 +26,8 @@ enum TokenType {
 	T_mod,
 	T_open_par,
 	T_close_par,
+	T_open_brac,
+	T_close_brac,
 	T_comma,
 	T_keyword,
 	T_def,

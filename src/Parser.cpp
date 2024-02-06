@@ -30,8 +30,7 @@ class TokTree {
 public:
 	int depth;
 	struct TokNode {
-		TokNode* next;
-		TokNode* first_child;
+		std::vector<TokNode*> children;
 		Token token;
 	};
 
@@ -41,6 +40,10 @@ public:
 
 	void printTree() {
 		std::cout << "implement this\n";
+	}
+
+	~TokTree() {
+		//free everythang
 	}
 };
 
