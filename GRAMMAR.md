@@ -1,126 +1,125 @@
-		PROGRAM -> FDECLS DECLARATIONS STATEMENT_SEQ t_.
-		FDECLS -> FDEC t_; FDECLS_P
+```
+		PROGRAM -> FDECLS DECLARATIONS STATEMENSEQ .
+		FDECLS -> FDEC ; FDECLS_P
 				| ϵ
-		  FDEC -> t_def TYPE FNAME t_( PARAMS t_) DECLARATIONS STATEMENT_SEQ t_fed
+		  FDEC -> def TYPE FNAME ( PARAMS ) DECLARATIONS STATEMENSEQ fed
 		PARAMS -> TYPE VAR PARAMS_P
 				| ϵ
 		 FNAME -> ID
-  DECLARATIONS -> DECL t_; DECLARATIONS_P
+  DECLARATIONS -> DECL ; DECLARATIONS_P
 				| ϵ
 		  DECL -> TYPE VARLIST
-		  TYPE -> t_kw_int
-				| t_kw_double
-	   VARLIST -> VAR VARLIST_P
- STATEMENT_SEQ -> STATEMENT STATEMENT_SEQ_P
-	 STATEMENT -> VAR t_= EXPR
-				| t_if BEXPR t_then STATEMENT_SEQ P_STREPLC t_fi
-				| t_while BEXPR t_do STATEMENT_SEQ t_od
-				| t_print EXPR
-				| t_return EXPR
+		  TYPE -> kw_int
+				| kw_double
+	   VARLIST -> VAR VARLISP
+ STATEMENSEQ -> STATEMENT STATEMENSEQ_P
+	 STATEMENT -> VAR = EXPR
+				| if BEXPR then STATEMENSEQ P_STREPLC fi
+				| while BEXPR do STATEMENSEQ od
+				| print EXPR
+				| return EXPR
 				| ϵ
-	 P_STREPLC -> t_else STATEMENT_SEQ
+	 P_STREPLC -> else STATEMENSEQ
 				| ϵ
 		  EXPR -> TERM P_EXPR
-		P_EXPR -> t_+ TERM P_EXPR
-				| t_- TERM P_EXPR
+		P_EXPR -> + TERM P_EXPR
+				| - TERM P_EXPR
 				| ϵ
 		  TERM -> FACTOR P_TERM
-		P_TERM -> t_* FACTOR P_TERM
-				| t_/ FACTOR P_TERM
-				| t_% FACTOR P_TERM
+		P_TERM -> * FACTOR P_TERM
+				| / FACTOR P_TERM
+				| % FACTOR P_TERM
 				| ϵ
 		FACTOR -> VAR
 				| NUMBER
-				| t_( EXPR t_)
-				| FNAME t_( EXPRSEQ t_)
+				| ( EXPR )
+				| FNAME ( EXPRSEQ )
 	   EXPRSEQ -> EXPR EXPRSEQ_P
 				| ϵ
 		 BEXPR -> BTERM P_BEXPR
-	   P_BEXPR -> t_or BTERM P_BEXPR
+	   P_BEXPR -> or BTERM P_BEXPR
 				| ϵ
 		 BTERM -> BFACTOR P_BTERM
-	   P_BTERM -> t_and BFACTOR P_BTERM
+	   P_BTERM -> and BFACTOR P_BTERM
 				| ϵ
-	   BFACTOR -> t_( BFACTOR_P
-				| t_not BFACTOR
-		  COMP -> t_> COMP_P_P
-				| t_< COMP_P
-				| t_= t_=
+	   BFACTOR -> ( BFACTOR_P
+				| not BFACTOR
+		  COMP -> > COMP_P_P
+				| < COMP_P
+				| = =
 		   VAR -> ID VAR_P
-			ID -> t_identifier
+			ID -> identifier
 		DOUBLE -> DECIMAL DOUBLE_P
-				| NUMBER t_exp NUMBER
-	   DECIMAL -> NUMBER t_. POSNUMBER
-		NUMBER -> t_num
-				| t_- t_num
-	 POSNUMBER -> t_num
+				| NUMBER exp NUMBER
+	   DECIMAL -> NUMBER . POSNUMBER
+		NUMBER -> num
+				| - num
+	 POSNUMBER -> num
 	   FDECLS_P -> ϵ
 				| FDECLS
 	   PARAMS_P -> ϵ
-				| t_, PARAMS
+				| , PARAMS
  DECLARATIONS_P -> ϵ
 				| DECLARATIONS
-	  VARLIST_P -> t_, VARLIST
+	  VARLISP -> , VARLIST
 				| ϵ
-STATEMENT_SEQ_P -> ϵ
-				| t_; STATEMENT_SEQ
-	  EXPRSEQ_P -> t_, EXPRSEQ
+STATEMENSEQ_P -> ϵ
+				| ; STATEMENSEQ
+	  EXPRSEQ_P -> , EXPRSEQ
 				| ϵ
-	  BFACTOR_P -> BEXPR t_)
-				| EXPR COMP EXPR t_)
+	  BFACTOR_P -> BEXPR )
+				| EXPR COMP EXPR )
 		 COMP_P -> ϵ
-				| t_=
-				| t_>
+				| =
+				| >
 		COMP_P_P -> ϵ
-				| t_=
+				| =
 		  VAR_P -> ϵ
-				| t_[ EXPR t_]
-	   DOUBLE_P -> t_exp NUMBER
+				| [ EXPR ]
+	   DOUBLE_P -> exp NUMBER
 				| ϵ
+```
 
-| Symbol		  | Nullable | First																		 | Follow																				  |
-| --------------- | -------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| PROGRAM		  | FALSE	 | t_. t_; t_def t_identifier t_if t_kw_double t_kw_int t_print t_return t_while | $																					  |
-| FDECLS		  | TRUE	 | t_def ϵ																		 | t_. t_; t_identifier t_if t_kw_double t_kw_int t_print t_return t_while				  |
-| FDECLS_P		  | TRUE	 | t_def ϵ																		 | t_. t_; t_identifier t_if t_kw_double t_kw_int t_print t_return t_while				  |
-| FDEC			  | FALSE	 | t_def																		 | t_;																					  |
-| PARAMS		  | TRUE	 | t_kw_double t_kw_int ϵ														 | t_)																					  |
-| PARAMS_P		  | TRUE	 | t_, ϵ																		 | t_)																					  |
-| FNAME			  | FALSE	 | t_identifier																	 | t_(																					  |
-| DECLARATIONS	  | TRUE	 | t_kw_double t_kw_int ϵ														 | t_. t_; t_fed t_identifier t_if t_print t_return t_while								  |
-| DECLARATIONS_P  | TRUE	 | t_kw_double t_kw_int ϵ														 | t_. t_; t_fed t_identifier t_if t_print t_return t_while								  |
-| DECL			  | FALSE	 | t_kw_double t_kw_int															 | t_;																					  |
-| TYPE			  | FALSE	 | t_kw_double t_kw_int															 | t_identifier																			  |
-| VARLIST		  | FALSE	 | t_identifier																	 | t_;																					  |
-| VARLIST_P		  | TRUE	 | t_, ϵ																		 | t_;																					  |
-| STATEMENT_SEQ	  | TRUE	 | t_; t_identifier t_if t_print t_return t_while ϵ								 | t_. t_else t_fed t_fi t_od															  |
-| STATEMENT_SEQ_P | TRUE	 | t_; ϵ																		 | t_. t_else t_fed t_fi t_od															  |
-| STATEMENT		  | TRUE	 | t_identifier t_if t_print t_return t_while ϵ									 | t_. t_; t_else t_fed t_fi t_od														  |
-| P_STREPLC		  | TRUE	 | t_else ϵ																		 | t_fi																					  |
-| EXPR			  | FALSE	 | t_( t_- t_identifier t_num													 | t_) t_, t_. t_; t_< t_= t_> t_] t_else t_fed t_fi t_od								  |
-| P_EXPR		  | TRUE	 | t_+ t_- ϵ																	 | t_) t_, t_. t_; t_< t_= t_> t_] t_else t_fed t_fi t_od								  |
-| TERM			  | FALSE	 | t_( t_- t_identifier t_num													 | t_) t_+ t_, t_- t_. t_; t_< t_= t_> t_] t_else t_fed t_fi t_od						  |
-| P_TERM		  | TRUE	 | t_% t_\* t_/ ϵ																 | t_) t_+ t_, t_- t_. t_; t_< t_= t_> t_] t_else t_fed t_fi t_od						  |
-| FACTOR		  | FALSE	 | t_( t_- t_identifier t_num													 | t_% t_) t_\* t_+ t_, t_- t_. t_/ t_; t_< t_= t_> t_] t_else t_fed t_fi t_od			  |
-| EXPRSEQ		  | TRUE	 | t_( t_- t_identifier t_num ϵ													 | t_)																					  |
-| EXPRSEQ_P		  | TRUE	 | t_, ϵ																		 | t_)																					  |
-| BEXPR			  | FALSE	 | t_( t_not																	 | t_) t_do t_then																		  |
-| P_BEXPR		  | TRUE	 | t_or ϵ																		 | t_) t_do t_then																		  |
-| BTERM			  | FALSE	 | t_( t_not																	 | t_) t_do t_or t_then																	  |
-| P_BTERM		  | TRUE	 | t_and ϵ																		 | t_) t_do t_or t_then																	  |
-| BFACTOR		  | FALSE	 | t_( t_not																	 | t_) t_and t_do t_or t_then															  |
-| BFACTOR_P		  | FALSE	 | t_( t_- t_identifier t_not t_num												 | t_) t_and t_do t_or t_then															  |
-| COMP			  | FALSE	 | t_< t_= t_>																	 | t_( t_- t_identifier t_num															  |
-| COMP_P		  | TRUE	 | t_= t_> ϵ																	 | t_( t_- t_identifier t_num															  |
-| COMP_P_P		  | TRUE	 | t_= ϵ																		 | t_( t_- t_identifier t_num															  |
-| VAR			  | FALSE	 | t_identifier																	 | \= t_% t_) t_\* t_+ t_, t_- t_. t_/ t_; t_< t_= t_> t_] t_else t_fed t_fi t_od		  |
-| VAR_P			  | TRUE	 | t_[ ϵ																		 | \= t_% t_) t_\* t_+ t_, t_- t_. t_/ t_; t_< t_= t_> t_] t_else t_fed t_fi t_od		  |
-| ID			  | FALSE	 | t_identifier																	 | \= t_% t_( t_) t_\* t_+ t_, t_- t_. t_/ t_; t_< t_= t_> t_[ t_] t_else t_fed t_fi t_od |
-| DOUBLE		  | FALSE	 | t_- t_num																	 |																						  |
-| DOUBLE_P		  | TRUE	 | t_exp ϵ																		 |																						  |
-| DECIMAL		  | FALSE	 | t_- t_num																	 | t_exp																				  |
-| NUMBER		  | FALSE	 | t_- t_num																	 | t_% t_) t_\* t_+ t_, t_- t_. t_/ t_; t_< t_= t_> t_] t_else t_exp t_fed t_fi t_od	  |
-| POSNUMBER		  | FALSE	 | t_num																		 | t_exp																				  |
-
-
-
+| Symbol		 | Nullable | First														| Follow												|
+| -------------- | -------- | --------------------------------------------------------- | ----------------------------------------------------- |
+| PROGRAM		 | FALSE	| . ; def identifier if kw_double kw_int print return while | $														|
+| FDECLS		 | TRUE		| def ϵ														| . ; identifier if kw_double kw_int print return while |
+| FDECLS_P		 | TRUE		| def ϵ														| . ; identifier if kw_double kw_int print return while |
+| FDEC			 | FALSE	| def														| ;														|
+| PARAMS		 | TRUE		| kw_double kw_int ϵ										| )														|
+| PARAMS_P		 | TRUE		| , ϵ														| )														|
+| FNAME			 | FALSE	| identifier												| (														|
+| DECLARATIONS	 | TRUE		| kw_double kw_int ϵ										| . ; fed identifier if print return while				|
+| DECLARATIONS_P | TRUE		| kw_double kw_int ϵ										| . ; fed identifier if print return while				|
+| DECL			 | FALSE	| kw_double kw_int											| ;														|
+| TYPE			 | FALSE	| kw_double kw_int											| identifier											|
+| VARLIST		 | FALSE	| identifier												| ;														|
+| VARLISP		 | TRUE		| , ϵ														| ;														|
+| STATEMENSEQ	 | TRUE		| ; identifier if print return while ϵ						| . else fed fi od										|
+| STATEMENSEQ_P	 | TRUE		| ; ϵ														| . else fed fi od										|
+| STATEMENT		 | TRUE		| identifier if print return while ϵ						| . ; else fed fi od									|
+| P_STREPLC		 | TRUE		| else ϵ													| fi													|
+| EXPR			 | FALSE	| ( - identifier num										| ) , . ; < = > ] else fed fi od						|
+| P_EXPR		 | TRUE		| + - ϵ														| ) , . ; < = > ] else fed fi od						|
+| TERM			 | FALSE	| ( - identifier num										| ) + , - . ; < = > ] else fed fi od					|
+| P_TERM		 | TRUE		| % \* / ϵ													| ) + , - . ; < = > ] else fed fi od					|
+| FACTOR		 | FALSE	| ( - identifier num										| % ) \* + , - . / ; < = > ] else fed fi od				|
+| EXPRSEQ		 | TRUE		| ( - identifier num ϵ										| )														|
+| EXPRSEQ_P		 | TRUE		| , ϵ														| )														|
+| BEXPR			 | FALSE	| ( not														| ) do then												|
+| P_BEXPR		 | TRUE		| or ϵ														| ) do then												|
+| BTERM			 | FALSE	| ( not														| ) do or then											|
+| P_BTERM		 | TRUE		| and ϵ														| ) do or then											|
+| BFACTOR		 | FALSE	| ( not														| ) and do or then										|
+| BFACTOR_P		 | FALSE	| ( - identifier not num									| ) and do or then										|
+| COMP			 | FALSE	| < = >														| ( - identifier num									|
+| COMP_P		 | TRUE		| = > ϵ														| ( - identifier num									|
+| COMP_P_P		 | TRUE		| = ϵ														| ( - identifier num									|
+| VAR			 | FALSE	| identifier												| \= % ) \* + , - . / ; < = > ] else fed fi od			|
+| VAR_P			 | TRUE		| [ ϵ														| \= % ) \* + , - . / ; < = > ] else fed fi od			|
+| ID			 | FALSE	| identifier												| \= % ( ) \* + , - . / ; < = > [ ] else fed fi od		|
+| DOUBLE		 | FALSE	| - num														|														|
+| DOUBLE_P		 | TRUE		| exp ϵ														|														|
+| DECIMAL		 | FALSE	| - num														| exp													|
+| NUMBER		 | FALSE	| - num														| % ) \* + , - . / ; < = > ] else exp fed fi od			|
+| POSNUMBER		 | FALSE	| num														| exp													|
