@@ -133,10 +133,13 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\cp471\P1\tests\example.txt" />
+    <Text Include="grammar.txt" />
+    <Text Include="grammar2.txt" />
     <Text Include="tests\bad_file.txt" />
     <Text Include="tests\example.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitattributes" />
     <None Include=".gitignore" />
     <None Include="README.md" />
     <None Include="tests\Test1.cp" />

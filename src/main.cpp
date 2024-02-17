@@ -18,8 +18,5 @@ int main(int argc, char* argv[]) {
 	;
 	Parser parsing(lexical.v_tokens);
 
-
-	// TODO
-	// Make lexer combine semicolon at the end of word??
 	return 0;
 }
