@@ -53,6 +53,7 @@ enum TokenType {
 	T_exp,
 	T_temp,
 	T_invalid,
+	T_dollar,
 	T_null
 };
 
@@ -93,6 +94,7 @@ enum NonTerminal {
 	G_VAR,			// Variable  // x
 	G_VAR_P,		// Array     // ..[expr]
 	G_ID,			// Identifier
+	G_ANYNUM,		// double or int
 	G_DOUBLE,		// double
 	G_DOUBLE_P,
 	G_DECIMAL,
@@ -130,14 +132,14 @@ struct TokenError {
 };
 
 struct Token {
-	TokenType token_type;
+	int token_type;
 	std::string token_value;
 	
 	Token() {
 		token_type = T_temp;
 		token_value = "";
 	}
-	Token(TokenType type, std::string value) {
+	Token(int type, std::string value) {
 		token_type = type;
 		token_value = value;
 	}

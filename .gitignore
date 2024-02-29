@@ -10,6 +10,8 @@ example*
 Tokens.txt
 Lexical-errors.txt
 Lexical-Errors.txt
+old/
+grammars/
 
 # User-specific files
 *.rsuser
