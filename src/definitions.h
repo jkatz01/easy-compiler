@@ -7,7 +7,7 @@
 
 #define NUM_TOKEN_TYPES		T_null + 1
 #define NUM_TERMINALS		NUM_TOKEN_TYPES
-#define NUM_NONTERIMNALS	G_NUMBER - T_null
+#define NUM_NONTERIMNALS	G_POSNUMBER - T_null
 #define PAGE_SIZE		4096
 #define TAB_SIZE		8
 
@@ -59,33 +59,44 @@ enum TokenType {
 enum NonTerminal {
 	G_PROGRAM = NUM_TOKEN_TYPES, // Start at the end of TokenType so we can use both together
 	G_FDECLS,
-	G_FDEC,
-	G_PARAMS,
-	G_FNAME,
+	G_FDECLS_P,
+	G_FDEC,			// Function declaration // def int func(int x, double y) body fed
+	G_PARAMS,		// Paramters of function // (int x, double y) 
+	G_PARAMS_P,
+	G_FNAME,		// Defined name // x 
 	G_DECLARATIONS,
-	G_DECL,
-	G_TYPE,
+	G_DECLARATIONS_P,
+	G_DECL,			// Variable declaration // int x, y;
+	G_TYPE,			// int // double
 	G_VARLIST,
-	G_STATEMENT_SEQ,
-	G_STATEMENT,
-	G_P_STREPLC,
-	G_EXPR,
-	G_P_EXPR,
-	G_TERM,
-	G_P_TERM,
-	G_FACTOR,
+	G_VARLIST_P,
+	G_STATEMENT_SEQ,	
+	G_STATEMENT_SEQ_P,
+	G_STATEMENT,		// x = y // if .. // while ... // print // return // null
+	G_STREPLC_P,
+	G_EXPR,			// binary operations // a + b // a - b
+	G_EXPR_P,
+	G_TERM,			// binary operations // a * b // a / b // a % b
+	G_TERM_P,
+	G_FACTOR,		// thing in operation 
 	G_EXPRSEQ,
-	G_BEXPR,
-	G_P_BEXPR,
+	G_EXPRSEQ_P,
+	G_BEXPR,		// Boolean expression // x and y // x or y // not x
+	G_BEXPR_P,
 	G_BTERM,
-	G_P_BTERM,
+	G_BTERM_P,
 	G_BFACTOR,
-	G_COMP,
-	G_VAR,
-	G_ID,
-	G_DOUBLE,
+	G_BFACTOR_P,
+	G_COMP,			// Comparison // x 
+	G_COMP_P,
+	G_COMP_P_P,
+	G_VAR,			// Variable  // x
+	G_VAR_P,		// Array     // ..[expr]
+	G_ID,			// Identifier
+	G_DOUBLE,		// double
+	G_DOUBLE_P,
 	G_DECIMAL,
-	G_NUMBER,
+	G_NUMBER,		// int
 	G_POSNUMBER
 };
 

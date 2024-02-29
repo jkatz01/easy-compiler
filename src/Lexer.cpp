@@ -322,6 +322,7 @@ private:
 		if (token_value.compare("")) {
 			TokenType t_val_type = findTokenType(token_value);
 			if (t_val_type == T_invalid || state == S_bad) {
+				// Handle error
 				TokenError terr(token_value, line_number, E_bad_token);
 				error_log.insert(error_log.begin() + error_count, terr);
 				error_count++;
