@@ -28,98 +28,71 @@ public:
 
 	// First const int in rule is the left hand side
 	int r01[5] = { G_PROGRAM,		G_FDECLS, G_DECLARATIONS, G_STATEMENT_SEQ, T_dot };
-	int r02[4] = { G_FDECLS,		G_FDEC, T_semicolon, G_FDECLS_P };
+	int r02[4] = { G_FDECLS,		G_FDEC, T_semicolon, G_FDECLS };
 	int r03[2] = { G_FDECLS,		T_null };
-	int r04[2] = { G_FDECLS_P,		G_FDECLS };
-	int r05[2] = { G_FDECLS_P,		T_null };
-	int r06[10]= { G_FDEC,			T_def, G_TYPE, G_FNAME, T_open_par, G_PARAMS, T_close_par, G_DECLARATIONS, G_STATEMENT_SEQ, T_fed };
-	int r07[4] = { G_PARAMS,		G_TYPE, G_VAR, G_PARAMS_P};
-	int r08[2] = { G_PARAMS,		T_null };
-	int r09[3] = { G_PARAMS_P,		T_comma, G_PARAMS };
-	int r10[2] = { G_PARAMS_P,		T_null };
-	int r11[2] = { G_FNAME,			G_ID };
-	int r12[4] = { G_DECLARATIONS,		G_DECL, T_semicolon, G_DECLARATIONS_P };
-	int r13[2] = { G_DECLARATIONS,		T_null };
-	int r14[2] = { G_DECLARATIONS_P,	G_DECLARATIONS };
-	int r15[2] = { G_DECLARATIONS_P,	T_null };
-
-	int r16[3] = { G_DECL,			G_TYPE, G_VARLIST };
-	int r17[2] = { G_TYPE,			T_kw_int };
-	int r18[2] = { G_TYPE,			T_kw_double };
-	int r19[3] = { G_VARLIST,		G_VAR, G_VARLIST_P };
-	int r20[3] = { G_VARLIST_P,		T_comma, G_VARLIST };
-	int r21[2] = { G_VARLIST_P,		T_null };
-	int r22[3] = { G_STATEMENT_SEQ,		G_STATEMENT, G_STATEMENT_SEQ_P };
-	int r23[3] = { G_STATEMENT_SEQ_P,	T_semicolon, G_STATEMENT_SEQ };
-	int r24[2] = { G_STATEMENT_SEQ_P,	T_null };
-
-	int r25[4] = { G_STATEMENT,		G_VAR, T_eq, G_EXPR };
-	int r26[7] = { G_STATEMENT,		T_if, G_BEXPR, T_then, G_STATEMENT_SEQ, G_STREPLC_P, T_fi};
-	int r27[6] = { G_STATEMENT,		T_while, G_BEXPR, T_do, G_STATEMENT_SEQ, T_od };
-	int r28[3] = { G_STATEMENT,		T_print, G_EXPR };
-	int r29[3] = { G_STATEMENT,		T_return, G_EXPR };
-	int r30[2] = { G_STATEMENT,		T_null };
-	int r31[3] = { G_STREPLC_P,		T_else, G_STATEMENT_SEQ };
-	int r32[2] = { G_STREPLC_P,		T_null};
-
-	int r33[3] = { G_EXPR,			G_TERM, G_EXPR_P };
-	int r34[4] = { G_EXPR_P,		T_plus, G_TERM, G_EXPR_P };
-	int r35[4] = { G_EXPR_P,		T_minus, G_TERM, G_EXPR_P };
-	int r36[2] = { G_EXPR_P,		T_null };
-
-	int r37[3] = { G_TERM,			G_FACTOR, G_TERM_P };
-	int r38[4] = { G_TERM_P,		T_star, G_FACTOR, G_TERM_P };
-	int r39[4] = { G_TERM_P,		T_slash, G_FACTOR, G_TERM_P };
-	int r40[4] = { G_TERM_P,		T_mod, G_FACTOR, G_TERM_P };
-	int r41[2] = { G_TERM_P,		T_null };
-
-	int r42[2] = { G_FACTOR,		G_VAR };
-	int r43[2] = { G_FACTOR,		G_NUMBER };
-	int r44[4] = { G_FACTOR,		T_open_par, G_EXPR, T_close_par };
-	int r45[5] = { G_FACTOR,		G_FNAME, T_open_par, G_EXPRSEQ, T_close_par };
-
-	int r46[3] = { G_EXPRSEQ,		G_EXPR, G_EXPRSEQ_P };
-	int r47[2] = { G_EXPRSEQ,		T_null };
-	int r48[3] = { G_EXPRSEQ_P,		T_comma, G_EXPRSEQ };
-	int r49[2] = { G_EXPRSEQ_P,		T_null };
-
-	int r50[3] = { G_BEXPR,			G_BTERM, G_BEXPR_P };
-	int r51[4] = { G_BEXPR_P,		T_or, G_BTERM, G_BEXPR_P };
-	int r52[2] = { G_BEXPR_P,		T_null };
-
-	int r53[3] = { G_BTERM,			G_BFACTOR, G_BTERM_P };
-	int r54[4] = { G_BTERM_P,		T_and, G_BFACTOR, G_BTERM_P };
-	int r55[2] = { G_BTERM_P,		T_null };
-
-	int r56[3] = { G_BFACTOR,		T_open_par, G_BFACTOR_P };
-	int r57[3] = { G_BFACTOR,		T_not, G_BFACTOR };
-	int r58[3] = { G_BFACTOR_P,		G_BEXPR, T_close_par };
-	int r59[5] = { G_BFACTOR_P,		G_EXPR, G_COMP, G_EXPR, T_close_par };
-	int r60[3] = { G_COMP,			T_gt, G_COMP_P_P };
-	int r61[3] = { G_COMP,			T_lt, G_COMP_P };
-	int r62[3] = { G_COMP,			T_eq, T_eq };
-	int r63[2] = { G_COMP_P,		T_null };
-	int r64[2] = { G_COMP_P,		T_eq };
-	int r65[2] = { G_COMP_P,		T_gt };
-	int r66[2] = { G_COMP_P_P,		T_null };
-	int r67[2] = { G_COMP_P_P,		T_eq };
-	
-	int r68[3] = { G_VAR,			G_ID, G_VAR_P};
-	int r69[2] = { G_VAR_P,			T_null};
-	int r70[4] = { G_VAR_P,			T_open_brac, G_EXPR, T_close_brac};
-
-	int r71[2] = { G_ID,			T_identifier };
-	int r72[3] = { G_DOUBLE,		G_DECIMAL, G_DOUBLE_P };
-	int r73[4] = { G_DOUBLE,		G_NUMBER, T_exp, G_NUMBER };
-	int r74[3] = { G_DOUBLE_P,		T_exp, G_NUMBER };
-	int r75[2] = { G_DOUBLE_P,		T_null };
-	int r76[4] = { G_DECIMAL,		G_NUMBER, T_dot, G_POSNUMBER };
-	int r77[2] = { G_NUMBER,		T_number };
-	int r78[3] = { G_NUMBER,		T_minus, T_number };
-	int r79[2] = { G_POSNUMBER,		T_number };
-	int r80[2] = { G_ANYNUM,		G_DOUBLE };
-	int r81[2] = { G_ANYNUM,		G_NUMBER };
-	int rxx[0];
+	int r04[10]= { G_FDEC,			T_def, G_TYPE, G_FNAME, T_open_par, G_PARAMS, T_close_par, G_DECLARATIONS, G_STATEMENT_SEQ, T_fed };
+	int r05[2] = { G_PARAMS,		G_TYPE, G_VAR, G_PARAM_OPT };
+	int r06[2] = { G_PARAMS,		T_null };
+	int r07[2] = { G_PARAM_OPT,		T_comma, G_PARAMS };
+	int r08[2] = { G_PARAM_OPT,		T_null };
+	int r09[2] = { G_FNAME, G_ID };
+	int r00[2] = { G_DECLARATIONS, G_DECL, T_comma, G_DECLARATIONS };
+	int r11[2] = { G_DECLARATIONS, T_null };
+	int r12[2] = { G_DECL, G_TYPE, G_VARLIST };
+	int r13[2] = { G_TYPE, T_kw_int };
+	int r14[2] = { G_TYPE, T_kw_double };
+	int r15[2] = { G_VARLIST, G_VAR, G_VARLIST_P };
+	int r16[2] = { G_VARLIST_P, T_comma, G_VARLIST };
+	int r17[2] = { G_VARLIST_P, T_null };
+	int r18[2] = { G_STATEMENT_SEQ, T_semicolon, G_STATEMENT_SEQ };
+	int r19[2] = { G_STATEMENT_SEQ, T_null };
+	int r20[2] = { G_STATEMENT, G_VAR, T_eq, G_EXPR };
+	int r21[2] = { G_STATEMENT, T_if, G_EXPR, T_then, G_STATEMENT_SEQ, G_STREPLC_P, T_fi };
+	int r22[2] = { G_STATEMENT, T_while, G_EXPR, T_do, G_STATEMENT_SEQ, T_od };
+	int r23[2] = { G_STATEMENT, T_print, G_EXPR };
+	int r24[2] = { G_STATEMENT, T_return, G_EXPR };
+	int r25[2] = { G_STATEMENT, T_null };
+	int r26[2] = { G_STREPLC_P, T_else, G_STATEMENT_SEQ };
+	int r27[2] = { G_STREPLC_P, T_null };
+	int r28[2] = { G_EXPR, G_TERM, G_EXPR_P };
+	int r29[2] = { G_EXPR_P, T_plus, G_TERM, G_EXPR_P };
+	int r30[2] = { G_EXPR_P, T_minus, G_TERM, G_EXPR_P};
+	int r31[2] = { G_EXPR_P, T_or, G_TERM, G_EXPR_P};
+	int r32[2] = { G_EXPR_P, T_null };
+	int r33[2] = { G_TERM, G_FACTOR, G_TERM_P };
+	int r34[2] = { G_TERM_P, T_star, G_FACTOR, G_TERM_P };
+	int r35[2] = { G_TERM_P, T_slash, G_FACTOR, G_TERM_P };
+	int r36[2] = { G_TERM_P, T_mod, G_FACTOR, G_TERM_P };
+	int r37[2] = { G_TERM_P, T_and, G_FACTOR, G_TERM_P };
+	int r38[2] = { G_TERM_P, T_null };
+	int r39[2] = { G_FACTOR, G_ID, G_FUNCOPTS };
+	int r40[2] = { G_FACTOR, G_NUMBER };
+	int r41[2] = { G_FACTOR, T_open_par, G_EXPR, T_close_par };
+	int r42[2] = { G_FUNCOPTS, T_open_par, G_EXPRSEQ, T_close_par };
+	int r43[2] = { G_FUNCOPTS, T_null };
+	int r44[2] = { G_EXPRSEQ, G_EXPOR, G_EXPRSEQ_P };
+	int r45[2] = { G_EXPRSEQ, T_null };
+	int r46[2] = { G_EXPRSEQ_P, T_comma, G_EXPRSEQ };
+	int r47[2] = { G_EXPRSEQ_P, T_null };
+	int r48[2] = { G_COMP, T_gt, G_COMP_P_P };
+	int r49[2] = { G_COMP, T_lt, G_COMP_P };
+	int r50[2] = { G_COMP, T_eq, T_eq };
+	int r51[2] = { G_COMP_P, T_null };
+	int r52[2] = { G_COMP_P, T_eq };
+	int r53[2] = { G_COMP_P, T_gt };
+	int r54[2] = { G_COMP_P_P, T_null };
+	int r55[2] = { G_COMP_P_P, T_eq };
+	int r56[2] = { G_VAR, G_ID, G_VAR_P };
+	int r57[2] = { G_VAR_P, T_null };
+	int r58[2] = { G_ID, T_identifier };
+	int r59[2] = { G_NUMBER, G_INT, G_DECIMAL };
+	int r60[2] = { G_DECIMAL, T_dot, G_INT, G_EXOPT };
+	int r61[2] = { G_DECIMAL, T_null };
+	int r62[2] = { G_EXOPT, T_exp, G_NUMBER };
+	int r63[2] = { G_EXOPT, T_null };
+	int r64[2] = { G_INT, T_number };
+	int r65[2] = { G_INT, T_minus, T_number };
+	int r6xx[1] = { 0 };
 
 
 	const int* table[NUM_NONTERIMNALS][NUM_TERMINALS] =
@@ -189,31 +162,42 @@ public:
 	}
 
 	int parse() {
-		// std::cout << "implement this\n";
-		Token test(T_temp, "testvalue");
-		// While ....
-		if (test.token_type == t_stack[t_stack.capacity()].token_type )  {
-			// Matched symbols
-			t_stack.pop_back();
-		}
-		else {
-			Rule cur = table.getRule( t_stack[t_stack.capacity()].token_type, test.token_type); 
-			t_stack.pop_back();
-			addRule(cur);
+		t_stack.push_back(Token(T_dollar, ""));
+
+		// While we still have tokens left...
+		// if current token matches top of stack -> pop 
+		// else get the rule  from table[stack.top()][current_literal]
+		// then pop the top non literal and replace it with the rule
+		for (auto it = tokens->begin(); it != tokens->end(); ++it) {
+			if (it->token_type == t_stack[t_stack.size()].token_type )  {
+				// Matched symbols
+				t_stack.pop_back();
+			}
+			else {
+				Rule cur = table.getRule( t_stack[t_stack.size()].token_type, it->token_type); 
+
+				t_stack.pop_back(); // I think every pop should add the next rule as the children 
+						// of that node on the tree? We need to build the tree bottom up
+				addRule(cur); 
+			}
 		}
 		
 		return 0;
 	}
 
 	int addRule(Rule rule) {
-		// Pushes the elemnts of a rule on the stack
+		// Pushes the elements of a rule on the stack
 		// if rule_size is 0 do nothing
 		// i stops at 1 because 0 is the first rule 0 -> 1 2 3 ...
 		// push in reverse order
 		if (rule.size <= 1) {
-			return 0;
+			return 1;
 		}
+		// need to handle null (push nothing?)
 		for (int i = rule.size - 1; i > 1; i--) {
+			if (rule.data[i] == T_null) {
+				return 2;
+			}
 			Token nonlit(rule.data[i], "");
 			t_stack.push_back(nonlit);	
 		}

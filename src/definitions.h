@@ -60,19 +60,16 @@ enum TokenType {
 enum NonTerminal {
 	G_PROGRAM = NUM_TOKEN_TYPES, // Start at the end of TokenType so we can use both together
 	G_FDECLS,
-	G_FDECLS_P,
 	G_FDEC,			// Function declaration // def int func(int x, double y) body fed
 	G_PARAMS,		// Paramters of function // (int x, double y) 
-	G_PARAMS_P,
+	G_PARAM_OPT,
 	G_FNAME,		// Defined name // x 
 	G_DECLARATIONS,
-	G_DECLARATIONS_P,
 	G_DECL,			// Variable declaration // int x, y;
 	G_TYPE,			// int // double
 	G_VARLIST,
 	G_VARLIST_P,
 	G_STATEMENT_SEQ,	
-	G_STATEMENT_SEQ_P,
 	G_STATEMENT,		// x = y // if .. // while ... // print // return // null
 	G_STREPLC_P,
 	G_EXPR,			// binary operations // a + b // a - b
@@ -80,26 +77,19 @@ enum NonTerminal {
 	G_TERM,			// binary operations // a * b // a / b // a % b
 	G_TERM_P,
 	G_FACTOR,		// thing in operation 
+	G_FUNCOPTS,
 	G_EXPRSEQ,
 	G_EXPRSEQ_P,
-	G_BEXPR,		// Boolean expression // x and y // x or y // not x
-	G_BEXPR_P,
-	G_BTERM,
-	G_BTERM_P,
-	G_BFACTOR,
-	G_BFACTOR_P,
 	G_COMP,			// Comparison // x 
 	G_COMP_P,
 	G_COMP_P_P,
 	G_VAR,			// Variable  // x
 	G_VAR_P,		// Array     // ..[expr]
 	G_ID,			// Identifier
-	G_ANYNUM,		// double or int
-	G_DOUBLE,		// double
-	G_DOUBLE_P,
-	G_DECIMAL,
-	G_NUMBER,		// int
-	G_POSNUMBER
+	G_NUMBER,
+	G_DECIMAL,		// if this exists a number is type double
+	G_EXOPT,		// exponential in double
+	G_INT
 };
 
 enum States { 
