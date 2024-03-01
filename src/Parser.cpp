@@ -36,7 +36,7 @@ public:
 	int r07[3] = { G_PARAM_OPT,		T_comma, G_PARAMS };
 	int r08[2] = { G_PARAM_OPT,		T_null };
 	int r09[2] = { G_FNAME,			G_ID };
-	int r00[4] = { G_DECLARATIONS,		 G_DECL, T_comma, G_DECLARATIONS };
+	int r10[4] = { G_DECLARATIONS,		 G_DECL, T_comma, G_DECLARATIONS };
 	int r11[2] = { G_DECLARATIONS,		 T_null };
 	int r12[3] = { G_DECL,			 G_TYPE, G_VARLIST };
 	int r13[2] = { G_TYPE,			 T_kw_int };
@@ -84,57 +84,89 @@ public:
 	int r55[2] = { G_COMP_P_P,		T_eq };
 	int r56[3] = { G_VAR,			 G_ID, G_VAR_P };
 	int r57[2] = { G_VAR_P,			T_null };
-	int r58[2] = { G_ID,			 T_identifier };
-	int r59[3] = { G_NUMBER,		 G_INT, G_DECIMAL };
-	int r60[4] = { G_DECIMAL,		 T_dot, G_INT, G_EXOPT };
-	int r61[2] = { G_DECIMAL,		 T_null };
-	int r62[3] = { G_EXOPT,			 T_exp, G_NUMBER };
-	int r63[2] = { G_EXOPT,			 T_null };
-	int r64[2] = { G_INT,			 T_number };
-	int r65[3] = { G_INT,			 T_minus, T_number };
+	int r58[4] = { G_VAR_P,			T_open_brac, G_EXPR, T_close_brac};
+	int r59[2] = { G_ID,			 T_identifier };
+	int r60[3] = { G_NUMBER,		 G_INT, G_DECIMAL };
+	int r61[4] = { G_DECIMAL,		 T_dot, G_INT, G_EXOPT };
+	int r62[2] = { G_DECIMAL,		 T_null };
+	int r63[3] = { G_EXOPT,			 T_exp, G_NUMBER };
+	int r64[2] = { G_EXOPT,			 T_null };
+	int r65[2] = { G_INT,			 T_number };
+	int r66[3] = { G_INT,			 T_minus, T_number };
 	int r__[1] = { 0 };
 
 
-	const int* table[NUM_NONTERIMNALS][NUM_TERMINALS] =
+	const int* table[NUM_NONTERIMNALS][34] =
 	{
-	//	  .    ;   def   (    )    fed   ,   int  dbl  =    if  then  fi  whl   do   od   prt  ret  else  +   -   or    *     /    %   and  >     <   >    [    ]    id   exp  num  $ 
-		{r01, r01, r01, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r03, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r11, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r19, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r61, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__}
+	//	  .    ;   def   (    )    fed   ,   int  dbl  =    if  then  fi  whl   do   od   prt  ret  else  +   -   or    *     /    %   and  >     <   [    ]    id   exp  num  $ 
+		{r01, r01, r01, r__, r__, r__, r__, r01, r01, r__, r01, r__, r__, r01, r__, r__, r01, r01, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r01, r__, r__, r01},
+		{r03, r03, r02, r__, r__, r__, r__, r03, r03, r__, r03, r__, r__, r03, r__, r__, r03, r03, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r03, r__, r__, r03},
+		{r__, r__, r04, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r11},
+		{r__, r__, r__, r__, r06, r__, r__, r05, r05, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
+		{r__, r__, r__, r__, r08, r__, r07, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
+		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r09, r__, r__, r__},
+		{r11, r11, r__, r__, r__, r11, r__, r10, r10, r__, r11, r__, r__, r11, r__, r__, r11, r11, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r11, r__, r__, r__},
+		{r__, r__, r__, r__, r__, r__, r__, r12, r12, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
+		{r__, r__, r__, r__, r__, r__, r__, r13, r14, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
+		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r15, r__, r__, r__},
+		{r__, r17, r__, r__, r__, r__, r16, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
+		{r19, r19, r__, r__, r__, r19, r__, r__, r__, r__, r18, r__, r19, r18, r__, r19, r18, r18, r18, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r18, r__, r__, r__},
+		{r__, r25, r__, r__, r__, r__, r__, r__, r__, r__, r21, r__, r__, r22, r__, r__, r23, r24, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r20, r__, r__, r__},
+		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r27, r__, r__, r__, r__, r__, r26, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
+		{r__, r__, r__, r28, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r28, r__, r__, r__, r__, r__, r__, r__, r__, r__, r28, r__, r28, r__},
+		{r__, r32, r__, r__, r32, r__, r32, r__, r__, r__, r__, r32, r__, r__, r32, r__, r__, r__, r__, r29, r30, r31, r__, r__, r__, r__, r__, r__, r__, r32, r__, r__, r__, r__},
+		{r__, r__, r__, r33, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r33, r__, r__, r__, r__, r__, r__, r__, r__, r__, r33, r__, r33, r__},
+		{r__, r38, r__, r__, r38, r__, r38, r__, r__, r__, r__, r38, r__, r__, r38, r__, r__, r__, r__, r38, r38, r38, r34, r35, r36, r37, r__, r__, r__, r38, r__, r__, r__, r__},
+		{r__, r__, r__, r41, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r40, r__, r__, r__, r__, r__, r__, r__, r__, r__, r39, r__, r40, r__},
+		{r__, r43, r__, r42, r43, r__, r43, r__, r__, r__, r__, r43, r__, r__, r43, r__, r__, r__, r__, r43, r43, r43, r43, r43, r43, r43, r__, r__, r__, r43, r__, r__, r__, r__},
+		{r__, r__, r__, r44, r45, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r44, r__, r__, r__, r__, r__, r__, r__, r__, r__, r44, r__, r44, r__},
+		{r__, r__, r__, r__, r47, r__, r46, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
+		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r50, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r48, r49, r__, r__, r__, r__, r__, r__},
+		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r52, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r53, r__, r__, r__, r__, r__, r__, r__},
+		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r55, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__},
+		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r56, r__, r__, r__},
+		{r__, r57, r__, r__, r57, r__, r57, r__, r__, r57, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r58, r__, r__, r__, r__, r__},
+		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r59, r__, r__, r__},
+		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r60, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r60, r__},
+		{r61, r62, r__, r__, r62, r__, r62, r__, r__, r__, r__, r62, r__, r__, r62, r__, r__, r__, r__, r62, r62, r62, r62, r62, r62, r62, r__, r__, r__, r62, r__, r__, r__, r__},
+		{r__, r64, r__, r__, r64, r__, r64, r__, r__, r__, r__, r64, r__, r__, r64, r__, r__, r__, r__, r64, r64, r64, r64, r64, r64, r64, r__, r__, r__, r64, r__, r63, r__, r__},
+		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r66, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r56, r__}
 	};
 
-	const int table_sizes[NUM_NONTERIMNALS][NUM_TERMINALS] =
+	const int table_sizes[NUM_NONTERIMNALS][34] =
 	{
-		//{ARR_SIZE(r3), ARR_SIZE(r5)},
+		{A_S(r01), A_S(r01), A_S(r01), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r01), A_S(r01), A_S(r__), A_S(r01), A_S(r__), A_S(r__), A_S(r01), A_S(r__), A_S(r__), A_S(r01), A_S(r01), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r01), A_S(r__), A_S(r__), A_S(r01)},
+		{A_S(r03), A_S(r03), A_S(r02), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r03), A_S(r03), A_S(r__), A_S(r03), A_S(r__), A_S(r__), A_S(r03), A_S(r__), A_S(r__), A_S(r03), A_S(r03), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r03), A_S(r__), A_S(r__), A_S(r03)},
+		{A_S(r__), A_S(r__), A_S(r04), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r11)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r06), A_S(r__), A_S(r__), A_S(r05), A_S(r05), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r08), A_S(r__), A_S(r07), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r09), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r11), A_S(r11), A_S(r__), A_S(r__), A_S(r__), A_S(r11), A_S(r__), A_S(r10), A_S(r10), A_S(r__), A_S(r11), A_S(r__), A_S(r__), A_S(r11), A_S(r__), A_S(r__), A_S(r11), A_S(r11), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r11), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r12), A_S(r12), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r13), A_S(r14), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r15), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r17), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r16), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r19), A_S(r19), A_S(r__), A_S(r__), A_S(r__), A_S(r19), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r18), A_S(r__), A_S(r19), A_S(r18), A_S(r__), A_S(r19), A_S(r18), A_S(r18), A_S(r18), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r18), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r25), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r21), A_S(r__), A_S(r__), A_S(r22), A_S(r__), A_S(r__), A_S(r23), A_S(r24), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r20), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r27), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r26), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r28), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r28), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r28), A_S(r__), A_S(r28), A_S(r__)},
+		{A_S(r__), A_S(r32), A_S(r__), A_S(r__), A_S(r32), A_S(r__), A_S(r32), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r32), A_S(r__), A_S(r__), A_S(r32), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r29), A_S(r30), A_S(r31), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r32), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r33), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r33), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r33), A_S(r__), A_S(r33), A_S(r__)},
+		{A_S(r__), A_S(r38), A_S(r__), A_S(r__), A_S(r38), A_S(r__), A_S(r38), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r38), A_S(r__), A_S(r__), A_S(r38), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r38), A_S(r38), A_S(r38), A_S(r34), A_S(r35), A_S(r36), A_S(r37), A_S(r__), A_S(r__), A_S(r__), A_S(r38), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r41), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r40), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r39), A_S(r__), A_S(r40), A_S(r__)},
+		{A_S(r__), A_S(r43), A_S(r__), A_S(r42), A_S(r43), A_S(r__), A_S(r43), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r43), A_S(r__), A_S(r__), A_S(r43), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r43), A_S(r43), A_S(r43), A_S(r43), A_S(r43), A_S(r43), A_S(r43), A_S(r__), A_S(r__), A_S(r__), A_S(r43), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r44), A_S(r45), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r44), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r44), A_S(r__), A_S(r44), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r47), A_S(r__), A_S(r46), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r50), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r48), A_S(r49), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r52), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r53), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r55), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r56), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r57), A_S(r__), A_S(r__), A_S(r57), A_S(r__), A_S(r57), A_S(r__), A_S(r__), A_S(r57), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r58), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r59), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r60), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r60), A_S(r__)},
+		{A_S(r61), A_S(r62), A_S(r__), A_S(r__), A_S(r62), A_S(r__), A_S(r62), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r62), A_S(r__), A_S(r__), A_S(r62), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r62), A_S(r62), A_S(r62), A_S(r62), A_S(r62), A_S(r62), A_S(r62), A_S(r__), A_S(r__), A_S(r__), A_S(r62), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r64), A_S(r__), A_S(r__), A_S(r64), A_S(r__), A_S(r64), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r64), A_S(r__), A_S(r__), A_S(r64), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r64), A_S(r64), A_S(r64), A_S(r64), A_S(r64), A_S(r64), A_S(r64), A_S(r__), A_S(r__), A_S(r__), A_S(r64), A_S(r__), A_S(r63), A_S(r__), A_S(r__)},
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r66), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r56), A_S(r__)}
 	};
 
 	const Rule getRule(int i, int j) {
@@ -160,10 +192,18 @@ public:
 		// if current token matches top of stack -> pop 
 		// else get the rule  from table[stack.top()][current_literal]
 		// then pop the top non literal and replace it with the rule
+		
 		for (auto it = tokens->begin(); it != tokens->end(); ++it) {
-			if (it->token_type == t_stack[t_stack.size()].token_type )  {
-				// Matched symbols
-				t_stack.pop_back();
+			int top_type = t_stack[t_stack.size()].token_type;
+			if ( top_type < NUM_TERMINALS || top_type == T_dollar )  { //top_type is nonterm or dollar
+				if (top_type == it->token_type) {
+					// Matches symbols
+					t_stack.pop_back();
+				}
+				else {
+					// ERROR
+				}
+
 			}
 			else {
 				Rule cur = table.getRule( t_stack[t_stack.size()].token_type, it->token_type); 

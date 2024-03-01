@@ -4,6 +4,7 @@
 #include <string>
 
 #define ARR_SIZE(X) (int)(sizeof(X) / sizeof(X[0]))
+#define A_S(X)	ARR_SIZE(X)
 
 #define NUM_TOKEN_TYPES		T_null + 1
 #define NUM_TERMINALS		NUM_TOKEN_TYPES
