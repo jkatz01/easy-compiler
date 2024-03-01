@@ -35,7 +35,7 @@ public:
 	int r07[3] = { G_PARAM_OPT,		T_comma, G_PARAMS };
 	int r08[2] = { G_PARAM_OPT,		T_null };
 	int r09[2] = { G_FNAME,			G_ID };
-	int r10[4] = { G_DECLARATIONS,		G_DECL, T_comma, G_DECLARATIONS };
+	int r10[4] = { G_DECLARATIONS,		G_DECL, T_semicolon, G_DECLARATIONS };
 	int r11[2] = { G_DECLARATIONS,		T_null };
 	int r12[3] = { G_DECL,			G_TYPE, G_VARLIST };
 	int r13[2] = { G_TYPE,			T_kw_int };
@@ -43,7 +43,7 @@ public:
 	int r15[3] = { G_VARLIST,		G_VAR, G_VARLIST_P };
 	int r16[3] = { G_VARLIST_P,		T_comma, G_VARLIST };
 	int r17[2] = { G_VARLIST_P,		T_null };
-	int r18[3] = { G_STATEMENT_SEQ,		T_semicolon, G_STATEMENT_SEQ };
+	int r18[4] = { G_STATEMENT_SEQ,		G_STATEMENT, T_semicolon, G_STATEMENT_SEQ };
 	int r19[2] = { G_STATEMENT_SEQ,		T_null };
 	int r20[4] = { G_STATEMENT,		G_VAR, T_eq, G_EXPR };
 	int r21[7] = { G_STATEMENT,		T_if, G_EXPR, T_then, G_STATEMENT_SEQ, G_STREPLC_P, T_fi };
@@ -206,7 +206,7 @@ public:
 				if (top_type == it->token_type) {
 					// Matches symbols
 					t_stack.pop_back();
-					std::cout << "Popped\n";
+					//std::cout << "Popped\n";
 					it++;
 					// Advance
 				}
@@ -249,13 +249,13 @@ public:
 			//std::cout << "i: " << i << std::endl;
 			if (rule.data[i] == T_null) {
 				//t_stack.pop_back();
-				std::cout << "null" << std::endl;
+				//std::cout << "null" << std::endl;
 				return 2;
 			}
 			Token nonlit(rule.data[i], "");
 			t_stack.push_back(nonlit);	
 		}
-		std::cout << std::endl;
+		//std::cout << std::endl;
 		return 0;
 	}
 
@@ -263,7 +263,7 @@ public:
 	"T_dot","T_semicolon","T_def","T_open_par","T_close_par","T_fed","T_comma","T_kw_int",
 	"T_kw_double","T_eq","T_if","T_then","T_fi","T_while","T_do","T_od","T_print","T_return","T_else","T_plus",
 	"T_minus","T_or","T_star","T_slash","T_mod","T_and","T_gt","T_lt","T_open_brac","T_close_brac","T_identifier","T_exp","T_number",
-	"T_dollar","T_underscore","T_operator","T_keyword","T_not","T_int","T_double","T_temp","T_invalid","T_null",
+	"$","T_underscore","T_operator","T_keyword","T_not","T_int","T_double","T_temp","T_invalid","T_null",
 	"PROGRAM","FDECLS","FDEC","PARAMS","PARAM_OPT","FNAME","DECLARATIONS","DECL",
 	"TYPE","VARLIST","VARLIST_P","STATEMENT_SEQ","STATEMENT","STREPLC_P","EXPR","EXPR_P","TERM","TERM_P","FACTOR",
 	"FUNCOPTS","EXPRSEQ","EXPRSEQ_P","COMP","COMP_P","COMP_P_P","VAR","VAR_P","ID","NUMBER","DECIMAL","EXOPT","INT"
