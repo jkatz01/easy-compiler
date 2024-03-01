@@ -48,7 +48,6 @@ enum TokenType {
 	T_exp,
 	T_number,
 	T_dollar,
-
 	T_underscore,
 	T_operator,
 	T_keyword,

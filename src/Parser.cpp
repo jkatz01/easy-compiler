@@ -170,7 +170,7 @@ public:
 
 	const Rule getRule(int i, int j) {
 		const struct Rule rule = { table_sizes[i][j], table[i][j] };
-		std::cout << "getRule size: " << table_sizes[i][j] << std::endl;
+		//std::cout << "getRule size: " << table_sizes[i][j] << std::endl;
 		return rule;
 	}
 };
@@ -194,30 +194,43 @@ public:
 		// else get the rule  from table[stack.top()][current_literal]
 		// then pop the top non literal and replace it with the rule
 		
-		for (auto it = tokens->begin(); it != tokens->end(); ++it) {
+		//for (auto it = tokens->begin(); it != tokens->end(); ++it) {
+		int finished = 0;
+		auto it = tokens->begin();
+		while (it != tokens->end()) {
 			int top_type = t_stack.back().token_type;
-			std::cout << "Parsing\n";
+			//std::cout << "Parsing\n";
+			
+
 			if ( top_type < NUM_TERMINALS || top_type == T_dollar )  { //top_type is nonterm or dollar
 				if (top_type == it->token_type) {
 					// Matches symbols
 					t_stack.pop_back();
 					std::cout << "Popped\n";
+					it++;
+					// Advance
 				}
 				else {
 					// ERROR
-					std::cout << "Error: top_type = " << top_type << ";   found: " << it->token_type << std::endl;
+					std::cout << "Error: top_type = " << token_names[top_type] << ";   found: " << token_names[it->token_type] << std::endl;
+					return -1;
 				}
 
 			}
 			else {
 
 				Rule cur = table.getRule( top_type - FIRST_NONLITERAL, it->token_type);
-				std::cout << "Add rule\n";
+				//std::cout << "Add rule\n";
 				t_stack.pop_back(); // I think every pop should add the next rule as the children 
 						// of that node on the tree? We need to build the tree bottom up
-				std::cout << "Rule size: " << cur.size << std::endl;
+				//std::cout << "Rule size: " << cur.size << std::endl;
 				addRule(cur); 
 			}
+			for (Token i : t_stack) {
+				std::cout << token_names[i.token_type] << "  ";
+			}
+			std::cout << "\t\t\t val: " << token_names[it->token_type] << std::endl;
+			
 		}
 		
 		return 0;
@@ -231,15 +244,29 @@ public:
 		if (rule.size <= 1) {
 			return 1;
 		}
-		// need to handle null (push nothing?)
-		for (int i = rule.size - 1; i > 1; i--) {
+		// need to handle null (pop?)
+		for (int i = rule.size - 1; i >= 1; i--) {
+			//std::cout << "i: " << i << std::endl;
 			if (rule.data[i] == T_null) {
+				//t_stack.pop_back();
+				std::cout << "null" << std::endl;
 				return 2;
 			}
 			Token nonlit(rule.data[i], "");
 			t_stack.push_back(nonlit);	
 		}
+		std::cout << std::endl;
 		return 0;
 	}
+
+	const std::string token_names[NUM_TOKEN_TYPES + NUM_NONTERIMNALS] = {
+	"T_dot","T_semicolon","T_def","T_open_par","T_close_par","T_fed","T_comma","T_kw_int",
+	"T_kw_double","T_eq","T_if","T_then","T_fi","T_while","T_do","T_od","T_print","T_return","T_else","T_plus",
+	"T_minus","T_or","T_star","T_slash","T_mod","T_and","T_gt","T_lt","T_open_brac","T_close_brac","T_identifier","T_exp","T_number",
+	"T_dollar","T_underscore","T_operator","T_keyword","T_not","T_int","T_double","T_temp","T_invalid","T_null",
+	"PROGRAM","FDECLS","FDEC","PARAMS","PARAM_OPT","FNAME","DECLARATIONS","DECL",
+	"TYPE","VARLIST","VARLIST_P","STATEMENT_SEQ","STATEMENT","STREPLC_P","EXPR","EXPR_P","TERM","TERM_P","FACTOR",
+	"FUNCOPTS","EXPRSEQ","EXPRSEQ_P","COMP","COMP_P","COMP_P_P","VAR","VAR_P","ID","NUMBER","DECIMAL","EXOPT","INT"
+	};
 
 };
