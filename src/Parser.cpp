@@ -1,6 +1,7 @@
 #include "definitions.h"
 #include <iostream>
 #include <string>
+#include <fstream>
 
 class TokTree {
 public:
@@ -180,6 +181,7 @@ class Parser {
 public:
 	std::vector<Token> const* tokens;
 	std::vector<Token> t_stack;
+	
 	LLTable table;
 	Parser(std::vector<Token> const& token_list) {
 		tokens = &token_list;
@@ -188,6 +190,9 @@ public:
 	int parse() {
 		t_stack.push_back(Token(T_dollar, ""));
 		t_stack.push_back(Token(G_PROGRAM, ""));
+
+		std::ofstream error_file;
+		error_file.open("Parsing-Errors.txt", std::ios::out | std::ios::trunc);
 
 		// While we still have tokens left...
 		// if current token matches top of stack -> pop 
@@ -201,7 +206,6 @@ public:
 			int top_type = t_stack.back().token_type;
 			//std::cout << "Parsing\n";
 			
-
 			if ( top_type < NUM_TERMINALS || top_type == T_dollar )  { //top_type is nonterm or dollar
 				if (top_type == it->token_type) {
 					// Matches symbols
@@ -212,8 +216,12 @@ public:
 				}
 				else {
 					// ERROR
-					std::cout << "Error: expected = " << token_names[top_type] << ";   found: " << token_names[it->token_type] << std::endl;
-					return -1;
+					std::cout << "Error: expected: " << token_names[top_type] << "\t found: " << token_names[it->token_type] << std::endl;
+					error_file << "Error: expected: " << token_names[top_type] << "\t found: " << token_names[it->token_type] << std::endl;
+					// Handle errors by deleting
+					t_stack.pop_back();
+					it++;
+					//return -1;
 				}
 
 			}
@@ -221,8 +229,7 @@ public:
 
 				Rule cur = table.getRule( top_type - FIRST_NONLITERAL, it->token_type);
 				//std::cout << "Add rule\n";
-				t_stack.pop_back(); // I think every pop should add the next rule as the children 
-						// of that node on the tree? We need to build the tree bottom up
+				t_stack.pop_back(); // I think every pop makes a node, with the rule that replaced it as the children
 				//std::cout << "Rule size: " << cur.size << std::endl;
 				addRule(cur); 
 			}
@@ -232,7 +239,7 @@ public:
 			std::cout << "\t\t\t val: " << token_names[it->token_type] << std::endl;
 			
 		}
-		
+		std::cout << "Finished parsing successfully" << std::endl;
 		return 0;
 	}
 
