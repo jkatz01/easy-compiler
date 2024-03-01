@@ -129,7 +129,7 @@ public:
 		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r60, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r60, r__},
 		{r61, r62, r__, r__, r62, r__, r62, r__, r__, r__, r__, r62, r__, r__, r62, r__, r__, r__, r__, r62, r62, r62, r62, r62, r62, r62, r__, r__, r__, r62, r__, r__, r__, r__},
 		{r__, r64, r__, r__, r64, r__, r64, r__, r__, r__, r__, r64, r__, r__, r64, r__, r__, r__, r__, r64, r64, r64, r64, r64, r64, r64, r__, r__, r__, r64, r__, r63, r__, r__},
-		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r66, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r56, r__}
+		{r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r66, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r__, r65, r__}
 	};
 
 	const int table_sizes[NUM_NONTERIMNALS][34] =
@@ -165,7 +165,7 @@ public:
 		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r60), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r60), A_S(r__)},
 		{A_S(r61), A_S(r62), A_S(r__), A_S(r__), A_S(r62), A_S(r__), A_S(r62), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r62), A_S(r__), A_S(r__), A_S(r62), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r62), A_S(r62), A_S(r62), A_S(r62), A_S(r62), A_S(r62), A_S(r62), A_S(r__), A_S(r__), A_S(r__), A_S(r62), A_S(r__), A_S(r__), A_S(r__), A_S(r__)},
 		{A_S(r__), A_S(r64), A_S(r__), A_S(r__), A_S(r64), A_S(r__), A_S(r64), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r64), A_S(r__), A_S(r__), A_S(r64), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r64), A_S(r64), A_S(r64), A_S(r64), A_S(r64), A_S(r64), A_S(r64), A_S(r__), A_S(r__), A_S(r__), A_S(r64), A_S(r__), A_S(r63), A_S(r__), A_S(r__)},
-		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r66), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r56), A_S(r__)}
+		{A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r66), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r__), A_S(r65), A_S(r__)}
 	};
 
 	const Rule getRule(int i, int j) {
@@ -212,7 +212,7 @@ public:
 				}
 				else {
 					// ERROR
-					std::cout << "Error: top_type = " << token_names[top_type] << ";   found: " << token_names[it->token_type] << std::endl;
+					std::cout << "Error: expected = " << token_names[top_type] << ";   found: " << token_names[it->token_type] << std::endl;
 					return -1;
 				}
 
