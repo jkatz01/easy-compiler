@@ -11,6 +11,7 @@
 #define NUM_NONTERIMNALS	G_INT - T_null
 #define PAGE_SIZE		4096
 #define TAB_SIZE		8
+#define FIRST_NONLITERAL	G_PROGRAM
 
 enum TokenType {
 	T_dot,
@@ -138,6 +139,10 @@ struct Token {
 };
 
 struct Rule {
-	const int size;
+	int size;
 	const int* data;
+	Rule(int rsize, const int* rdata) {
+		size = rsize;
+		data = rdata;
+	}
 };

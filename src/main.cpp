@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
 	;
-	Parser parsing(lexical.v_tokens);
-
+	Parser parser(lexical.v_tokens);
+	parser.parse();
 	return 0;
 }

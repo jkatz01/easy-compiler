@@ -25,7 +25,6 @@ public:
 
 class LLTable {
 public:
-
 	// First const int in rule is the left hand side
 	int r01[5] = { G_PROGRAM,		G_FDECLS, G_DECLARATIONS, G_STATEMENT_SEQ, T_dot };
 	int r02[4] = { G_FDECLS,		G_FDEC, T_semicolon, G_FDECLS };
@@ -36,63 +35,63 @@ public:
 	int r07[3] = { G_PARAM_OPT,		T_comma, G_PARAMS };
 	int r08[2] = { G_PARAM_OPT,		T_null };
 	int r09[2] = { G_FNAME,			G_ID };
-	int r10[4] = { G_DECLARATIONS,		 G_DECL, T_comma, G_DECLARATIONS };
-	int r11[2] = { G_DECLARATIONS,		 T_null };
-	int r12[3] = { G_DECL,			 G_TYPE, G_VARLIST };
-	int r13[2] = { G_TYPE,			 T_kw_int };
-	int r14[2] = { G_TYPE,			 T_kw_double };
-	int r15[3] = { G_VARLIST,		 G_VAR, G_VARLIST_P };
-	int r16[3] = { G_VARLIST_P,		 T_comma, G_VARLIST };
+	int r10[4] = { G_DECLARATIONS,		G_DECL, T_comma, G_DECLARATIONS };
+	int r11[2] = { G_DECLARATIONS,		T_null };
+	int r12[3] = { G_DECL,			G_TYPE, G_VARLIST };
+	int r13[2] = { G_TYPE,			T_kw_int };
+	int r14[2] = { G_TYPE,			T_kw_double };
+	int r15[3] = { G_VARLIST,		G_VAR, G_VARLIST_P };
+	int r16[3] = { G_VARLIST_P,		T_comma, G_VARLIST };
 	int r17[2] = { G_VARLIST_P,		T_null };
-	int r18[3] = { G_STATEMENT_SEQ,		 T_semicolon, G_STATEMENT_SEQ };
-	int r19[2] = { G_STATEMENT_SEQ,		 T_null };
-	int r20[4] = { G_STATEMENT,		 G_VAR, T_eq, G_EXPR };
-	int r21[7] = { G_STATEMENT,		 T_if, G_EXPR, T_then, G_STATEMENT_SEQ, G_STREPLC_P, T_fi };
-	int r22[6] = { G_STATEMENT,		 T_while, G_EXPR, T_do, G_STATEMENT_SEQ, T_od };
-	int r23[3] = { G_STATEMENT,		 T_print, G_EXPR };
+	int r18[3] = { G_STATEMENT_SEQ,		T_semicolon, G_STATEMENT_SEQ };
+	int r19[2] = { G_STATEMENT_SEQ,		T_null };
+	int r20[4] = { G_STATEMENT,		G_VAR, T_eq, G_EXPR };
+	int r21[7] = { G_STATEMENT,		T_if, G_EXPR, T_then, G_STATEMENT_SEQ, G_STREPLC_P, T_fi };
+	int r22[6] = { G_STATEMENT,		T_while, G_EXPR, T_do, G_STATEMENT_SEQ, T_od };
+	int r23[3] = { G_STATEMENT,		T_print, G_EXPR };
 	int r24[3] = { G_STATEMENT,		T_return, G_EXPR };
-	int r25[2] = { G_STATEMENT,		 T_null };
-	int r26[3] = { G_STREPLC_P,		 T_else, G_STATEMENT_SEQ };
+	int r25[2] = { G_STATEMENT,		T_null };
+	int r26[3] = { G_STREPLC_P,		T_else, G_STATEMENT_SEQ };
 	int r27[2] = { G_STREPLC_P,		T_null };
 	int r28[3] = { G_EXPR,			G_TERM, G_EXPR_P };
-	int r29[4] = { G_EXPR_P,		 T_plus, G_TERM, G_EXPR_P };
-	int r30[4] = { G_EXPR_P,		 T_minus, G_TERM, G_EXPR_P};
+	int r29[4] = { G_EXPR_P,		T_plus, G_TERM, G_EXPR_P };
+	int r30[4] = { G_EXPR_P,		T_minus, G_TERM, G_EXPR_P};
 	int r31[4] = { G_EXPR_P,		T_or, G_TERM, G_EXPR_P};
-	int r32[2] = { G_EXPR_P,		 T_null };
+	int r32[2] = { G_EXPR_P,		T_null };
 	int r33[3] = { G_TERM,			G_FACTOR, G_TERM_P };
 	int r34[4] = { G_TERM_P,		T_star, G_FACTOR, G_TERM_P };
 	int r35[4] = { G_TERM_P,		T_slash, G_FACTOR, G_TERM_P };
 	int r36[4] = { G_TERM_P,		T_mod, G_FACTOR, G_TERM_P };
 	int r37[4] = { G_TERM_P,		T_and, G_FACTOR, G_TERM_P };
-	int r38[2] = { G_TERM_P,		 T_null };
+	int r38[2] = { G_TERM_P,		T_null };
 	int r39[3] = { G_FACTOR,		G_ID, G_FUNCOPTS };
-	int r40[2] = { G_FACTOR,		 G_NUMBER };
+	int r40[2] = { G_FACTOR,		G_NUMBER };
 	int r41[4] = { G_FACTOR,		T_open_par, G_EXPR, T_close_par };
-	int r42[4] = { G_FUNCOPTS,		 T_open_par, G_EXPRSEQ, T_close_par };
-	int r43[2] = { G_FUNCOPTS,		 T_null };
-	int r44[3] = { G_EXPRSEQ,		 G_EXPR, G_EXPRSEQ_P };
-	int r45[2] = { G_EXPRSEQ,		 T_null };
-	int r46[3] = { G_EXPRSEQ_P,		 T_comma, G_EXPRSEQ };
+	int r42[4] = { G_FUNCOPTS,		T_open_par, G_EXPRSEQ, T_close_par };
+	int r43[2] = { G_FUNCOPTS,		T_null };
+	int r44[3] = { G_EXPRSEQ,		G_EXPR, G_EXPRSEQ_P };
+	int r45[2] = { G_EXPRSEQ,		T_null };
+	int r46[3] = { G_EXPRSEQ_P,		T_comma, G_EXPRSEQ };
 	int r47[2] = { G_EXPRSEQ_P,		T_null };
-	int r48[3] = { G_COMP,			 T_gt, G_COMP_P_P };
-	int r49[3] = { G_COMP,			 T_lt, G_COMP_P };
-	int r50[3] = { G_COMP,			 T_eq, T_eq };
-	int r51[2] = { G_COMP_P,		 T_null };
-	int r52[2] = { G_COMP_P,		 T_eq };
-	int r53[2] = { G_COMP_P,		 T_gt };
-	int r54[2] = { G_COMP_P_P,		 T_null };
+	int r48[3] = { G_COMP,			T_gt, G_COMP_P_P };
+	int r49[3] = { G_COMP,			T_lt, G_COMP_P };
+	int r50[3] = { G_COMP,			T_eq, T_eq };
+	int r51[2] = { G_COMP_P,		T_null };
+	int r52[2] = { G_COMP_P,		T_eq };
+	int r53[2] = { G_COMP_P,		T_gt };
+	int r54[2] = { G_COMP_P_P,		T_null };
 	int r55[2] = { G_COMP_P_P,		T_eq };
-	int r56[3] = { G_VAR,			 G_ID, G_VAR_P };
+	int r56[3] = { G_VAR,			G_ID, G_VAR_P };
 	int r57[2] = { G_VAR_P,			T_null };
 	int r58[4] = { G_VAR_P,			T_open_brac, G_EXPR, T_close_brac};
-	int r59[2] = { G_ID,			 T_identifier };
-	int r60[3] = { G_NUMBER,		 G_INT, G_DECIMAL };
-	int r61[4] = { G_DECIMAL,		 T_dot, G_INT, G_EXOPT };
-	int r62[2] = { G_DECIMAL,		 T_null };
-	int r63[3] = { G_EXOPT,			 T_exp, G_NUMBER };
-	int r64[2] = { G_EXOPT,			 T_null };
-	int r65[2] = { G_INT,			 T_number };
-	int r66[3] = { G_INT,			 T_minus, T_number };
+	int r59[2] = { G_ID,			T_identifier };
+	int r60[3] = { G_NUMBER,		G_INT, G_DECIMAL };
+	int r61[4] = { G_DECIMAL,		T_dot, G_INT, G_EXOPT };
+	int r62[2] = { G_DECIMAL,		T_null };
+	int r63[3] = { G_EXOPT,			T_exp, G_NUMBER };
+	int r64[2] = { G_EXOPT,			T_null };
+	int r65[2] = { G_INT,			T_number };
+	int r66[3] = { G_INT,			T_minus, T_number };
 	int r__[1] = { 0 };
 
 
@@ -171,6 +170,7 @@ public:
 
 	const Rule getRule(int i, int j) {
 		const struct Rule rule = { table_sizes[i][j], table[i][j] };
+		std::cout << "getRule size: " << table_sizes[i][j] << std::endl;
 		return rule;
 	}
 };
@@ -187,6 +187,7 @@ public:
 
 	int parse() {
 		t_stack.push_back(Token(T_dollar, ""));
+		t_stack.push_back(Token(G_PROGRAM, ""));
 
 		// While we still have tokens left...
 		// if current token matches top of stack -> pop 
@@ -194,22 +195,27 @@ public:
 		// then pop the top non literal and replace it with the rule
 		
 		for (auto it = tokens->begin(); it != tokens->end(); ++it) {
-			int top_type = t_stack[t_stack.size()].token_type;
+			int top_type = t_stack.back().token_type;
+			std::cout << "Parsing\n";
 			if ( top_type < NUM_TERMINALS || top_type == T_dollar )  { //top_type is nonterm or dollar
 				if (top_type == it->token_type) {
 					// Matches symbols
 					t_stack.pop_back();
+					std::cout << "Popped\n";
 				}
 				else {
 					// ERROR
+					std::cout << "Error: top_type = " << top_type << ";   found: " << it->token_type << std::endl;
 				}
 
 			}
 			else {
-				Rule cur = table.getRule( t_stack[t_stack.size()].token_type, it->token_type); 
 
+				Rule cur = table.getRule( top_type - FIRST_NONLITERAL, it->token_type);
+				std::cout << "Add rule\n";
 				t_stack.pop_back(); // I think every pop should add the next rule as the children 
 						// of that node on the tree? We need to build the tree bottom up
+				std::cout << "Rule size: " << cur.size << std::endl;
 				addRule(cur); 
 			}
 		}
