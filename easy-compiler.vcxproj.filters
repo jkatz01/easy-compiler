@@ -4,6 +4,7 @@
     <ClCompile Include="src\Lexer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Parser.cpp" />
+    <ClCompile Include="src\LLTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="tests\bad_file.txt" />
@@ -11,6 +12,7 @@
     <Text Include="..\cp471\P1\tests\example.txt" />
     <Text Include="grammar.txt" />
     <Text Include="grammar2.txt" />
+    <Text Include="src\grammar.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="tests\Test1.cp" />
@@ -25,6 +27,7 @@
     <None Include=".gitignore" />
     <None Include="README.md" />
     <None Include=".gitattributes" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\definitions.h" />

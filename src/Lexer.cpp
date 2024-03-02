@@ -137,7 +137,7 @@ public:
 			for (int j = 0; j <= tab_num; j++) {
 				output_file << "\t";
 			}
-			output_file << "-\t" << enum_names[i.token_type] << std::endl;
+			output_file << "-\t" << token_names[i.token_type] << std::endl;
 		}
 		return 0;
 	}
@@ -217,12 +217,6 @@ private:
 		{"not", T_not},
 		{"int", T_kw_int},
 		{"double", T_kw_double},
-	};
-	const std::string enum_names[NUM_TOKEN_TYPES] = { 
-	"T_dot","T_semicolon","T_def","T_open_par","T_close_par","T_fed","T_comma","T_kw_int",
-	"T_kw_double","T_eq","T_if","T_then","T_fi","T_while","T_do","T_od","T_print","T_return","T_else","T_plus",
-	"T_minus","T_or","T_star","T_slash","T_mod","T_and","T_gt","T_lt","T_open_brac","T_close_brac","T_identifier","T_exp","T_number",
-	"T_dollar","T_underscore","T_operator","T_keyword","T_not","T_int","T_double","T_temp","T_invalid","T_null"
 	};
 
 	/// <summary>
