@@ -16,10 +16,10 @@ int main(int argc, char* argv[]) {
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
-	;;
+	;
 	//Parser parser(lexical.v_tokens);
 	//parser.parse();
-
-	LLTable testTable;
+	;
+	LLTable testTable;;
 	return 0;
 }

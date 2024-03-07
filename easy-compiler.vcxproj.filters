@@ -13,6 +13,7 @@
     <Text Include="grammar.txt" />
     <Text Include="grammar2.txt" />
     <Text Include="src\grammar.txt" />
+    <Text Include="src\table.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="tests\Test1.cp" />
