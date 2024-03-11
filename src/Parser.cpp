@@ -27,23 +27,21 @@ public:
 		// else get the rule  from table[stack.top()][current_literal]
 		// then pop the top non literal and replace it with the rule
 		
-		//for (auto it = tokens->begin(); it != tokens->end(); ++it) {
-		int finished = 0;
-		auto it = tokens->begin();
-		while (it != tokens->end()) {
+		int it = 0;
+		while (it < tokens->size()) {
 			int top_type = t_stack.back().token_type;
 			//std::cout << "Parsing\n";
 			
 			if ( top_type < NUM_TERMINALS || top_type == T_dollar )  { //top_type is nonterm or dollar
-				if (top_type == it->token_type) {
+				if (top_type == tokens->at(it).token_type) {
 					// Matched symbols
 					t_stack.pop_back();
 					it++;
 				}
 				else {
 					// ERROR
-					std::cout << "Error: expected: " << token_names[top_type] << "\t found: " << token_names[it->token_type] << std::endl;
-					error_file << "Error: expected: " << token_names[top_type] << "\t found: " << token_names[it->token_type] << std::endl;
+					std::cout << "Error: expected: " << token_names[top_type] << "\t found: " << token_names[tokens->at(it).token_type] << std::endl;
+					error_file << "Error: expected: " << token_names[top_type] << "\t found: " << token_names[tokens->at(it).token_type] << std::endl;
 					// Handle errors by deleting
 					t_stack.pop_back(); // ????
 					it++; 
@@ -53,14 +51,14 @@ public:
 			}
 			else {
 
-				Rule cur = table.getRule( top_type - FIRST_NONLITERAL, it->token_type);
+				Rule cur = table.getRule( top_type - FIRST_NONLITERAL, tokens->at(it).token_type);
 				t_stack.pop_back(); // I think every pop makes a node, with the rule that replaced it as the children
 				addRule(cur); 
 			}
 			for (Token i : t_stack) {
 				std::cout << token_names[i.token_type] << "  ";
 			}
-			std::cout << "\t\t\t val: " << token_names[it->token_type] << std::endl;
+			if (it < tokens->size()) std::cout << "\t\t\t val: " << token_names[tokens->at(it).token_type] << std::endl;
 			
 		}
 		std::cout << "Finished parsing successfully" << std::endl;

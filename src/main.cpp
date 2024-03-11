@@ -14,11 +14,10 @@ int main(int argc, char* argv[]) {
 	int lex_err_count = lexical.generateTokens();
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
-	};;
+	}
+	;
+	Parser *parser = new Parser(lexical.v_tokens);
+	parser->parse();
 	
-	Parser parser(lexical.v_tokens);
-	parser.parse();
-	
-	//LLTable testTable;
 	return 0;
 }
