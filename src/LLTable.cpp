@@ -28,7 +28,7 @@ public:
 				Rule rule{};
 				std::istringstream line_stream(line);
 				auto token = std::string{};
-				//std::cout << line << "\n";
+				std::cout << rule_count + 1 << " ";
 				while (line_stream >> token) {
 					// Find enum for rule
 					std::cout << token << " ";
@@ -55,8 +55,6 @@ public:
 			std::cout << x.size << " ";
 		}
 		std::cout << std::endl;*/
-
-
 	}
 	void read_table(std::string in_file_name) {
 		std::ifstream in_file(in_file_name);
@@ -90,9 +88,8 @@ public:
 			std::cout << "failed to open file\n";
 		}
 	}
-	//Rule getRule(int i, int j) {
-	//	//Rule rule = { table_sizes[i][j], table[i][j] };
-	//	//std::cout << "getRule size: " << table_sizes[i][j] << std::endl;
-	//	return rule;
-	//}
+	Rule getRule(int i, int j) {
+		Rule rule = *table[i][j];
+		return rule;
+	}
 };

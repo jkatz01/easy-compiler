@@ -1,6 +1,5 @@
 #include "Lexer.cpp"
 #include "Parser.cpp"
-#include "LLTable.cpp"
 
 #include <iostream>
 
@@ -10,16 +9,16 @@ int main(int argc, char* argv[]) {
 		std::cout << "Incorrect number of arguments." << std::endl;
 		return EXIT_FAILURE;
 	}
-	;
+	
 	Lexer lexical(argv[1], "Tokens.txt", "Lexical-Errors.txt");
 	int lex_err_count = lexical.generateTokens();
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
-	}
-	;
-	//Parser parser(lexical.v_tokens);
-	//parser.parse();
-	;
-	LLTable testTable;;
+	};;
+	
+	Parser parser(lexical.v_tokens);
+	parser.parse();
+	
+	//LLTable testTable;
 	return 0;
 }

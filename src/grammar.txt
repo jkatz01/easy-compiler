@@ -18,17 +18,19 @@ G_VARLIST_P      T_null
 G_STATEMENT_SEQ      G_STATEMENT T_semicolon G_STATEMENT_SEQ
 G_STATEMENT_SEQ      T_null
 G_STATEMENT      G_VAR T_eq G_EXPR
-G_STATEMENT      T_if G_EXPR T_then G_STATEMENT_SEQ G_STREPLC_P T_fi
-G_STATEMENT      T_while G_EXPR T_do G_STATEMENT_SEQ T_od
-G_STATEMENT      T_print G_EXPR
-G_STATEMENT      T_return G_EXPR
+G_STATEMENT      T_if T_open_par G_EXPR T_close_par T_then G_STATEMENT_SEQ G_STREPLC_P T_fi
+G_STATEMENT      T_while T_open_par G_EXPR T_close_par T_do G_STATEMENT_SEQ T_od
+G_STATEMENT      T_print T_open_par G_EXPR T_close_par
+G_STATEMENT      T_return T_open_par G_EXPR T_close_par
 G_STATEMENT      T_null
 G_STREPLC_P      T_else G_STATEMENT_SEQ
 G_STREPLC_P      T_null
 G_EXPR         G_TERM G_EXPR_P
+G_EXPR	      T_not T_open_par G_EXPR T_close_par
 G_EXPR_P      T_plus G_TERM G_EXPR_P
 G_EXPR_P      T_minus G_TERM G_EXPR_P
 G_EXPR_P      T_or G_TERM G_EXPR_P
+G_EXPR_P      G_COMP G_TERM G_EXPR_P
 G_EXPR_P      T_null
 G_TERM         G_FACTOR G_TERM_P
 G_TERM_P      T_star G_FACTOR G_TERM_P
@@ -56,11 +58,11 @@ G_COMP_P_P      T_eq
 G_VAR         G_ID G_VAR_P
 G_VAR_P         T_null
 G_VAR_P         T_open_brac G_EXPR T_close_brac
-G_ID         T_id
+G_ID         T_identifier
 G_NUMBER      G_INT G_DECIMAL
 G_DECIMAL      T_dot G_INT G_EXOPT
 G_DECIMAL      T_null
 G_EXOPT         T_exp G_NUMBER
 G_EXOPT         T_null
-G_INT         T_num
-G_INT         T_minus T_num
+G_INT         T_number
+G_INT         T_minus T_number
