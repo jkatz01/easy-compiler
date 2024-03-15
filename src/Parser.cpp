@@ -158,7 +158,7 @@ public:
 			return 1;
 		}
 
-		astAddRule(rule);
+		astAddRule(rule);  // build AST
 
 		for (int i = rule.size - 1; i >= 1; i--) {
 			//std::cout << "i: " << i << std::endl;
@@ -179,19 +179,20 @@ public:
 		TreeNode* root;
 		switch (rule.id) {
 			case 1: // PROGRAM -> STATEMENT_SEQ  DECLARATIONS  FDECLS
-				{
 				root = program_tree.insert(new NodeHeader(AST_program));
 				ast_node_stack.push_back(root);
 				astAddStandardRule(rule);
 				break;
-				}
 			case 3: // FDECLS -> null
 				ast_node_stack.pop_back();
 				std::cout << "FDECLS -> NULL" << std::endl;
 				break;
 			case 10: //DECLARATIONS -> DECL ; DECLARATIONS
-				program_tree.insert(new NodeHeader(AST_declaration), ast_node_stack.back());
+				{
+				TreeNode* decl = program_tree.insert(new NodeHeader(AST_declaration), ast_node_stack.back());
+				ast_node_stack.push_back(decl);
 				break;
+				}
 			case 12: //DECL -> TYPE VARLIST
 				astAddStandardRule(rule);
 				break;
