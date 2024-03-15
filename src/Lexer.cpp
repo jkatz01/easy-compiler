@@ -74,6 +74,8 @@ public:
 		char buffer[PAGE_SIZE];
 		error_log.reserve(PAGE_SIZE);
 
+		if (PRINT_CONSOLE) printSourceProgram();
+
 		// Time measuring
 		std::cout << "starting: \n";
 		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
@@ -102,7 +104,7 @@ public:
 		output_file.open(output_file_name, std::ios::out | std::ios::trunc);
 		error_file.open(error_file_name, std::ios::out | std::ios::trunc);
 
-		std::cout << "Printing: " << std::endl;
+		std::cout << "Printing: " << std::endl << std::endl;
 		printTokens();
 		printErrors();
 		
@@ -115,6 +117,16 @@ public:
 		}
 
 		return EXIT_SUCCESS;
+	}
+
+	void printSourceProgram() {
+		std::ifstream infile(source_file_name);
+		std::string line;
+		while (std::getline(infile, line))
+		{
+			std::cout << line << std::endl;
+		}
+		std::cout << std::endl;
 	}
 
 	/// <summary>
@@ -134,10 +146,13 @@ public:
 			}
 
 			output_file << i.token_value;
+			if (PRINT_CONSOLE) std::cout << i.token_value;
 			for (int j = 0; j <= tab_num; j++) {
 				output_file << "\t";
+				if (PRINT_CONSOLE) std::cout << "\t";
 			}
-			output_file << "-\t" << token_names[i.token_type] << std::endl;
+			output_file << "-\t" << token_names_nice[i.token_type] << std::endl;
+			if (PRINT_CONSOLE) std::cout << "-\t" << token_names_nice[i.token_type] << std::endl;
 		}
 		return 0;
 	}

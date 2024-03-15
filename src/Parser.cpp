@@ -196,8 +196,8 @@ public:
 			case 12: //DECL -> TYPE VARLIST
 				astAddStandardRule(rule);
 				break;
-			default:
-				std::cerr << "Could not find rule" << std::endl;
+			//default:
+				//std::cerr << "Could not find rule" << std::endl;
 		}
 	}
 

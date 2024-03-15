@@ -13,6 +13,7 @@
 #define TAB_SIZE		8
 #define FIRST_NONLITERAL	G_PROGRAM
 #define NUM_RULES		68
+#define PRINT_CONSOLE true
 
 enum TokenType {
 	T_dot,

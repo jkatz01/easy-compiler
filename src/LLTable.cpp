@@ -28,10 +28,10 @@ public:
 				Rule rule{};
 				std::istringstream line_stream(line);
 				auto token = std::string{};
-				std::cout << rule_count + 1 << " ";
+				//std::cout << rule_count + 1 << " ";
 				while (line_stream >> token) {
 					// Find enum for rule
-					std::cout << token << " ";
+					//std::cout << token << " ";
 					for (int i = 0; i < ARR_SIZE(token_names); i++) {
 						if (token_names[i] == token) {
 							rule.data[sym_count] = i;
@@ -39,7 +39,7 @@ public:
 					}
 					sym_count++;
 				}
-				std::cout << std::endl;
+				//std::cout << std::endl;
 				rule.size = sym_count;
 				rule.id = rule_count + 1;
 				
@@ -77,11 +77,11 @@ public:
 					else {
 						table[row_count][col_count] = &rules[value - 1];
 					}
-					std::cout << value << " ";
+					//std::cout << value << " ";
 					col_count++;
 				}
 				row_count++;
-				std::cout << std::endl;
+				//std::cout << std::endl;
 			}
 			in_file.close();
 		}
