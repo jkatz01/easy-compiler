@@ -136,9 +136,10 @@ enum NodeType {
 	AST_func_call,
 	AST_head,
 	AST_program,
-	AST_list_func_declarations,
-	AST_list_declarations,
-	AST_list_statements,
+	AST_list_func_declarations, // FDECLS
+	AST_list_declarations,		// DECLARATIONS
+	AST_list_statements,		// STATEMENT_SEQ
+	AST_list_variables			// VARLIST
 };
 
 enum OpType {
@@ -191,6 +192,7 @@ struct Token {
 
 struct Rule {
 	int size;
+	int id; // RULE ID STARTS AT 1 !!! so its the same as the table
 	int data[16];
 };
 
@@ -219,7 +221,7 @@ const std::string operator_names[15] = {
 	"OP_unequals","OP_greater_eq","OP_lesser_eq","OP_greater","OP_lesser","OP_single_factor"
 };
 
-const std::string type_names[23] = {
+const std::string ast_type_names[24] = {
 	"AST_func_declaration",
 	"AST_declaration",
 	"AST_NodeHeader",
@@ -243,4 +245,5 @@ const std::string type_names[23] = {
 	"AST_list_func_declarations",
 	"AST_list_declarations",
 	"AST_list_statements",
+	"AST_list_variables"
 };

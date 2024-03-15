@@ -41,6 +41,7 @@ public:
 				}
 				std::cout << std::endl;
 				rule.size = sym_count;
+				rule.id = rule_count + 1;
 				
 				rules[rule_count] = rule;
 				rule_count++;
