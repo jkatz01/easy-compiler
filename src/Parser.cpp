@@ -90,6 +90,11 @@ public:
 	std::vector<TreeNode*> ast_node_stack; // For returning to the node
 	LLTable table;
 
+	// Buffers for putting values into nodes
+	VarType type_buffer = VT_int;
+	OpType  op_buffer = OP_plus;
+	std::string num_buffer = "";
+
 	Parser(std::vector<Token> const& token_list) {
 		tokens = &token_list;
 		parse_stack.reserve(32);
@@ -134,7 +139,7 @@ public:
 
 				Rule cur = table.getRule( top_type - FIRST_NONLITERAL, found_type);
 				parse_stack.pop_back(); // I think every pop makes a node, with the rule that replaced it as the children
-				addRule(cur); 
+				addRule(cur, found_type);
 			}
 			for (Token i : parse_stack) {
 				std::cout << token_names_nice[i.token_type] << "  ";
@@ -144,12 +149,13 @@ public:
 		}
 		std::cout << "Finished parsing successfully" << std::endl;
 		std::cout << "\n\n\nAbstract Syntax Tree:" << std::endl;
+		
 		program_tree.print();
 
 		return 0;
 	}
 
-	int addRule(Rule rule) {
+	int addRule(Rule rule, int found_type) {
 		// Pushes the elements of a rule on the stack
 		// if rule_size is 0 do nothing
 		// i stops at 1 because 0 is the first rule 0 -> 1 2 3 ...
@@ -158,7 +164,7 @@ public:
 			return 1;
 		}
 
-		astAddRule(rule);  // build AST
+		astAddRule(rule, found_type);  // build AST
 
 		for (int i = rule.size - 1; i >= 1; i--) {
 			//std::cout << "i: " << i << std::endl;
@@ -175,8 +181,11 @@ public:
 	}
 
 
-	void astAddRule(Rule rule) {
+	void astAddRule(Rule rule, int found_type) {
 		TreeNode* root;
+		if (found_type == T_semicolon) {
+			ast_node_stack.pop_back();
+		}
 		switch (rule.id) {
 			case 1: // PROGRAM -> STATEMENT_SEQ  DECLARATIONS  FDECLS
 				root = program_tree.insert(new NodeHeader(AST_program));
@@ -185,7 +194,7 @@ public:
 				break;
 			case 3: // FDECLS -> null
 				ast_node_stack.pop_back();
-				std::cout << "FDECLS -> NULL" << std::endl;
+				//std::cout << "FDECLS -> NULL" << std::endl;
 				break;
 			case 10: //DECLARATIONS -> DECL ; DECLARATIONS
 				{
@@ -193,12 +202,63 @@ public:
 				ast_node_stack.push_back(decl);
 				break;
 				}
+			case 11: //G_DECLARATIONS      T_null
+				ast_node_stack.pop_back();
+				break;
 			case 12: //DECL -> TYPE VARLIST
 				astAddStandardRule(rule);
 				break;
-			//default:
-				//std::cerr << "Could not find rule" << std::endl;
+			case 13: //G_TYPE -> T_kw_int
+				// TODO: add type to some buffer maybe?
+				ast_node_stack.pop_back();
+				break;
+			case 14: //G_TYPE -> T_kw_double
+				// TODO: add type
+				ast_node_stack.pop_back();
+				break;
+			case 17: //G_VARLIST_P -> T_null
+				break;
+			case 20: //G_STATEMENT      G_VAR T_eq G_EXPR
+				{
+				TreeNode * asgn = program_tree.insert(new NodeHeader(AST_assignment), ast_node_stack.back());
+				ast_node_stack.push_back(asgn);
+				break;
+				}
+			case 28: //G_EXPR         G_TERM G_EXPR_P
+				{
+				TreeNode* asgn = program_tree.insert(new NodeHeader(AST_expression), ast_node_stack.back());
+				ast_node_stack.push_back(asgn);
+				break;
+				}
+			case 31: //G_EXPR_P      T_minus G_TERM G_EXPR_P
+				{
+				program_tree.insert(new NodeHeader(AST_operator), ast_node_stack.back());
+				TreeNode* expr = program_tree.insert(new NodeHeader(AST_expression), ast_node_stack.back());
+				ast_node_stack.push_back(expr);
+				break;
+				}
+			case 34: //G_EXPR_P      T_null
+				
+				break;
+			case 42: //G_FACTOR      G_NUMBER
+			{
+				TreeNode* asgn = program_tree.insert(new NodeHeader(AST_factor_const), ast_node_stack.back());
+				ast_node_stack.push_back(asgn);
+				break;
+			}
+			case 59: //G_VAR_P         T_null
+				break;
+			case 58: //G_VAR         G_ID G_VAR_P
+				program_tree.insert(new NodeHeader(AST_variable), ast_node_stack.back());
+				break;
+			case 61: //G_ID -> T_identifier
+				// Insert variable identifier into some buffer so the node can get it?
+				break;
+			case 62: //G_NUMBER      G_INT G_DECIMAL
+				ast_node_stack.pop_back();
+				break;
 		}
+		//printAstNodeStack();
 	}
 
 	void astAddStandardRule(Rule rule) {
@@ -209,7 +269,7 @@ public:
 		for (int i = 1; i < rule.size; i++) {
 			if (rule.data[i] >= G_PROGRAM) {
 				NodeType cur_type = nonterminalToNodetype(rule.data[i]);
-				TreeNode *child = program_tree.insert(new NodeHeader(cur_type), ast_node_stack.back()); //replace HEAD with appropriate one
+				TreeNode *child = program_tree.insert(new NodeHeader(cur_type), ast_node_stack.back());
 				temp_nodes.push_back(child);
 			}
 		}
@@ -218,16 +278,10 @@ public:
 			// go through temp_nodes backwards to add to node stack
 			ast_node_stack.push_back(temp_nodes.at(j));
 		}
-		std::cout << "AST Node Stack: ";
-		for (TreeNode* n : ast_node_stack) {
-			n->node_data->print();
-			std::cout << "   ";
-		}
-		std::cout << std::endl;
+		//printAstNodeStack();
 	}
 
 	NodeType nonterminalToNodetype(int value) {
-		std::cout << "adding to rule: " << token_names[value] << std::endl;
 		switch (value) {
 			case G_PROGRAM:
 				return AST_program;
@@ -246,6 +300,15 @@ public:
 			default:
 				return AST_head;
 		}
+	}
+
+	void printAstNodeStack() {
+		std::cout << "AST Node Stack: ";
+		for (TreeNode* n : ast_node_stack) {
+			n->node_data->print();
+			std::cout << "   ";
+		}
+		std::cout << std::endl;
 	}
 	//G_PROGRAM = NUM_TOKEN_TYPES, // Start at the end of TokenType so we can use both together
 	//G_FDECLS,
