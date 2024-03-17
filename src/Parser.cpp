@@ -249,10 +249,11 @@ public:
 			case 59: //G_VAR_P         T_null
 				break;
 			case 58: //G_VAR         G_ID G_VAR_P
-				program_tree.insert(new NodeHeader(AST_variable), ast_node_stack.back());
+				//program_tree.insert(new NodeHeader(AST_variable), ast_node_stack.back());
 				break;
 			case 61: //G_ID -> T_identifier
 				// Insert variable identifier into some buffer so the node can get it?
+				program_tree.insert(new NodeHeader(AST_variable), ast_node_stack.back());
 				break;
 			case 62: //G_NUMBER      G_INT G_DECIMAL
 				ast_node_stack.pop_back();
