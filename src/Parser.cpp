@@ -7,7 +7,7 @@
 class NodeData {
 public:
 	virtual void print() = 0;
-	virtual void setVartype(VarType t) = 0;
+	virtual void setVarType(VarType t) = 0;
 	virtual void appendNumString(std::string s) = 0;
 };
 
@@ -18,7 +18,7 @@ public:
 	void print() override {
 		std::cout << ast_type_names[node_type];
 	}
-	void setVartype(VarType t) override {
+	void setVarType(VarType t) override {
 		std::cout << "Function Should not be called" << std::endl;
 	}
 	virtual void appendNumString(std::string s) {
@@ -34,7 +34,7 @@ public:
 	void print() override {
 		std::cout << ast_type_names[node_type] << "    type: " << type_names[var_type];
 	}
-	void setVartype(VarType t) override {
+	void setVarType(VarType t) override {
 		var_type = t;
 	}
 	virtual void appendNumString(std::string s) {
@@ -45,13 +45,14 @@ public:
 class NodeConstFactor : public NodeData {
 public:
 	NodeType node_type;
+	VarType var_type = VT_int; //int by default
 	std::string num_str = "";
 	NodeConstFactor(NodeType type) : node_type(type) {}
 	void print() override {
-		std::cout << ast_type_names[node_type] << "    val: " << num_str;
+		std::cout << ast_type_names[node_type] << "    type: " << type_names[var_type] << "    val: " << num_str;
 	}
-	void setVartype(VarType t) override {
-		std::cout << "Function Should not be called" << std::endl;
+	void setVarType(VarType t) override {
+		var_type = t;
 	}
 	void appendNumString(std::string s) override {
 		std::cout << "blubelubelujblaubxub lubl bu    called";
@@ -269,11 +270,11 @@ public:
 			}
 			case 13: //G_TYPE -> T_kw_int
 				// TODO: add type to some buffer maybe?
-				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVartype(VT_int);
+				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVarType(VT_int);
 				break;
 			case 14: //G_TYPE -> T_kw_double
 				// TODO: add type
-				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVartype(VT_double);
+				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVarType(VT_double);
 				break;
 			case 17: //G_VARLIST_P -> T_null
 				break;
@@ -328,6 +329,7 @@ public:
 				break;
 			case 63: //G_DECIMAL      T_dot G_INT G_EXOPT
 				ast_node_stack.back()->node_data->appendNumString(tokens->at(it).token_value);
+				ast_node_stack.back()->node_data->setVarType(VT_double);
 				break;
 			case 64: //G_DECIMAL      T_null
 				//  we can finish the number builder at this point
@@ -336,6 +338,7 @@ public:
 				break;
 			case 65: //G_EXOPT         T_exp G_NUMBER
 				ast_node_stack.back()->node_data->appendNumString(tokens->at(it).token_value);
+				ast_node_stack.back()->node_data->setVarType(VT_double);
 				break;
 			case 67: //G_INT         T_number
 				ast_node_stack.back()->node_data->appendNumString(tokens->at(it).token_value);
