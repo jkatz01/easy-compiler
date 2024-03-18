@@ -8,6 +8,7 @@ class NodeData {
 public:
 	virtual void print() = 0;
 	virtual void setVartype(VarType t) = 0;
+	virtual void appendNumString(std::string s) = 0;
 };
 
 class NodeHeader : public NodeData {
@@ -18,7 +19,10 @@ public:
 		std::cout << ast_type_names[node_type];
 	}
 	void setVartype(VarType t) override {
-		;
+		std::cout << "Function Should not be called" << std::endl;
+	}
+	virtual void appendNumString(std::string s) {
+		std::cout << "Function Should not be called" << std::endl;
 	}
 };
 
@@ -32,6 +36,26 @@ public:
 	}
 	void setVartype(VarType t) override {
 		var_type = t;
+	}
+	virtual void appendNumString(std::string s) {
+		std::cout << "Function Should not be called" << std::endl;
+	}
+};
+
+class NodeConstFactor : public NodeData {
+public:
+	NodeType node_type;
+	std::string num_str = "";
+	NodeConstFactor(NodeType type) : node_type(type) {}
+	void print() override {
+		std::cout << ast_type_names[node_type] << "    val: " << num_str;
+	}
+	void setVartype(VarType t) override {
+		std::cout << "Function Should not be called" << std::endl;
+	}
+	void appendNumString(std::string s) override {
+		std::cout << "blubelubelujblaubxub lubl bu    called";
+		num_str.append(s);
 	}
 };
 
@@ -110,7 +134,6 @@ public:
 	// Buffers for putting values into nodes
 	VarType type_buffer = VT_int;
 	OpType  op_buffer = OP_plus;
-	std::string num_buffer = "";
 
 	Parser(std::vector<Token> const& token_list) {
 		tokens = &token_list;
@@ -156,7 +179,7 @@ public:
 
 				Rule cur = table.getRule( top_type - FIRST_NONLITERAL, found_type);
 				parse_stack.pop_back(); // I think every pop makes a node, with the rule that replaced it as the children
-				addRule(cur, found_type);
+				addRule(cur, it);
 			}
 			for (Token i : parse_stack) {
 				std::cout << token_names_nice[i.token_type] << "  ";
@@ -172,7 +195,7 @@ public:
 		return 0;
 	}
 
-	int addRule(Rule rule, int found_type) {
+	int addRule(Rule rule, int it) {
 		// Pushes the elements of a rule on the stack
 		// if rule_size is 0 do nothing
 		// i stops at 1 because 0 is the first rule 0 -> 1 2 3 ...
@@ -181,7 +204,7 @@ public:
 			return 1;
 		}
 
-		astAddRule(rule, found_type);  // build AST
+		astAddRule(rule, it);  // build AST
 
 		for (int i = rule.size - 1; i >= 1; i--) {
 			//std::cout << "i: " << i << std::endl;
@@ -198,7 +221,7 @@ public:
 	}
 
 
-	void astAddRule(Rule rule, int found_type) {
+	void astAddRule(Rule rule, int it) {
 
 
 		// MAJOR TODO:::: write an operator presadence swapper:
@@ -208,10 +231,16 @@ public:
 		// parent.second = new expr (high, low.op, low.second)
 		// I think this is just a left rotate??
 
+		// Can also start working on the symbol table
+
 
 		TreeNode* root;
-		if (found_type == T_semicolon) {
+		if (tokens->at(it).token_type == T_semicolon) {
 			ast_node_stack.pop_back();
+			std::cout << "semicolon pop" << std::endl;
+			printAstNodeStack();
+			return;
+			
 		}
 		switch (rule.id) {
 			case 1: // PROGRAM -> STATEMENT_SEQ  DECLARATIONS  FDECLS
@@ -268,7 +297,6 @@ public:
 				break;
 			}
 			case 34: //G_EXPR_P      T_null
-				
 				break;
 			case 36: //G_TERM_P      T_star G_FACTOR G_TERM_P
 			{
@@ -277,10 +305,11 @@ public:
 				ast_node_stack.push_back(expr);
 				break;
 			}
-			case 42: //G_FACTOR      G_NUMBER
+			case 42: //G_FACTOR      G_NUMBER    we can start the number builder
 			{
-				TreeNode* asgn = program_tree.insert(new NodeHeader(AST_factor_const), ast_node_stack.back());
-				ast_node_stack.push_back(asgn);
+
+				TreeNode* fac = program_tree.insert(new NodeConstFactor(AST_factor_const), ast_node_stack.back());
+				ast_node_stack.push_back(fac);
 				break;
 			}
 			case 59: //G_VAR_P         T_null
@@ -294,10 +323,33 @@ public:
 				break;
 			case 62: //G_NUMBER      G_INT G_DECIMAL
 				// Start by resetting number buffer
-				ast_node_stack.pop_back();
+				//ast_node_stack.pop_back();
+
 				break;
+			case 63: //G_DECIMAL      T_dot G_INT G_EXOPT
+				ast_node_stack.back()->node_data->appendNumString(tokens->at(it).token_value);
+				break;
+			case 64: //G_DECIMAL      T_null
+				//  we can finish the number builder at this point
+				printAstNodeStack();
+				ast_node_stack.pop_back(); // ???
+				break;
+			case 65: //G_EXOPT         T_exp G_NUMBER
+				ast_node_stack.back()->node_data->appendNumString(tokens->at(it).token_value);
+				break;
+			case 67: //G_INT         T_number
+				ast_node_stack.back()->node_data->appendNumString(tokens->at(it).token_value);
+				printAstNodeStack();
+				break;
+			case 68: // G_INT         T_minus T_number
+				ast_node_stack.back()->node_data->appendNumString(tokens->at(it).token_value);
+				ast_node_stack.back()->node_data->appendNumString(tokens->at(it + 1).token_value);
+				break;
+			// CASE 42: FACTOR  -> NUMBER we can start the number builder
+			// CASE 64: DECIMAL -> null we can finish the number builder at this point
+			
 		}
-		//printAstNodeStack();
+		printAstNodeStack();
 	}
 
 	void astAddStandardRule(Rule rule) {
