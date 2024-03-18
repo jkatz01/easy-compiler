@@ -7,6 +7,7 @@
 class NodeData {
 public:
 	virtual void print() = 0;
+	virtual void setVartype(VarType t) = 0;
 };
 
 class NodeHeader : public NodeData {
@@ -15,6 +16,22 @@ public:
 	NodeHeader(NodeType type) : node_type(type) {}
 	void print() override {
 		std::cout << ast_type_names[node_type];
+	}
+	void setVartype(VarType t) override {
+		;
+	}
+};
+
+class NodeDeclaration : public NodeData {
+public:
+	NodeType node_type;
+	VarType var_type;
+	NodeDeclaration(NodeType type, VarType v) : node_type(type), var_type(v) {}
+	void print() override {
+		std::cout << ast_type_names[node_type] << "    type: " << type_names[var_type];
+	}
+	void setVartype(VarType t) override {
+		var_type = t;
 	}
 };
 
@@ -182,6 +199,16 @@ public:
 
 
 	void astAddRule(Rule rule, int found_type) {
+
+
+		// MAJOR TODO:::: write an operator presadence swapper:
+		// Potential way: (might work???)
+		// find expr (parent) (high prec) (low prec)
+		// high.second = low.first
+		// parent.second = new expr (high, low.op, low.second)
+		// I think this is just a left rotate??
+
+
 		TreeNode* root;
 		if (found_type == T_semicolon) {
 			ast_node_stack.pop_back();
@@ -197,49 +224,59 @@ public:
 				//std::cout << "FDECLS -> NULL" << std::endl;
 				break;
 			case 10: //DECLARATIONS -> DECL ; DECLARATIONS
-				{
-				TreeNode* decl = program_tree.insert(new NodeHeader(AST_declaration), ast_node_stack.back());
+			{
+				TreeNode* decl = program_tree.insert(new NodeDeclaration(AST_declaration, VT_int), ast_node_stack.back());
 				ast_node_stack.push_back(decl);
 				break;
-				}
+			}
 			case 11: //G_DECLARATIONS      T_null
 				ast_node_stack.pop_back();
 				break;
 			case 12: //DECL -> TYPE VARLIST
-				astAddStandardRule(rule);
+			{
+				TreeNode * varl = program_tree.insert(new NodeHeader(AST_list_variables), ast_node_stack.back());
+				ast_node_stack.push_back(varl);
 				break;
+			}
 			case 13: //G_TYPE -> T_kw_int
 				// TODO: add type to some buffer maybe?
-				ast_node_stack.pop_back();
+				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVartype(VT_int);
 				break;
 			case 14: //G_TYPE -> T_kw_double
 				// TODO: add type
-				ast_node_stack.pop_back();
+				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVartype(VT_double);
 				break;
 			case 17: //G_VARLIST_P -> T_null
 				break;
 			case 20: //G_STATEMENT      G_VAR T_eq G_EXPR
-				{
+			{
 				TreeNode * asgn = program_tree.insert(new NodeHeader(AST_assignment), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
 				break;
-				}
+			}
 			case 28: //G_EXPR         G_TERM G_EXPR_P
-				{
+			{
 				TreeNode* asgn = program_tree.insert(new NodeHeader(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
 				break;
-				}
+			}
 			case 31: //G_EXPR_P      T_minus G_TERM G_EXPR_P
-				{
+			{
 				program_tree.insert(new NodeHeader(AST_operator), ast_node_stack.back());
 				TreeNode* expr = program_tree.insert(new NodeHeader(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
 				break;
-				}
+			}
 			case 34: //G_EXPR_P      T_null
 				
 				break;
+			case 36: //G_TERM_P      T_star G_FACTOR G_TERM_P
+			{
+				program_tree.insert(new NodeHeader(AST_head), ast_node_stack.back());
+				TreeNode* expr = program_tree.insert(new NodeHeader(AST_expression), ast_node_stack.back());
+				ast_node_stack.push_back(expr);
+				break;
+			}
 			case 42: //G_FACTOR      G_NUMBER
 			{
 				TreeNode* asgn = program_tree.insert(new NodeHeader(AST_factor_const), ast_node_stack.back());
@@ -256,6 +293,7 @@ public:
 				program_tree.insert(new NodeHeader(AST_variable), ast_node_stack.back());
 				break;
 			case 62: //G_NUMBER      G_INT G_DECIMAL
+				// Start by resetting number buffer
 				ast_node_stack.pop_back();
 				break;
 		}
@@ -270,6 +308,7 @@ public:
 		for (int i = 1; i < rule.size; i++) {
 			if (rule.data[i] >= G_PROGRAM) {
 				NodeType cur_type = nonterminalToNodetype(rule.data[i]);
+				// Switch cur_type to different node header types 
 				TreeNode *child = program_tree.insert(new NodeHeader(cur_type), ast_node_stack.back());
 				temp_nodes.push_back(child);
 			}

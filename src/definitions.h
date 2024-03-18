@@ -112,8 +112,8 @@ enum ErrorType {
 };
 
 enum VarType {
-	VT_double,
-	VT_int
+	VT_int,
+	VT_double
 };
 
 enum NodeType {
@@ -221,7 +221,9 @@ const std::string operator_names[15] = {
 	"OP_plus","OP_minus","OP_or","OP_times","OP_divide","OP_mod","OP_and","OP_not","OP_equals",
 	"OP_unequals","OP_greater_eq","OP_lesser_eq","OP_greater","OP_lesser","OP_single_factor"
 };
-
+const std::string type_names[2] = {
+	"int","double"
+};
 const std::string ast_type_names[24] = {
 	"AST_func_declaration",
 	"AST_declaration",
