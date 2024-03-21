@@ -9,6 +9,8 @@ public:
 	virtual void print() = 0;
 	virtual void setVarType(VarType t) = 0;
 	virtual void appendNumString(std::string s) = 0;
+	virtual NodeType getNodeType() = 0; // TODO: only have this function once instead of defined in every base class
+	virtual ~NodeData() {}
 };
 
 class NodeHeader : public NodeData {
@@ -21,8 +23,11 @@ public:
 	void setVarType(VarType t) override {
 		std::cout << "Function Should not be called" << std::endl;
 	}
-	virtual void appendNumString(std::string s) {
+	void appendNumString(std::string s) {
 		std::cout << "Function Should not be called" << std::endl;
+	}
+	NodeType getNodeType() {
+		return node_type;
 	}
 };
 
@@ -37,8 +42,11 @@ public:
 	void setVarType(VarType t) override {
 		var_type = t;
 	}
-	virtual void appendNumString(std::string s) {
+	void appendNumString(std::string s) {
 		std::cout << "Function Should not be called" << std::endl;
+	}
+	NodeType getNodeType() {
+		return node_type;
 	}
 };
 
@@ -57,6 +65,29 @@ public:
 	void appendNumString(std::string s) override {
 		num_str.append(s);
 	}
+	NodeType getNodeType() {
+		return node_type;
+	}
+};
+
+class NodeVariable : public NodeData {
+public:
+	NodeType node_type;
+	VarType var_type = VT_int; //int by default
+	std::string var_name = "";
+	NodeVariable(NodeType t, std::string n, VarType vt) : node_type(t), var_name(n), var_type(vt)  {}
+	void print() override {
+		std::cout << ast_type_names[node_type] << "    type: " << type_names[var_type] << "    name: " << var_name;
+	}
+	void setVarType(VarType t) override {
+		var_type = t;
+	}
+	void appendNumString(std::string s) override {
+		;
+	}
+	NodeType getNodeType() {
+		return node_type;
+	}
 };
 
 struct TreeNode {
@@ -65,9 +96,16 @@ struct TreeNode {
 	TreeNode(NodeData *nd) : node_data(nd) {}
 };
 
+struct Variable {
+	std::string name;
+	VarType		type;
+	Variable(std::string n, VarType t) : name(n), type(t) {}
+};
+
 class SyntaxTree {
 private:
 	TreeNode* root;
+	std::vector<Variable> var_table;
 
 	void destroy(TreeNode* node) {
 		if (node == nullptr) {
@@ -83,10 +121,6 @@ public:
 
 	~SyntaxTree() {
 		destroy(root);
-	}
-
-	TreeNode* getRoot() {
-		return root;
 	}
 
 	TreeNode* insert(NodeData* value, TreeNode* parent = nullptr) {
@@ -124,6 +158,36 @@ public:
 	void print() {
 		print(root);
 	}
+
+	TreeNode* getRoot() {
+		return root;
+	}
+
+	void buildSymbolTable(TreeNode* node) {
+		//std::cout << ast_type_names[node->node_data->getNodeType()];
+		//std::cout << std::endl;
+		if (node == nullptr) {
+			return;
+		}
+		if (node->node_data->getNodeType() == AST_variable) {
+			NodeVariable* tempVar = dynamic_cast<NodeVariable*>(node->node_data);
+			for (Variable v : var_table) {
+				if (tempVar->var_name == v.name) {
+					std::cout << "Variable " << tempVar->var_name << " already in symbol table!" << std::endl;
+				}
+			}
+			var_table.push_back(Variable(tempVar->var_name, tempVar->var_type));
+		}
+		for (TreeNode* child : node->children) {
+			buildSymbolTable(child);
+		}
+	}
+
+	void printSymbolTable() {
+		for (Variable i : var_table) {
+			std::cout << i.name << "    " << type_names[i.type] << std::endl;
+		}
+	}
 };
 
 class Parser {
@@ -136,8 +200,7 @@ public:
 	LLTable table;
 
 	// Buffers for putting values into nodes
-	VarType type_buffer = VT_int;
-	OpType  op_buffer = OP_plus;
+	
 
 	Parser(std::vector<Token> const& token_list) {
 		tokens = &token_list;
@@ -227,6 +290,8 @@ public:
 
 	void astAddRule(Rule rule, int it) {
 
+		static VarType type_buffer = VT_int;
+		//OpType  op_buffer = OP_plus;
 
 		// MAJOR TODO:::: write an operator presadence swapper:
 		// Potential way: (might work???)
@@ -272,9 +337,11 @@ public:
 			}
 			case 13: //G_TYPE -> T_kw_int
 				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVarType(VT_int);
+				type_buffer = VT_int;
 				break;
 			case 14: //G_TYPE -> T_kw_double
 				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVarType(VT_double);
+				type_buffer = VT_double;
 				break;
 			case 17: //G_VARLIST_P -> T_null
 				break;
@@ -319,7 +386,7 @@ public:
 				break;
 			case 61: //G_ID -> T_identifier
 				// Insert variable identifier into some buffer so the node can get it?
-				program_tree.insert(new NodeHeader(AST_variable), ast_node_stack.back());
+				program_tree.insert(new NodeVariable(AST_variable, tokens->at(it).token_value, type_buffer), ast_node_stack.back());
 				break;
 			case 62: //G_NUMBER      G_INT G_DECIMAL
 				break;
