@@ -11,6 +11,7 @@ public:
 	virtual void setStrVal(std::string s) = 0;
 	virtual void appendNumString(std::string s) = 0;
 	virtual NodeType getNodeType() = 0; // TODO: only have this function once instead of defined in every base class
+	virtual void	 setNodeType(NodeType n) = 0;
 	virtual ~NodeData() {}
 };
 
@@ -38,6 +39,9 @@ public:
 	NodeType getNodeType() {
 		return node_type;
 	}
+	void setNodeType(NodeType n) {
+		node_type = n;
+	}
 };
 
 class NodeDeclaration : public NodeData {
@@ -59,6 +63,9 @@ public:
 	}
 	NodeType getNodeType() {
 		return node_type;
+	}
+	void setNodeType(NodeType n) {
+		node_type = n;
 	}
 };
 
@@ -83,6 +90,9 @@ public:
 	NodeType getNodeType() {
 		return node_type;
 	}
+	void setNodeType(NodeType n) {
+		node_type = n;
+	}
 };
 
 class NodeVariable : public NodeData {
@@ -105,6 +115,9 @@ public:
 	}
 	NodeType getNodeType() {
 		return node_type;
+	}
+	void setNodeType(NodeType n) {
+		node_type = n;
 	}
 };
 
@@ -161,9 +174,11 @@ public:
 		if (node == nullptr) {
 			return;
 		}
-		for (int i = 0; i < depth; i++) {
-			std::cout << "        ";
+		for (int i = 0; i < depth - 1; i++) {
+			std::cout << "    ";
 		}
+		if (depth > 0) std::cout << "|___";
+		else std::cout << "    ";
 
 		node->node_data->print();
 		std::cout << std::endl;
@@ -412,6 +427,20 @@ public:
 				ast_node_stack.push_back(fac);
 				break;
 			}
+			case 44: //G_FUNCOPTS      T_open_par G_EXPRSEQ T_close_par 
+			{
+				ast_node_stack.back()->node_data->setNodeType(AST_func_call);
+				break;
+			}
+			case 48: //G_EXPRSEQ_P      T_comma G_EXPRSEQ
+			{
+				ast_node_stack.pop_back();
+				break;
+			}
+			case 49: //G_EXPRSEQ_P      T_null
+				ast_node_stack.pop_back();
+				break;
+
 			case 59: //G_VAR_P         T_null
 				break;
 			case 58: //G_VAR         G_ID G_VAR_P
@@ -423,6 +452,7 @@ public:
 				}
 				else if (ast_node_stack.back()->node_data->getNodeType() == AST_factor_var) {
 					ast_node_stack.back()->node_data->setStrVal(tokens->at(it).token_value);
+					ast_node_stack.pop_back();
 				}
 				break;
 			case 62: //G_NUMBER      G_INT G_DECIMAL

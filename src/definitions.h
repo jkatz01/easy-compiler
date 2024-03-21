@@ -223,7 +223,7 @@ const std::string operator_names[15] = {
 	"OP_unequals","OP_greater_eq","OP_lesser_eq","OP_greater","OP_lesser","OP_single_factor"
 };
 const std::string type_names[3] = {
-	"int","double","default"
+	"int   ","double","default"
 };
 const std::string ast_type_names[24] = {
 	"AST_func_declaration",
