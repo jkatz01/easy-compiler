@@ -12,6 +12,7 @@ public:
 	virtual void appendNumString(std::string s) = 0;
 	virtual NodeType getNodeType() = 0; // TODO: only have this function once instead of defined in every base class
 	virtual void	 setNodeType(NodeType n) = 0;
+	virtual std::string	 getNodeStrVal() = 0;
 	virtual ~NodeData() {}
 };
 
@@ -27,15 +28,16 @@ public:
 			std::cout << "    " << str_value;
 		}
 	}
-	void setVarType(VarType t) override {
-		;
-	}
+	void setVarType(VarType t) override {}
+
 	void setStrVal(std::string s) override {
 		str_value = s;
 	}
-	void appendNumString(std::string s) {
-		;
+	std::string	 getNodeStrVal() {
+		return str_value;
 	}
+	void appendNumString(std::string s) {}
+
 	NodeType getNodeType() {
 		return node_type;
 	}
@@ -55,9 +57,10 @@ public:
 	void setVarType(VarType t) override {
 		var_type = t;
 	}
-	void setStrVal(std::string s) override {
-		;
-	}
+
+	void setStrVal(std::string s)  {}
+	std::string	 getNodeStrVal() { return ""; }
+
 	void appendNumString(std::string s) {
 		std::cout << "Function Should not be called" << std::endl;
 	}
@@ -81,9 +84,9 @@ public:
 	void setVarType(VarType t) override {
 		var_type = t;
 	}
-	void setStrVal(std::string s) override {
-		;
-	}
+	void setStrVal(std::string s) override {}
+	std::string	 getNodeStrVal() { return ""; }
+
 	void appendNumString(std::string s) override {
 		num_str.append(s);
 	}
@@ -107,12 +110,12 @@ public:
 	void setVarType(VarType t) override {
 		var_type = t;
 	}
-	void setStrVal(std::string s) override {
-		;
+	void setStrVal(std::string s) override {}
+	void appendNumString(std::string s) override {}
+	std::string	 getNodeStrVal() {
+		return var_name;
 	}
-	void appendNumString(std::string s) override {
-		;
-	}
+
 	NodeType getNodeType() {
 		return node_type;
 	}
@@ -220,7 +223,32 @@ public:
 			}
 		}
 	}
-
+	// Make sure all symbols can be found in the symbol table
+	void checkSymbolReferences(TreeNode* node, bool in_stmt) {
+		if (node == nullptr) {
+			return;
+		}
+		if (in_stmt && (node->node_data->getNodeType() == AST_factor_var || node->node_data->getNodeType() == AST_variable)) {
+			bool found = false;
+			for (Variable v : var_table) {
+				if (v.name == node->node_data->getNodeStrVal()) {
+					std::cout << "Found variable " << v.name << std::endl;
+					found = true;
+				}
+			}
+			if (!found) {
+				std::cout << "COULD NOT FIND VARIABLE " << node->node_data->getNodeStrVal() << std::endl;
+			}
+		}
+		for (TreeNode* child : node->children) {
+			if (node->node_data->getNodeType() == AST_assignment || in_stmt == true) {
+				checkSymbolReferences(child, true);
+			}
+			else {
+				checkSymbolReferences(child, false);
+			}
+		}
+	}
 	void printSymbolTable() {
 		for (Variable i : var_table) {
 			std::cout << i.name << "    " << type_names[i.type] << std::endl;
@@ -446,15 +474,18 @@ public:
 			case 58: //G_VAR         G_ID G_VAR_P
 				break;
 			case 61: //G_ID -> T_identifier
+			{
 				// Insert variable identifier into some buffer so the node can get it?
-				if (ast_node_stack.back()->node_data->getNodeType() == AST_list_variables) { //AST_list_variables might have to be changed to AST_declaration
+				NodeType cur_type = ast_node_stack.back()->node_data->getNodeType();
+				if (cur_type == AST_list_variables || cur_type == AST_assignment) { //AST_list_variables might have to be changed to AST_declaration
 					program_tree.insert(new NodeVariable(AST_variable, tokens->at(it).token_value, type_buffer), ast_node_stack.back());
 				}
-				else if (ast_node_stack.back()->node_data->getNodeType() == AST_factor_var) {
+				else if (cur_type == AST_factor_var) {
 					ast_node_stack.back()->node_data->setStrVal(tokens->at(it).token_value);
 					ast_node_stack.pop_back();
 				}
 				break;
+			}
 			case 62: //G_NUMBER      G_INT G_DECIMAL
 				break;
 			case 63: //G_DECIMAL      T_dot G_INT G_EXOPT
