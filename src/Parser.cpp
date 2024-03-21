@@ -460,6 +460,9 @@ public:
 				ast_node_stack.back()->node_data->setNodeType(AST_func_call);
 				break;
 			}
+			case 45: //G_FUNCOPTS      T_null
+				//ast_node_stack.pop_back();
+				break;
 			case 48: //G_EXPRSEQ_P      T_comma G_EXPRSEQ
 			{
 				ast_node_stack.pop_back();
@@ -468,7 +471,6 @@ public:
 			case 49: //G_EXPRSEQ_P      T_null
 				ast_node_stack.pop_back();
 				break;
-
 			case 59: //G_VAR_P         T_null
 				break;
 			case 58: //G_VAR         G_ID G_VAR_P
