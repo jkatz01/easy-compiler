@@ -55,7 +55,6 @@ public:
 		var_type = t;
 	}
 	void appendNumString(std::string s) override {
-		std::cout << "blubelubelujblaubxub lubl bu    called";
 		num_str.append(s);
 	}
 };
@@ -84,6 +83,10 @@ public:
 
 	~SyntaxTree() {
 		destroy(root);
+	}
+
+	TreeNode* getRoot() {
+		return root;
 	}
 
 	TreeNode* insert(NodeData* value, TreeNode* parent = nullptr) {
@@ -238,8 +241,8 @@ public:
 		TreeNode* root;
 		if (tokens->at(it).token_type == T_semicolon) {
 			ast_node_stack.pop_back();
-			std::cout << "semicolon pop" << std::endl;
-			printAstNodeStack();
+			//std::cout << "semicolon pop" << std::endl;
+			//printAstNodeStack();
 			return;
 			
 		}
@@ -251,7 +254,6 @@ public:
 				break;
 			case 3: // FDECLS -> null
 				ast_node_stack.pop_back();
-				//std::cout << "FDECLS -> NULL" << std::endl;
 				break;
 			case 10: //DECLARATIONS -> DECL ; DECLARATIONS
 			{
@@ -269,11 +271,9 @@ public:
 				break;
 			}
 			case 13: //G_TYPE -> T_kw_int
-				// TODO: add type to some buffer maybe?
 				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVarType(VT_int);
 				break;
 			case 14: //G_TYPE -> T_kw_double
-				// TODO: add type
 				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVarType(VT_double);
 				break;
 			case 17: //G_VARLIST_P -> T_null
@@ -316,16 +316,12 @@ public:
 			case 59: //G_VAR_P         T_null
 				break;
 			case 58: //G_VAR         G_ID G_VAR_P
-				//program_tree.insert(new NodeHeader(AST_variable), ast_node_stack.back());
 				break;
 			case 61: //G_ID -> T_identifier
 				// Insert variable identifier into some buffer so the node can get it?
 				program_tree.insert(new NodeHeader(AST_variable), ast_node_stack.back());
 				break;
 			case 62: //G_NUMBER      G_INT G_DECIMAL
-				// Start by resetting number buffer
-				//ast_node_stack.pop_back();
-
 				break;
 			case 63: //G_DECIMAL      T_dot G_INT G_EXOPT
 				ast_node_stack.back()->node_data->appendNumString(tokens->at(it).token_value);
@@ -333,7 +329,6 @@ public:
 				break;
 			case 64: //G_DECIMAL      T_null
 				//  we can finish the number builder at this point
-				printAstNodeStack();
 				ast_node_stack.pop_back(); // ???
 				break;
 			case 65: //G_EXOPT         T_exp G_NUMBER
@@ -342,7 +337,6 @@ public:
 				break;
 			case 67: //G_INT         T_number
 				ast_node_stack.back()->node_data->appendNumString(tokens->at(it).token_value);
-				printAstNodeStack();
 				break;
 			case 68: // G_INT         T_minus T_number
 				ast_node_stack.back()->node_data->appendNumString(tokens->at(it).token_value);
@@ -352,7 +346,7 @@ public:
 			// CASE 64: DECIMAL -> null we can finish the number builder at this point
 			
 		}
-		printAstNodeStack();
+		//printAstNodeStack();
 	}
 
 	void astAddStandardRule(Rule rule) {
@@ -405,37 +399,4 @@ public:
 		}
 		std::cout << std::endl;
 	}
-	//G_PROGRAM = NUM_TOKEN_TYPES, // Start at the end of TokenType so we can use both together
-	//G_FDECLS,
-	//G_FDEC,			// Function declaration // def int func(int x, double y) body fed
-	//G_PARAMS,		// Paramters of function // (int x, double y) 
-	//G_PARAM_OPT,
-	//G_FNAME,		// Defined name // x 
-	//G_DECLARATIONS,
-	//G_DECL,			// Variable declaration // int x, y;
-	//G_TYPE,			// int // double
-	//G_VARLIST,
-	//G_VARLIST_P,
-	//G_STATEMENT_SEQ,
-	//G_STATEMENT,		// x = y // if .. // while ... // print // return // null
-	//G_STREPLC_P,
-	//G_EXPR,			// binary operations // a + b // a - b
-	//G_EXPR_P,
-	//G_TERM,			// binary operations // a * b // a / b // a % b
-	//G_TERM_P,
-	//G_FACTOR,		// thing in operation 
-	//G_FUNCOPTS,
-	//G_EXPRSEQ,
-	//G_EXPRSEQ_P,
-	//G_COMP,			// Comparison // x 
-	//G_COMP_P,
-	//G_COMP_P_P,
-	//G_VAR,			// Variable  // x
-	//G_VAR_P,		// Array     // ..[expr]
-	//G_ID,			// Identifier
-	//G_NUMBER,
-	//G_DECIMAL,		// if this exists a number is type double
-	//G_EXOPT,		// exponential in double
-	//G_INT
-	
 };

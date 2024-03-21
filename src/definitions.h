@@ -3,16 +3,16 @@
 #include <vector>
 #include <string>
 
-#define ARR_SIZE(X) (int)(sizeof(X) / sizeof(X[0]))
-#define A_S(X)	ARR_SIZE(X)
+#define ARR_SIZE(X)	(int)(sizeof(X) / sizeof(X[0]))
+#define A_S(X)		ARR_SIZE(X)
 
 #define NUM_TOKEN_TYPES		T_null + 1
 #define NUM_TERMINALS		NUM_TOKEN_TYPES
 #define NUM_NONTERIMNALS	G_INT - T_null
-#define PAGE_SIZE		4096
-#define TAB_SIZE		8
+#define PAGE_SIZE			4096
+#define TAB_SIZE			8
 #define FIRST_NONLITERAL	G_PROGRAM
-#define NUM_RULES		68
+#define NUM_RULES			68
 #define PRINT_CONSOLE		true
 
 enum TokenType {
