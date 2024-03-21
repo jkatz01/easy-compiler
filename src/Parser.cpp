@@ -8,6 +8,7 @@ class NodeData {
 public:
 	virtual void print() = 0;
 	virtual void setVarType(VarType t) = 0;
+	virtual void setStrVal(std::string s) = 0;
 	virtual void appendNumString(std::string s) = 0;
 	virtual NodeType getNodeType() = 0; // TODO: only have this function once instead of defined in every base class
 	virtual ~NodeData() {}
@@ -16,15 +17,23 @@ public:
 class NodeHeader : public NodeData {
 public:
 	NodeType node_type;
+	std::string str_value = "";
 	NodeHeader(NodeType type) : node_type(type) {}
+	NodeHeader(NodeType type, std::string s) : node_type(type), str_value(s) {}
 	void print() override {
 		std::cout << ast_type_names[node_type];
+		if (node_type == AST_factor_var) {
+			std::cout << "    " << str_value;
+		}
 	}
 	void setVarType(VarType t) override {
-		std::cout << "Function Should not be called" << std::endl;
+		;
+	}
+	void setStrVal(std::string s) override {
+		str_value = s;
 	}
 	void appendNumString(std::string s) {
-		std::cout << "Function Should not be called" << std::endl;
+		;
 	}
 	NodeType getNodeType() {
 		return node_type;
@@ -41,6 +50,9 @@ public:
 	}
 	void setVarType(VarType t) override {
 		var_type = t;
+	}
+	void setStrVal(std::string s) override {
+		;
 	}
 	void appendNumString(std::string s) {
 		std::cout << "Function Should not be called" << std::endl;
@@ -62,6 +74,9 @@ public:
 	void setVarType(VarType t) override {
 		var_type = t;
 	}
+	void setStrVal(std::string s) override {
+		;
+	}
 	void appendNumString(std::string s) override {
 		num_str.append(s);
 	}
@@ -81,6 +96,9 @@ public:
 	}
 	void setVarType(VarType t) override {
 		var_type = t;
+	}
+	void setStrVal(std::string s) override {
+		;
 	}
 	void appendNumString(std::string s) override {
 		;
@@ -163,13 +181,13 @@ public:
 		return root;
 	}
 
-	void buildSymbolTable(TreeNode* node) {
+	void buildSymbolTable(TreeNode* node, bool in_decl) {
 		//std::cout << ast_type_names[node->node_data->getNodeType()];
 		//std::cout << std::endl;
 		if (node == nullptr) {
 			return;
 		}
-		if (node->node_data->getNodeType() == AST_variable) {
+		if (in_decl && node->node_data->getNodeType() == AST_variable) {
 			NodeVariable* tempVar = dynamic_cast<NodeVariable*>(node->node_data);
 			for (Variable v : var_table) {
 				if (tempVar->var_name == v.name) {
@@ -179,7 +197,12 @@ public:
 			var_table.push_back(Variable(tempVar->var_name, tempVar->var_type));
 		}
 		for (TreeNode* child : node->children) {
-			buildSymbolTable(child);
+			if (node->node_data->getNodeType() == AST_declaration || in_decl == true) {
+				buildSymbolTable(child, true);
+			}
+			else {
+				buildSymbolTable(child, false);
+			}
 		}
 	}
 
@@ -328,6 +351,7 @@ public:
 			}
 			case 11: //G_DECLARATIONS      T_null
 				ast_node_stack.pop_back();
+				type_buffer = VT_default;
 				break;
 			case 12: //DECL -> TYPE VARLIST
 			{
@@ -368,14 +392,22 @@ public:
 				break;
 			case 36: //G_TERM_P      T_star G_FACTOR G_TERM_P
 			{
-				program_tree.insert(new NodeHeader(AST_head), ast_node_stack.back());
+				program_tree.insert(new NodeHeader(AST_operator), ast_node_stack.back());
 				TreeNode* expr = program_tree.insert(new NodeHeader(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
 				break;
 			}
+			case 41: //G_FACTOR      G_ID G_FUNCOPTS
+			{
+				// Need to figure out if funcopts was called or not
+				// Maybe start as a NodeName(AST_factor_var) in here, and if funcopts was used
+				// Then change its type to AST_fun_call
+				TreeNode* facvar = program_tree.insert(new NodeHeader(AST_factor_var), ast_node_stack.back());
+				ast_node_stack.push_back(facvar);
+				break;
+			}
 			case 42: //G_FACTOR      G_NUMBER    we can start the number builder
 			{
-
 				TreeNode* fac = program_tree.insert(new NodeConstFactor(AST_factor_const), ast_node_stack.back());
 				ast_node_stack.push_back(fac);
 				break;
@@ -386,7 +418,12 @@ public:
 				break;
 			case 61: //G_ID -> T_identifier
 				// Insert variable identifier into some buffer so the node can get it?
-				program_tree.insert(new NodeVariable(AST_variable, tokens->at(it).token_value, type_buffer), ast_node_stack.back());
+				if (ast_node_stack.back()->node_data->getNodeType() == AST_list_variables) { //AST_list_variables might have to be changed to AST_declaration
+					program_tree.insert(new NodeVariable(AST_variable, tokens->at(it).token_value, type_buffer), ast_node_stack.back());
+				}
+				else if (ast_node_stack.back()->node_data->getNodeType() == AST_factor_var) {
+					ast_node_stack.back()->node_data->setStrVal(tokens->at(it).token_value);
+				}
 				break;
 			case 62: //G_NUMBER      G_INT G_DECIMAL
 				break;

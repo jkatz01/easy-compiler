@@ -15,10 +15,10 @@ int main(int argc, char* argv[]) {
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
-	;;;;;;;
+	;;;;;;;;
 	Parser *parser = new Parser(lexical.v_tokens);
 	parser->parse();
-	parser->program_tree.buildSymbolTable(parser->program_tree.getRoot());
+	parser->program_tree.buildSymbolTable(parser->program_tree.getRoot(), false);
 	parser->program_tree.printSymbolTable();
 	
 	return 0;
