@@ -15,36 +15,22 @@ public:
 	int line_number = 0;
 	int token_count = 0;
 	int error_count = 0;
-	/// <summary>
-	/// Holds all tokens for future use
-	/// </summary>
+
 	std::vector<Token> v_tokens;
 	std::vector<TokenError> error_log;
 
-	/// <summary>
-	/// Default constructor for Lexer class
-	/// </summary>
 	Lexer() {
 		source_file_name = "src_file.txt";
 		output_file_name = "out_file.txt";
 		error_file_name = "error_file.txt";
 	}
 
-	/// <summary>
-	/// Constructor for Lexer using filenames
-	/// </summary>
-	/// <param name="src_file">Input file to analyze</param>
-	/// <param name="out_file">Output file for tokens</param>
-	/// <param name="error_file">Output file for errors</param>
 	Lexer(std::string src_file, std::string out_file, std::string error_file) {
 		source_file_name = src_file;
 		output_file_name = out_file;
 		error_file_name = error_file;
 	}
 
-	/// <summary>
-	/// Default destructor for Lexer class in case files are left open
-	/// </summary>
 	~Lexer() {
 		// Destructor
 		if (source_file.is_open()) {
@@ -129,10 +115,6 @@ public:
 		std::cout << std::endl;
 	}
 
-	/// <summary>
-	/// Prints all tokens from v_tokens into file
-	/// </summary>
-	/// <returns></returns>
 	int printTokens() {
 		for (Token i : v_tokens) {
 			int tab_num;
@@ -157,10 +139,6 @@ public:
 		return 0;
 	}
 
-	/// <summary>
-	/// Prints all errors from error_log into file
-	/// </summary>
-	/// <returns></returns>
 	int printErrors() {
 		for (TokenError i : error_log) {
 			if (i.err_type == E_bad_token) {
@@ -234,12 +212,6 @@ private:
 		{"double", T_kw_double},
 	};
 
-	/// <summary>
-	/// Main function for tokenizing a block of text into tokens
-	/// </summary>
-	/// <param name="line">Block of text to analyze</param>
-	/// <param name="size">Size of text</param>
-	/// <returns></returns>
 	int tokenizeLine(std::string& line, size_t size) {
 		size_t line_len = size;
 		char cur_char;
@@ -317,8 +289,6 @@ private:
 	/// </summary>
 	/// <param name="line">Input text</param>
 	/// <param name="last_is_symbol">If the token was delimited by a symbol, set to true</param>
-	/// <param name="start"></param>
-	/// <param name="distance"></param>
 	/// <param name="symbol_type">Type of symbol for the last character, if last_is_symbol == true</param>
 	/// <returns></returns>
 	int addToken(std::string& line, bool last_is_symbol, int start, int distance, TokenType symbol_type) {
@@ -348,11 +318,6 @@ private:
 		return 0;
 	}
 
-	/// <summary>
-	/// Finds the TokenType of a token, includes searching for keywords
-	/// </summary>
-	/// <param name="str"></param>
-	/// <returns>Type of token</returns>
 	TokenType findTokenType(std::string& str) {
 		if (state == S_number) {
 			return T_number;

@@ -5,6 +5,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Parser.cpp" />
     <ClCompile Include="src\LLTable.cpp" />
+    <ClCompile Include="src\SyntaxTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="tests\bad_file.txt" />

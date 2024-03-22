@@ -16,17 +16,18 @@ int main(int argc, char* argv[]) {
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
-	;;;
+	;
 	SyntaxTree* program_tree = new SyntaxTree();
-	;;;
+	
 	Parser *parser = new Parser(lexical->v_tokens, program_tree); // Release fails here, maybe an unclosed file?
 	parser->parse();
 	
-	delete parser;
+	delete parser; //TODO: memory leak here, LLTable does not get deleted
+	delete lexical;
 	
 	std::cout << std::endl;
 	std::cout << "Compiling tree" << std::endl << "---------------------" << std::endl;
-	program_tree->compileTree(program_tree->getRoot());
+	program_tree->compileTreeMaster();
 
 	return 0;
 }

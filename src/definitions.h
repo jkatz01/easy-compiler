@@ -194,10 +194,18 @@ struct Token {
 };
 
 struct Rule {
+	// TODO: write copy constructor
 	int size;
 	int id; // RULE ID STARTS AT 1 !!! so its the same as the table
 	int data[16];
 
+};
+
+struct Variable {
+	std::string name;
+	VarType		type;
+	Variable() : name("def"), type(VT_default) {}
+	Variable(std::string n, VarType t) : name(n), type(t) {}
 };
 
 const std::string token_names[NUM_TOKEN_TYPES + NUM_NONTERIMNALS] = {

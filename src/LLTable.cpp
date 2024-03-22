@@ -10,7 +10,6 @@ public:
 	Rule rules[NUM_RULES];
 	Rule* table[(NUM_NONTERIMNALS)][34];
 	
-	// TODO: make file reader that takes all this info from a file
 	LLTable() {
 		read_rules("src/grammar.txt");
 		read_table("src/table.txt");
@@ -20,8 +19,6 @@ public:
 	}
 	// First int in rule is the left hand side
 	
-	
-
 	void read_rules(std::string in_file_name) {
 		std::ifstream in_file(in_file_name);
 		std::string line;
@@ -88,6 +85,7 @@ public:
 		}
 	}
 	Rule getRule(int i, int j) {
+		// TODO: maybe convert this to return a pointer?
 		Rule rule = *(table[i][j]);
 		return rule;
 	}
