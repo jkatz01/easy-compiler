@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
-	;;;;;;;;;;;;;;;
+	;;;;
 	SyntaxTree* program_tree = new SyntaxTree();
 
 	Parser *parser = new Parser(lexical->v_tokens, program_tree);
@@ -29,6 +29,9 @@ int main(int argc, char* argv[]) {
 	program_tree->printSymbolTable();
 	std::cout << std::endl;
 	program_tree->checkSymbolReferences(program_tree->getRoot(), false);
+	std::cout << std::endl;
+	std::cout << std::endl;
+	program_tree->typeCheckTree(program_tree->getRoot());
 
 	return 0;
 }

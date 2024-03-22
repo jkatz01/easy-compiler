@@ -98,22 +98,32 @@ public:
 	}
 };
 
+struct Variable {
+	std::string name;
+	VarType		type;
+	Variable() : name("def"), type(VT_default) {}
+	Variable(std::string n, VarType t) : name(n), type(t) {}
+};
+
 class NodeVariable : public NodeData {
 public:
 	NodeType node_type;
-	VarType var_type = VT_int; //int by default
-	std::string var_name = "";
-	NodeVariable(NodeType t, std::string n, VarType vt) : node_type(t), var_name(n), var_type(vt)  {}
+	Variable var;
+	NodeVariable(NodeType t, std::string n, VarType vt) {
+		node_type = t;
+		var.name = n;
+		var.type = vt;
+	}
 	void print() override {
-		std::cout << ast_type_names[node_type] << "    type: " << type_names[var_type] << "    name: " << var_name;
+		std::cout << ast_type_names[node_type] << "    type: " << type_names[var.type] << "    name: " << var.name;
 	}
 	void setVarType(VarType t) override {
-		var_type = t;
+		var.type = t;
 	}
 	void setStrVal(std::string s) override {}
 	void appendNumString(std::string s) override {}
 	std::string	 getNodeStrVal() {
-		return var_name;
+		return var.name;
 	}
 
 	NodeType getNodeType() {
@@ -133,11 +143,7 @@ struct TreeNode {
 	}
 };
 
-struct Variable {
-	std::string name;
-	VarType		type;
-	Variable(std::string n, VarType t) : name(n), type(t) {}
-};
+
 
 class SyntaxTree {
 private:
@@ -202,20 +208,94 @@ public:
 		return root;
 	}
 
+	// Looks up variables by name in a table
+	Variable variableLookup(Variable var) {
+		for (Variable v : var_table) {
+			if (v.name == var.name) {
+				return v;
+			}
+		}
+		return Variable("", VT_invalid);
+	}
+
+	VarType typeCheckExpression(TreeNode* node) {
+		if (node == nullptr) {
+			return VT_default;
+		}
+		NodeType my_type = node->node_data->getNodeType();
+		if (my_type == AST_expression) {
+			if (node->children.size() == 1) {
+				return typeCheckExpression(node->children.at(0));
+			}
+			else if (node->children.size() == 3) { //TODO: needs to be changed to 2 if we remove AST_operator
+				VarType lhs = typeCheckExpression(node->children.at(0));
+				VarType rhs = typeCheckExpression(node->children.at(2));
+				if (lhs == rhs) {
+					std::cout << "TYPES MATCHED!!" << std::endl;
+				}
+				else {
+					std::cout << "TYPE MISMATCH!!" << std::endl;
+					return VT_invalid;
+				}
+				return lhs;
+			}
+		}
+		else if (my_type == AST_factor_const) {
+			NodeConstFactor* tempConst = dynamic_cast<NodeConstFactor*>(node->node_data);
+			std::cout << "FOUND FACTOR CONST TYPE: " << type_names[tempConst->var_type] << std::endl;
+			return tempConst->var_type;
+		}
+		else if (my_type == AST_factor_var) {
+			std::string node_var_name = node->node_data->getNodeStrVal();
+			// Find symbol in symbol table
+			Variable looked_up = variableLookup(Variable(node_var_name, VT_default));
+			std::cout << "FOUND FACTOR VAR TYPE: " << type_names[looked_up.type] << std::endl;
+			return looked_up.type;
+		}
+		else if (my_type == AST_func_call) {
+			// ignore for now, should return the (return type) of the func
+			
+		}
+		else {
+			
+		}
+
+	}
+
+	VarType typeCheckTree(TreeNode* node) {
+		if (node == nullptr) {
+			return VT_default;
+		}
+		NodeType cur_type = node->node_data->getNodeType();
+		if (cur_type == AST_assignment) {
+			if (node->children.at(0)->node_data->getNodeType() != AST_variable) return VT_invalid;
+			NodeVariable* tempVar = dynamic_cast<NodeVariable*>(node->children.at(0)->node_data);
+
+			VarType lhs = variableLookup(tempVar->var).type;
+			std::cout << "FOUND ASSIGNMENT VARIABLE TYPE: " << type_names[lhs] << std::endl;
+
+			if (node->children.at(1)->node_data->getNodeType() == AST_expression) {
+				typeCheckExpression(node->children.at(1));
+			}
+		}
+		for (TreeNode* child : node->children) {
+			typeCheckTree(child);
+		}
+		return VT_default;
+	}
+
 	void buildSymbolTable(TreeNode* node, bool in_decl) {
-		//std::cout << ast_type_names[node->node_data->getNodeType()];
-		//std::cout << std::endl;
 		if (node == nullptr) {
 			return;
 		}
 		if (in_decl && node->node_data->getNodeType() == AST_variable) {
 			NodeVariable* tempVar = dynamic_cast<NodeVariable*>(node->node_data);
 			for (Variable v : var_table) {
-				if (tempVar->var_name == v.name) {
-					std::cout << "Variable " << tempVar->var_name << " already in symbol table!" << std::endl;
+				if (tempVar->var.name == v.name) {
+					std::cout << "Variable " << tempVar->var.name << " already in symbol table!" << std::endl;
 				}
 			}
-			var_table.push_back(Variable(tempVar->var_name, tempVar->var_type));
+			var_table.push_back(Variable(tempVar->var.name, tempVar->var.type));
 		}
 		for (TreeNode* child : node->children) {
 			if (node->node_data->getNodeType() == AST_declaration || in_decl == true) {
@@ -226,7 +306,8 @@ public:
 			}
 		}
 	}
-	// Make sure all symbols can be found in the symbol table
+
+	// Function to make sure all symbols can be found in the symbol table
 	void checkSymbolReferences(TreeNode* node, bool in_stmt) {
 		if (node == nullptr) {
 			return;
@@ -268,7 +349,6 @@ public:
 	std::vector<TreeNode*> ast_node_stack; // For returning to the node
 	LLTable *table;
 
-	// Buffers for putting values into nodes
 
 	Parser(std::vector<Token> const& token_list, SyntaxTree* tree) {
 		tokens = &token_list;
@@ -290,11 +370,6 @@ public:
 		std::ofstream error_file;
 		error_file.open("Parsing-Errors.txt", std::ios::out | std::ios::trunc);
 
-		// While we still have tokens left...
-		// if current token matches top of stack -> pop 
-		// else get the rule  from table[stack.top()][current_literal]
-		// then pop the top non literal and replace it with the rule
-		
 		int it = 0;
 		while (it < tokens->size()) {
 			int top_type = parse_stack.back().token_type;
@@ -312,7 +387,7 @@ public:
 					std::cout << "Error: expected: " << token_names[top_type] << "\t found: " << token_names[found_type] << std::endl;
 					error_file << "Error: expected: " << token_names[top_type] << "\t found: " << token_names[found_type] << std::endl;
 					// Handle errors by deleting
-					parse_stack.pop_back(); // ????
+					parse_stack.pop_back(); 
 					it++; 
 					//return -1;
 				}
@@ -321,7 +396,7 @@ public:
 				
 				Rule cur = table->getRule( top_type - FIRST_NONLITERAL, found_type);
 
-				parse_stack.pop_back(); // I think every pop makes a node, with the rule that replaced it as the children
+				parse_stack.pop_back(); 
 				addRule(cur, it);
 			}
 			for (Token i : parse_stack) {
@@ -350,16 +425,12 @@ public:
 		astAddRule(rule, it);  // build AST
 
 		for (int i = rule.size - 1; i >= 1; i--) {
-			//std::cout << "i: " << i << std::endl;
 			if (rule.data[i] == T_null) {
-				//parse_stack.pop_back(); unnecessary 
-				//std::cout << "null" << std::endl;
 				return 2;
 			}
 			Token nonlit(rule.data[i], "");
 			parse_stack.push_back(nonlit);	
 		}
-		//std::cout << std::endl;
 		return 0;
 	}
 
