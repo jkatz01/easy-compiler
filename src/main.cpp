@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
 	}
 	;;;;;;;;;;;;
 	SyntaxTree* program_tree = new SyntaxTree();
-	;;;;
+	;;;
 	Parser *parser = new Parser(lexical->v_tokens, program_tree);
 	parser->parse();
 	
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
 
 	std::cout << std::endl;
 	std::cout << "Type Checking" << std::endl << "---------------------" << std::endl;
-	program_tree->typeCheckTree(program_tree->getRoot());
+	program_tree->typeCheckNode(program_tree->getRoot());
 
 	return 0;
 }

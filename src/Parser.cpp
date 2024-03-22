@@ -178,7 +178,7 @@ struct TreeNode {
 class SyntaxTree {
 private:
 	TreeNode* root;
-	std::vector<Variable> var_table;
+	std::vector<std::vector<Variable>> var_table;
 
 	std::ofstream error_file;
 	
@@ -195,6 +195,8 @@ private:
 public:
 	SyntaxTree() : root(nullptr) {
 		error_file.open("Semantic-Errors.txt", std::ios::out | std::ios::trunc);
+		std::vector<Variable> first_table;
+		var_table.push_back(first_table);
 	}
 
 	~SyntaxTree() {
@@ -245,14 +247,47 @@ public:
 
 	// Looks up variables by name in a table
 	Variable variableLookup(Variable var) {
-		for (Variable v : var_table) {
-			if (v.name == var.name) {
-				return v;
+		for (auto& tb : var_table) {
+			for (Variable v : tb) {
+				if (v.name == var.name) {
+					return v;
+				}
 			}
+			// Couldn't find in scope
 		}
+		// Add error message here instead
 		return Variable("", VT_invalid);
 	}
+	// TODO: make all this stuff happen at the same time
+	/*
+	compiletree()
+		if decl -> add to symbol table
+		if stmt -> type check
+		if func_decl -> add to symbol table (when to pop?)
+	*/
+	void compileTree(TreeNode* node) {
+		if (node == nullptr) {
+			return;
+		}
+		// stuff
+		NodeType my_type = node->node_data->getNodeType();
+		if (my_type == AST_declaration) {
+			return; // ?????
+		}
+		else if (my_type == AST_assignment) {
+			typeCheckNode(node);
+			return; // ?????
+		}
+		else if (my_type == AST_factor_var || my_type == AST_variable) {
+			if (variableLookup(Variable(node->node_data->getNodeStrVal(), VT_default)).type == VT_invalid) {
+				// BAD!!!!
+			}
+		}
 
+		for (TreeNode* child : node->children) {
+			compileTree(child);
+		}
+	}
 	VarType typeCheckExpression(TreeNode* node) {
 		if (node == nullptr) {
 			return VT_default;
@@ -298,7 +333,7 @@ public:
 		return VT_invalid;
 	}
 
-	VarType typeCheckTree(TreeNode* node) {
+	VarType typeCheckNode(TreeNode* node) {
 		if (node == nullptr) {
 			return VT_default;
 		}
@@ -323,7 +358,7 @@ public:
 		}
 
 		for (TreeNode* child : node->children) {
-			typeCheckTree(child);
+			typeCheckNode(child);
 		}
 		return lhs;
 	}
@@ -334,12 +369,10 @@ public:
 		}
 		if (in_decl && node->node_data->getNodeType() == AST_variable) {
 			NodeVariable* tempVar = dynamic_cast<NodeVariable*>(node->node_data);
-			for (Variable v : var_table) {
-				if (tempVar->var.name == v.name) {
-					std::cout << "Variable " << tempVar->var.name << " already in symbol table!" << std::endl;
-				}
+			if (variableLookup(tempVar->var).type == VT_invalid) {
+				std::cout << "Variable " << tempVar->var.name << " already in symbol table!" << std::endl;
 			}
-			var_table.push_back(Variable(tempVar->var.name, tempVar->var.type));
+			var_table.back().push_back(Variable(tempVar->var.name, tempVar->var.type));
 		}
 		for (TreeNode* child : node->children) {
 			if (node->node_data->getNodeType() == AST_declaration || in_decl == true) {
@@ -351,37 +384,12 @@ public:
 		}
 	}
 
-	// Function to make sure all symbols can be found in the symbol table
-	void checkSymbolReferences(TreeNode* node, bool in_stmt) {
-		if (node == nullptr) {
-			return;
-		}
-		NodeType cur_type = node->node_data->getNodeType();
-		if (in_stmt && (cur_type == AST_factor_var || cur_type == AST_variable)) {
-			bool found = false;
-			for (Variable v : var_table) {
-				if (v.name == node->node_data->getNodeStrVal()) {
-					std::cout << "Found variable " << v.name << "    type:" << type_names[v.type] << std::endl;
-					found = true;
-				}
-			}
-			if (!found) {
-				std::cout << "COULD NOT FIND VARIABLE " << node->node_data->getNodeStrVal() << std::endl;
-				error_file << "COULD NOT FIND VARIABLE " << node->node_data->getNodeStrVal() << std::endl;
-			}
-		}
-		for (TreeNode* child : node->children) {
-			if (cur_type == AST_assignment || in_stmt == true) {
-				checkSymbolReferences(child, true);
-			}
-			else {
-				checkSymbolReferences(child, false);
-			}
-		}
-	}
 	void printSymbolTable() {
-		for (Variable i : var_table) {
-			std::cout << i.name << "    " << type_names[i.type] << std::endl;
+		for (auto& tb : var_table) {
+			for (Variable v : tb) {
+				std::cout << v.name << "    " << type_names[v.type] << std::endl;
+			}
+			// Couldn't find in scope
 		}
 	}
 };
