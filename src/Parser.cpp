@@ -272,15 +272,32 @@ public:
 		// stuff
 		NodeType my_type = node->node_data->getNodeType();
 		if (my_type == AST_declaration) {
+			// Add declaration variables to symbol table
+			NodeDeclaration* decl = dynamic_cast<NodeDeclaration*>(node->node_data);
+			VarType decl_type = decl->var_type;
+			for (TreeNode* child : node->children.at(0)->children ) {
+				// This should only be full of AST_variable
+				if (child->node_data->getNodeType() != AST_variable) {
+					std::cout << "ERROR: trying to add variable but found node of type " << child->node_data->getNodeType() << std::endl;
+				}
+				std::cout << "Added " << child->node_data->getNodeStrVal() << "  " << type_names[decl_type] << std::endl;
+				var_table.back().push_back(Variable(child->node_data->getNodeStrVal(), decl_type));
+			}
 			return; // ?????
 		}
 		else if (my_type == AST_assignment) {
+			std::cout << "-------- TYPE CHECK: --------" << std::endl;
 			typeCheckNode(node);
-			return; // ?????
+			std::cout << "-------- ended check --------" << std::endl;
 		}
 		else if (my_type == AST_factor_var || my_type == AST_variable) {
 			if (variableLookup(Variable(node->node_data->getNodeStrVal(), VT_default)).type == VT_invalid) {
 				// BAD!!!!
+				std::cout << "ERROR: Failed to find variable " << node->node_data->getNodeStrVal() << std::endl;
+			}
+			else {
+				// good
+				std::cout << "Good variable :)    " << node->node_data->getNodeStrVal() << std::endl;
 			}
 		}
 
@@ -288,6 +305,7 @@ public:
 			compileTree(child);
 		}
 	}
+
 	VarType typeCheckExpression(TreeNode* node) {
 		if (node == nullptr) {
 			return VT_default;
@@ -361,27 +379,6 @@ public:
 			typeCheckNode(child);
 		}
 		return lhs;
-	}
-
-	void buildSymbolTable(TreeNode* node, bool in_decl) {
-		if (node == nullptr) {
-			return;
-		}
-		if (in_decl && node->node_data->getNodeType() == AST_variable) {
-			NodeVariable* tempVar = dynamic_cast<NodeVariable*>(node->node_data);
-			if (variableLookup(tempVar->var).type == VT_invalid) {
-				std::cout << "Variable " << tempVar->var.name << " already in symbol table!" << std::endl;
-			}
-			var_table.back().push_back(Variable(tempVar->var.name, tempVar->var.type));
-		}
-		for (TreeNode* child : node->children) {
-			if (node->node_data->getNodeType() == AST_declaration || in_decl == true) {
-				buildSymbolTable(child, true);
-			}
-			else {
-				buildSymbolTable(child, false);
-			}
-		}
 	}
 
 	void printSymbolTable() {
