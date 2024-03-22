@@ -231,10 +231,10 @@ public:
 				VarType lhs = typeCheckExpression(node->children.at(0));
 				VarType rhs = typeCheckExpression(node->children.at(2));
 				if (lhs == rhs) {
-					std::cout << "TYPES MATCHED!!" << std::endl;
+					std::cout << "Expression Types Matched" << std::endl;
 				}
 				else {
-					std::cout << "TYPE MISMATCH!!" << std::endl;
+					std::cout << "EXPRESSION TYPE MISMATCH!!" << std::endl;
 					return VT_invalid;
 				}
 				return lhs;
@@ -242,22 +242,22 @@ public:
 		}
 		else if (my_type == AST_factor_const) {
 			NodeConstFactor* tempConst = dynamic_cast<NodeConstFactor*>(node->node_data);
-			std::cout << "FOUND FACTOR CONST TYPE: " << type_names[tempConst->var_type] << std::endl;
+			std::cout << "Found factor const type: " << type_names[tempConst->var_type] << std::endl;
 			return tempConst->var_type;
 		}
 		else if (my_type == AST_factor_var) {
 			std::string node_var_name = node->node_data->getNodeStrVal();
 			// Find symbol in symbol table
 			Variable looked_up = variableLookup(Variable(node_var_name, VT_default));
-			std::cout << "FOUND FACTOR VAR TYPE: " << type_names[looked_up.type] << std::endl;
+			std::cout << "Found factor var type: " << type_names[looked_up.type] << std::endl;
 			return looked_up.type;
 		}
 		else if (my_type == AST_func_call) {
 			// ignore for now, should return the (return type) of the func
-			
+			return VT_invalid;
 		}
 		else {
-			
+			return VT_invalid;
 		}
 
 	}
@@ -267,21 +267,28 @@ public:
 			return VT_default;
 		}
 		NodeType cur_type = node->node_data->getNodeType();
+		VarType lhs = VT_default;
+		VarType rhs = VT_default;
 		if (cur_type == AST_assignment) {
 			if (node->children.at(0)->node_data->getNodeType() != AST_variable) return VT_invalid;
 			NodeVariable* tempVar = dynamic_cast<NodeVariable*>(node->children.at(0)->node_data);
 
-			VarType lhs = variableLookup(tempVar->var).type;
+			lhs = variableLookup(tempVar->var).type;
 			std::cout << "FOUND ASSIGNMENT VARIABLE TYPE: " << type_names[lhs] << std::endl;
-
-			if (node->children.at(1)->node_data->getNodeType() == AST_expression) {
-				typeCheckExpression(node->children.at(1));
+			rhs = typeCheckExpression(node->children.at(1));
+			if (lhs == rhs) {
+				std::cout << "Assignment Types Matched" << std::endl;
+			}
+			else {
+				std::cout << "ASSIGNMENT TYPE MISMATCH!!" << std::endl;
+				return VT_invalid;
 			}
 		}
+
 		for (TreeNode* child : node->children) {
 			typeCheckTree(child);
 		}
-		return VT_default;
+		return lhs;
 	}
 
 	void buildSymbolTable(TreeNode* node, bool in_decl) {

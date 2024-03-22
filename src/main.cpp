@@ -16,21 +16,26 @@ int main(int argc, char* argv[]) {
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
-	;;;;
+	;;
 	SyntaxTree* program_tree = new SyntaxTree();
-
+	;;
 	Parser *parser = new Parser(lexical->v_tokens, program_tree);
 	parser->parse();
 	
 	delete parser;
 	
 	program_tree->buildSymbolTable(program_tree->getRoot(), false);
+
 	std::cout << std::endl;
+	std::cout << "Created Symbol Table" << std::endl << "---------------------" << std::endl;
 	program_tree->printSymbolTable();
+
 	std::cout << std::endl;
+	std::cout << "Checking Symbols in Symbol Table" << std::endl << "---------------------" << std::endl;
 	program_tree->checkSymbolReferences(program_tree->getRoot(), false);
+
 	std::cout << std::endl;
-	std::cout << std::endl;
+	std::cout << "Type Checking" << std::endl << "---------------------" << std::endl;
 	program_tree->typeCheckTree(program_tree->getRoot());
 
 	return 0;
