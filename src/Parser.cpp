@@ -46,6 +46,34 @@ public:
 	}
 };
 
+class NodeFunction : public NodeData {
+public:
+	NodeType node_type;
+	std::string function_name;
+	VarType function_type; // return type
+	NodeFunction(NodeType type, std::string s, VarType vt) : node_type(type), function_name(s), function_type(vt) {}
+	void print() override {
+		std::cout << ast_type_names[node_type] << "    name: " << function_name << "    return type: " << type_names[function_type];
+	}
+	void setVarType(VarType t) override {
+		function_type = t;
+	}
+	void setStrVal(std::string s) override {
+		function_name = s;
+	}
+	std::string	 getNodeStrVal() {
+		return function_name;
+	}
+	void appendNumString(std::string s) {}
+
+	NodeType getNodeType() {
+		return node_type;
+	}
+	void setNodeType(NodeType n) {
+		node_type = n;
+	}
+};
+
 class NodeDeclaration : public NodeData {
 public:
 	NodeType node_type;
@@ -120,7 +148,9 @@ public:
 	void setVarType(VarType t) override {
 		var.type = t;
 	}
-	void setStrVal(std::string s) override {}
+	void setStrVal(std::string s) override {
+		var.name = s;
+	}
 	void appendNumString(std::string s) override {}
 	std::string	 getNodeStrVal() {
 		return var.name;
@@ -194,9 +224,9 @@ public:
 		for (int i = 0; i < depth - 1; i++) {
 			std::cout << "    ";
 		}
-		if (depth > 0) std::cout << "|___";
-		else std::cout << "    ";
-
+		if (depth > 0) {
+			std::cout << "|___";
+		}
 		node->node_data->print();
 		std::cout << std::endl;
 
@@ -280,7 +310,7 @@ public:
 			NodeVariable* tempVar = dynamic_cast<NodeVariable*>(node->children.at(0)->node_data);
 
 			lhs = variableLookup(tempVar->var).type;
-			std::cout << "FOUND ASSIGNMENT VARIABLE TYPE: " << type_names[lhs] << std::endl;
+			std::cout << "Found assignment variable: " << type_names[lhs] << std::endl;
 			rhs = typeCheckExpression(node->children.at(1));
 			if (lhs == rhs) {
 				std::cout << "Assignment Types Matched" << std::endl;
@@ -453,6 +483,7 @@ public:
 	void astAddRule(Rule rule, int it) {
 
 		static VarType type_buffer = VT_int;
+		static bool	   in_stmt_seq;
 		//OpType  op_buffer = OP_plus;
 
 		// MAJOR TODO:::: write an operator presadence swapper:
@@ -468,10 +499,7 @@ public:
 		TreeNode* root;
 		if (tokens->at(it).token_type == T_semicolon) {
 			ast_node_stack.pop_back();
-			//std::cout << "semicolon pop" << std::endl;
-			//printAstNodeStack();
 			return;
-			
 		}
 		switch (rule.id) {
 			case 1: // PROGRAM -> STATEMENT_SEQ  DECLARATIONS  FDECLS
@@ -482,6 +510,28 @@ public:
 			case 3: // FDECLS -> null
 				ast_node_stack.pop_back();
 				break;
+			case 4: //G_FDEC         T_def G_TYPE G_FNAME T_open_par G_PARAMS T_close_par G_DECLARATIONS G_STATEMENT_SEQ T_fed
+			{
+				TreeNode* func = program_tree->insert(new NodeFunction(AST_func_declaration, "default", VT_default), ast_node_stack.back());
+				ast_node_stack.push_back(func);
+				break;
+			}
+			case 5: //G_PARAMS      G_TYPE G_VAR G_PARAM_OPT 
+			{
+				TreeNode* parm = program_tree->insert(new NodeVariable(AST_parameter, "default", VT_default), ast_node_stack.back());
+				ast_node_stack.push_back(parm);
+				break;
+			}
+			case 6: //G_PARAMS      T_null
+			{
+				ast_node_stack.pop_back();
+				break;
+			}
+			case 7: //G_PARAM_OPT      T_comma G_PARAMS
+			{
+				ast_node_stack.pop_back();
+				break;
+			}
 			case 10: //DECLARATIONS -> DECL ; DECLARATIONS
 			{
 				TreeNode* decl = program_tree->insert(new NodeDeclaration(AST_declaration, VT_int), ast_node_stack.back());
@@ -499,14 +549,50 @@ public:
 				break;
 			}
 			case 13: //G_TYPE -> T_kw_int
-				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVarType(VT_int);
-				type_buffer = VT_int;
+			{
+				if (ast_node_stack.back()->node_data->getNodeType() == AST_func_declaration) {
+					ast_node_stack.back()->node_data->setVarType(VT_int);
+				}
+				else if (ast_node_stack.back()->node_data->getNodeType() == AST_parameter) {
+					ast_node_stack.back()->node_data->setVarType(VT_int);
+				}
+				else {
+					ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVarType(VT_int);
+					type_buffer = VT_int;
+				}
 				break;
+			}
 			case 14: //G_TYPE -> T_kw_double
-				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVarType(VT_double);
-				type_buffer = VT_double;
+			{
+				if (ast_node_stack.back()->node_data->getNodeType() == AST_func_declaration) {
+					ast_node_stack.back()->node_data->setVarType(VT_double);
+				}
+				else if (ast_node_stack.back()->node_data->getNodeType() == AST_parameter) {
+					ast_node_stack.back()->node_data->setVarType(VT_double);
+				}
+				else {
+					ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setVarType(VT_double);
+					type_buffer = VT_double;
+				}
 				break;
+			}
 			case 17: //G_VARLIST_P -> T_null
+				break;
+			case 18: //G_STATEMENT_SEQ      G_STATEMENT T_semicolon G_STATEMENT_SEQ
+			{
+				if (in_stmt_seq == false && ast_node_stack.back()->node_data->getNodeType() == AST_func_declaration) {
+					TreeNode* seq = program_tree->insert(new NodeHeader(AST_list_statements), ast_node_stack.back());
+					ast_node_stack.push_back(seq);
+					in_stmt_seq = true;
+				}
+				break;
+			}
+			case 19: //G_STATEMENT_SEQ      T_null
+				if (ast_node_stack.back()->node_data->getNodeType() == AST_list_statements) {
+					ast_node_stack.pop_back();
+					ast_node_stack.pop_back();
+					in_stmt_seq = false;
+				}
 				break;
 			case 20: //G_STATEMENT      G_VAR T_eq G_EXPR
 			{
@@ -582,6 +668,15 @@ public:
 					ast_node_stack.back()->node_data->setStrVal(tokens->at(it).token_value);
 					ast_node_stack.pop_back();
 				}
+				else if (cur_type == AST_func_declaration) {
+					ast_node_stack.back()->node_data->setStrVal(tokens->at(it).token_value);
+				}
+				else if (cur_type == AST_parameter) {
+					ast_node_stack.back()->node_data->setStrVal(tokens->at(it).token_value);
+					std::cout << "got here ------------------------ " << tokens->at(it).token_value << std::endl;
+					ast_node_stack.back()->node_data->print();
+					std::cout << std::endl;
+				}
 				break;
 			}
 			case 62: //G_NUMBER      G_INT G_DECIMAL
@@ -605,11 +700,9 @@ public:
 				ast_node_stack.back()->node_data->appendNumString(tokens->at(it).token_value);
 				ast_node_stack.back()->node_data->appendNumString(tokens->at(it + 1).token_value);
 				break;
-			// CASE 42: FACTOR  -> NUMBER we can start the number builder
-			// CASE 64: DECIMAL -> null we can finish the number builder at this point
 			
 		}
-		//printAstNodeStack();
+		printAstNodeStack();
 	}
 
 	void astAddStandardRule(Rule rule) {

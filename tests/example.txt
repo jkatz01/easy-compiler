@@ -1,7 +1,8 @@
+def int gcd(int first, int second)
+	a = 5;
+	b = 5;
+fed;
+
 int x, y;
-double w;
-x = 5 - w;
 x = 5 - y;
-blu = wfdsfsd;
-x = 5.0;
 .
