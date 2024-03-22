@@ -7,19 +7,21 @@ Documentation can be found in:
 - main.cpp
 - definitions.h
 - Lexer.cpp
+- Parser.cpp
+- LLTable.cpp
 
 Project structure:
 ------------
 
     ├── README.md           <- The readme
-    ├── old                 <- old files that aren't included in the build
     ├── tests               <- various tests to run
     │
-    ├── src                <- Source code.
+    ├── src                 <- Source code.
         ├── main.cpp        <- The main program to run the entire compiler
-        ├── definitions.h   <- Struct, enum, define, include declarations 
+        ├── definitions.h   <- Structs, enums, macros, includes
         ├── Lexer.cpp       <- Lexical analysis class, stores tokens
-        │
+        ├── Parser.cpp      <- Parsing class, generates syntax tree
+        ├── LLTable.cpp     <- Helper class that stores grammar rules and LL1 table
         └── 
 ------------
 

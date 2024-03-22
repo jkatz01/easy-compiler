@@ -1,0 +1,7 @@
+int x, y;
+double w;
+x = 5 - w;
+x = 5 - y;
+blu = wfdsfsd;
+x = 5.0;
+.

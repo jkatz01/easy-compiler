@@ -150,6 +150,9 @@ private:
 	TreeNode* root;
 	std::vector<Variable> var_table;
 
+	std::ofstream error_file;
+	
+
 	void destroy(TreeNode* node) {
 		if (node == nullptr) {
 			return;
@@ -160,7 +163,9 @@ private:
 		delete node;
 	}
 public:
-	SyntaxTree() : root(nullptr) {}
+	SyntaxTree() : root(nullptr) {
+		error_file.open("Semantic-Errors.txt", std::ios::out | std::ios::trunc);
+	}
 
 	~SyntaxTree() {
 		destroy(root);
@@ -235,6 +240,7 @@ public:
 				}
 				else {
 					std::cout << "EXPRESSION TYPE MISMATCH!!" << std::endl;
+					error_file << "EXPRESSION TYPE MISMATCH!!" << std::endl;
 					return VT_invalid;
 				}
 				return lhs;
@@ -259,7 +265,7 @@ public:
 		else {
 			return VT_invalid;
 		}
-
+		return VT_invalid;
 	}
 
 	VarType typeCheckTree(TreeNode* node) {
@@ -281,6 +287,7 @@ public:
 			}
 			else {
 				std::cout << "ASSIGNMENT TYPE MISMATCH!!" << std::endl;
+				error_file << "ASSIGNMENT TYPE MISMATCH!!" << std::endl;
 				return VT_invalid;
 			}
 		}
@@ -330,6 +337,7 @@ public:
 			}
 			if (!found) {
 				std::cout << "COULD NOT FIND VARIABLE " << node->node_data->getNodeStrVal() << std::endl;
+				error_file << "COULD NOT FIND VARIABLE " << node->node_data->getNodeStrVal() << std::endl;
 			}
 		}
 		for (TreeNode* child : node->children) {

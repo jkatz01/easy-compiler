@@ -6,11 +6,11 @@
 
 # My ignores:
 DOCUMENTATION
-example*
 Tokens.txt
 Lexical-errors.txt
 Lexical-Errors.txt
 Parsing-Errors.txt
+Semantic-Errors.txt
 old/
 cpp.hint
 
