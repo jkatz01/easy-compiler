@@ -678,9 +678,6 @@ public:
 				}
 				else if (cur_type == AST_parameter) {
 					ast_node_stack.back()->node_data->setStrVal(tokens->at(it).token_value);
-					std::cout << "got here ------------------------ " << tokens->at(it).token_value << std::endl;
-					ast_node_stack.back()->node_data->print();
-					std::cout << std::endl;
 				}
 				break;
 			}
@@ -707,7 +704,7 @@ public:
 				break;
 			
 		}
-		printAstNodeStack();
+		//printAstNodeStack();
 	}
 
 	void astAddStandardRule(Rule rule) {
