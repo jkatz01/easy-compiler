@@ -128,6 +128,9 @@ struct TreeNode {
 	NodeData* node_data;
 	std::vector<TreeNode*> children;
 	TreeNode(NodeData *nd) : node_data(nd) {}
+	~TreeNode() {
+		delete node_data;
+	}
 };
 
 struct Variable {
@@ -228,11 +231,12 @@ public:
 		if (node == nullptr) {
 			return;
 		}
-		if (in_stmt && (node->node_data->getNodeType() == AST_factor_var || node->node_data->getNodeType() == AST_variable)) {
+		NodeType cur_type = node->node_data->getNodeType();
+		if (in_stmt && (cur_type == AST_factor_var || cur_type == AST_variable)) {
 			bool found = false;
 			for (Variable v : var_table) {
 				if (v.name == node->node_data->getNodeStrVal()) {
-					std::cout << "Found variable " << v.name << std::endl;
+					std::cout << "Found variable " << v.name << "    type:" << type_names[v.type] << std::endl;
 					found = true;
 				}
 			}
@@ -241,7 +245,7 @@ public:
 			}
 		}
 		for (TreeNode* child : node->children) {
-			if (node->node_data->getNodeType() == AST_assignment || in_stmt == true) {
+			if (cur_type == AST_assignment || in_stmt == true) {
 				checkSymbolReferences(child, true);
 			}
 			else {
@@ -260,18 +264,23 @@ class Parser {
 public:
 	std::vector<Token> const* tokens; // Tokens from tokenizer
 	std::vector<Token> parse_stack; // Stack used for parsing
-	SyntaxTree program_tree; // Need to add nodes from a tree in a custom way for rules that need it
-	// std::vector<Token> tokens_for_node; // Temporary stack for nodes that need to read values from the token list
+	SyntaxTree *program_tree; // Need to add nodes from a tree in a custom way for rules that need it
 	std::vector<TreeNode*> ast_node_stack; // For returning to the node
-	LLTable table;
+	LLTable *table;
 
 	// Buffers for putting values into nodes
-	
 
-	Parser(std::vector<Token> const& token_list) {
+	Parser(std::vector<Token> const& token_list, SyntaxTree* tree) {
 		tokens = &token_list;
 		parse_stack.reserve(32);
 		ast_node_stack.reserve(32);
+		table = new LLTable();
+		program_tree = tree;
+
+	}
+	~Parser() {
+		// TODO: deleting table causes heap corruption
+		;
 	}
 
 	int parse() {
@@ -309,8 +318,9 @@ public:
 				}
 			}
 			else {
+				
+				Rule cur = table->getRule( top_type - FIRST_NONLITERAL, found_type);
 
-				Rule cur = table.getRule( top_type - FIRST_NONLITERAL, found_type);
 				parse_stack.pop_back(); // I think every pop makes a node, with the rule that replaced it as the children
 				addRule(cur, it);
 			}
@@ -323,7 +333,7 @@ public:
 		std::cout << "Finished parsing successfully" << std::endl;
 		std::cout << "\n\n\nAbstract Syntax Tree:" << std::endl;
 		
-		program_tree.print();
+		program_tree->print();
 
 		return 0;
 	}
@@ -379,7 +389,7 @@ public:
 		}
 		switch (rule.id) {
 			case 1: // PROGRAM -> STATEMENT_SEQ  DECLARATIONS  FDECLS
-				root = program_tree.insert(new NodeHeader(AST_program));
+				root = program_tree->insert(new NodeHeader(AST_program));
 				ast_node_stack.push_back(root);
 				astAddStandardRule(rule);
 				break;
@@ -388,7 +398,7 @@ public:
 				break;
 			case 10: //DECLARATIONS -> DECL ; DECLARATIONS
 			{
-				TreeNode* decl = program_tree.insert(new NodeDeclaration(AST_declaration, VT_int), ast_node_stack.back());
+				TreeNode* decl = program_tree->insert(new NodeDeclaration(AST_declaration, VT_int), ast_node_stack.back());
 				ast_node_stack.push_back(decl);
 				break;
 			}
@@ -398,7 +408,7 @@ public:
 				break;
 			case 12: //DECL -> TYPE VARLIST
 			{
-				TreeNode * varl = program_tree.insert(new NodeHeader(AST_list_variables), ast_node_stack.back());
+				TreeNode * varl = program_tree->insert(new NodeHeader(AST_list_variables), ast_node_stack.back());
 				ast_node_stack.push_back(varl);
 				break;
 			}
@@ -414,20 +424,20 @@ public:
 				break;
 			case 20: //G_STATEMENT      G_VAR T_eq G_EXPR
 			{
-				TreeNode * asgn = program_tree.insert(new NodeHeader(AST_assignment), ast_node_stack.back());
+				TreeNode * asgn = program_tree->insert(new NodeHeader(AST_assignment), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
 				break;
 			}
 			case 28: //G_EXPR         G_TERM G_EXPR_P
 			{
-				TreeNode* asgn = program_tree.insert(new NodeHeader(AST_expression), ast_node_stack.back());
+				TreeNode* asgn = program_tree->insert(new NodeHeader(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
 				break;
 			}
 			case 31: //G_EXPR_P      T_minus G_TERM G_EXPR_P
 			{
-				program_tree.insert(new NodeHeader(AST_operator), ast_node_stack.back());
-				TreeNode* expr = program_tree.insert(new NodeHeader(AST_expression), ast_node_stack.back());
+				program_tree->insert(new NodeHeader(AST_operator), ast_node_stack.back());
+				TreeNode* expr = program_tree->insert(new NodeHeader(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
 				break;
 			}
@@ -435,8 +445,8 @@ public:
 				break;
 			case 36: //G_TERM_P      T_star G_FACTOR G_TERM_P
 			{
-				program_tree.insert(new NodeHeader(AST_operator), ast_node_stack.back());
-				TreeNode* expr = program_tree.insert(new NodeHeader(AST_expression), ast_node_stack.back());
+				program_tree->insert(new NodeHeader(AST_operator), ast_node_stack.back());
+				TreeNode* expr = program_tree->insert(new NodeHeader(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
 				break;
 			}
@@ -445,13 +455,13 @@ public:
 				// Need to figure out if funcopts was called or not
 				// Maybe start as a NodeName(AST_factor_var) in here, and if funcopts was used
 				// Then change its type to AST_fun_call
-				TreeNode* facvar = program_tree.insert(new NodeHeader(AST_factor_var), ast_node_stack.back());
+				TreeNode* facvar = program_tree->insert(new NodeHeader(AST_factor_var), ast_node_stack.back());
 				ast_node_stack.push_back(facvar);
 				break;
 			}
 			case 42: //G_FACTOR      G_NUMBER    we can start the number builder
 			{
-				TreeNode* fac = program_tree.insert(new NodeConstFactor(AST_factor_const), ast_node_stack.back());
+				TreeNode* fac = program_tree->insert(new NodeConstFactor(AST_factor_const), ast_node_stack.back());
 				ast_node_stack.push_back(fac);
 				break;
 			}
@@ -480,7 +490,7 @@ public:
 				// Insert variable identifier into some buffer so the node can get it?
 				NodeType cur_type = ast_node_stack.back()->node_data->getNodeType();
 				if (cur_type == AST_list_variables || cur_type == AST_assignment) { //AST_list_variables might have to be changed to AST_declaration
-					program_tree.insert(new NodeVariable(AST_variable, tokens->at(it).token_value, type_buffer), ast_node_stack.back());
+					program_tree->insert(new NodeVariable(AST_variable, tokens->at(it).token_value, type_buffer), ast_node_stack.back());
 				}
 				else if (cur_type == AST_factor_var) {
 					ast_node_stack.back()->node_data->setStrVal(tokens->at(it).token_value);
@@ -525,7 +535,7 @@ public:
 			if (rule.data[i] >= G_PROGRAM) {
 				NodeType cur_type = nonterminalToNodetype(rule.data[i]);
 				// Switch cur_type to different node header types 
-				TreeNode *child = program_tree.insert(new NodeHeader(cur_type), ast_node_stack.back());
+				TreeNode *child = program_tree->insert(new NodeHeader(cur_type), ast_node_stack.back());
 				temp_nodes.push_back(child);
 			}
 		}

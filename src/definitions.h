@@ -196,6 +196,7 @@ struct Rule {
 	int size;
 	int id; // RULE ID STARTS AT 1 !!! so its the same as the table
 	int data[16];
+
 };
 
 const std::string token_names[NUM_TOKEN_TYPES + NUM_NONTERIMNALS] = {

@@ -6,16 +6,21 @@
 
 class LLTable {
 public:
+	Rule r_blank[1] = { 0 };
+	Rule rules[NUM_RULES];
+	Rule* table[(NUM_NONTERIMNALS)][34];
+	
 	// TODO: make file reader that takes all this info from a file
 	LLTable() {
 		read_rules("src/grammar.txt");
 		read_table("src/table.txt");
 	}
+	~LLTable() {
+		std::cout << "blblubublublu";
+	}
 	// First int in rule is the left hand side
-	Rule r_blank[1] = { 0 };
-
-	Rule rules[NUM_RULES];
-	Rule *table[NUM_NONTERIMNALS][34];
+	
+	
 
 	void read_rules(std::string in_file_name) {
 		std::ifstream in_file(in_file_name);
@@ -25,7 +30,6 @@ public:
 			while (std::getline(in_file, line)) {
 				// Get a rule from row
 				int sym_count = 0;
-				Rule rule{};
 				std::istringstream line_stream(line);
 				auto token = std::string{};
 				//std::cout << rule_count + 1 << " ";
@@ -34,16 +38,15 @@ public:
 					//std::cout << token << " ";
 					for (int i = 0; i < ARR_SIZE(token_names); i++) {
 						if (token_names[i] == token) {
-							rule.data[sym_count] = i;
+							rules[rule_count].data[sym_count] = i;
 						}
 					}
 					sym_count++;
 				}
 				//std::cout << std::endl;
-				rule.size = sym_count;
-				rule.id = rule_count + 1;
+				rules[rule_count].size = sym_count;
+				rules[rule_count].id = rule_count + 1;
 				
-				rules[rule_count] = rule;
 				rule_count++;
 			}
 			in_file.close();	
@@ -51,11 +54,6 @@ public:
 		else {
 			std::cout << "failed to open file\n";
 		}
-		
-		/*for (Rule x : rules) {
-			std::cout << x.size << " ";
-		}
-		std::cout << std::endl;*/
 	}
 	void read_table(std::string in_file_name) {
 		std::ifstream in_file(in_file_name);
@@ -75,7 +73,7 @@ public:
 						table[row_count][col_count] = r_blank;
 					}
 					else {
-						table[row_count][col_count] = &rules[value - 1];
+						table[row_count][col_count] = &(rules[value - 1]);
 					}
 					//std::cout << value << " ";
 					col_count++;
@@ -90,7 +88,7 @@ public:
 		}
 	}
 	Rule getRule(int i, int j) {
-		Rule rule = *table[i][j];
+		Rule rule = *(table[i][j]);
 		return rule;
 	}
 };
