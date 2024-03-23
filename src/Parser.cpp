@@ -110,8 +110,6 @@ public:
 		// parent.second = new expr (high, low.op, low.second)
 		// I think this is just a left rotate??
 
-		// Can also start working on the symbol table
-
 		// TODO: escape parameter list correctly
 
 

@@ -3,95 +3,88 @@
 #include <fstream>
 
 class NodeData {
+protected:
+	NodeType node_type;
 public:
-	virtual void		print() = 0;
-	virtual void		setVarType(VarType t) = 0;
-	virtual void		setNodeType(NodeType n) = 0;
-	virtual void		setStrVal(std::string s) = 0;
-	virtual void		appendNumString(std::string s) = 0;
-	virtual NodeType	getNodeType() = 0; // TODO: only have this function once instead of defined in every base class
+	
+	NodeData() {node_type = AST_head;}
+	NodeData(NodeType type) {
+		node_type = type;
+	}
+
+	virtual void		print() {};
+	virtual void		setVarType(VarType t) {};
+	virtual void		setStrVal(std::string s) {};
+	virtual void		appendNumString(std::string s) {};
 	virtual std::string	getNodeStrVal() = 0;
-	virtual				~NodeData() {}
+
+	void				setNodeType(NodeType n) { node_type = n; }
+	NodeType			getNodeType() { return node_type; };
 };
 
 class NodeHeader : public NodeData {
 public:
-	NodeType node_type;
 	std::string str_value = "";
-	NodeHeader(NodeType type) : node_type(type) {}
-	NodeHeader(NodeType type, std::string s) : node_type(type), str_value(s) {}
+	NodeHeader(NodeType type) : NodeData(type) {}
+	NodeHeader(NodeType type, std::string s) : NodeData(type) {
+		str_value = s;
+	}
 	void print() override {
 		std::cout << ast_type_names[node_type];
 		if (node_type == AST_factor_var) { std::cout << "    name: " << str_value; }
 	}
 
-	void		setVarType(VarType t) override {}
 	void		setStrVal(std::string s) override { str_value = s; }
-	void		setNodeType(NodeType n) override { node_type = n; }
-	void		appendNumString(std::string s) override {}
-	NodeType	getNodeType() override { return node_type; }
 	std::string getNodeStrVal() override { return str_value; }
 };
 
 class NodeFunction : public NodeData {
 public:
-	NodeType node_type;
 	std::string function_name;
 	VarType function_type; // return type
-	NodeFunction(NodeType type, std::string s, VarType vt) : node_type(type), function_name(s), function_type(vt) {}
+	NodeFunction(NodeType type, std::string s, VarType vt) : NodeData(type){
+		function_name = s;
+		function_type = vt;
+	}
 	void print() override {
 		std::cout << ast_type_names[node_type] << "    name: " << function_name << "    return type: " << type_names[function_type];
 	}
 	void setVarType(VarType t) override { function_type = t; }
 	void setStrVal(std::string s) override { function_name = s; }
-	void setNodeType(NodeType n) { node_type = n; }
-	NodeType getNodeType() { return node_type; }
-	std::string	 getNodeStrVal() { return function_name; }
-	void appendNumString(std::string s) {}
-
-
+	std::string	 getNodeStrVal() override { return function_name; }
 };
 
 class NodeDeclaration : public NodeData {
 public:
-	NodeType node_type;
 	VarType var_type;
-	NodeDeclaration(NodeType type, VarType v) : node_type(type), var_type(v) {}
+	NodeDeclaration(NodeType type, VarType v) : NodeData(type) {
+		var_type = v;
+	}
 	void print() override {
 		std::cout << ast_type_names[node_type] << "    type: " << type_names[var_type];
 	}
 	void setVarType(VarType t) override { var_type = t; }
-	void setNodeType(NodeType n) override { node_type = n; }
-	void setStrVal(std::string s) override {}
-	NodeType getNodeType() override { return node_type; }
 	std::string	 getNodeStrVal() override { return ""; }
 	void appendNumString(std::string s) override { std::cout << "Function Should not be called" << std::endl; }
 };
 
 class NodeConstFactor : public NodeData {
 public:
-	NodeType node_type;
 	VarType var_type = VT_int; //int by default
 	std::string num_str = "";
-	NodeConstFactor(NodeType type) : node_type(type) {}
+	NodeConstFactor(NodeType type) : NodeData(type) {}
 	void print() override {
 		std::cout << ast_type_names[node_type] << "    type: " << type_names[var_type] << "    val: " << num_str;
 	}
 	void setVarType(VarType t) override { var_type = t; }
-	void setStrVal(std::string s) override {}
-	void setNodeType(NodeType n) override { node_type = n; }
-	NodeType getNodeType() { return node_type; }
-	std::string	 getNodeStrVal() { return ""; }
+	std::string	 getNodeStrVal() override { return ""; }
 	void appendNumString(std::string s) override { num_str.append(s); }
-
 };
 
 class NodeVariable : public NodeData {
 public:
-	NodeType node_type;
 	Variable var;
-	NodeVariable(NodeType t, std::string n, VarType vt) {
-		node_type = t;
+	NodeVariable(NodeType t, std::string n, VarType vt) : NodeData(t) {
 		var.name = n;
 		var.type = vt;
 	}
@@ -100,10 +93,7 @@ public:
 	}
 	void setVarType(VarType t) override { var.type = t; }
 	void setStrVal(std::string s) override { var.name = s; }
-	void setNodeType(NodeType n) override { node_type = n; }
-	NodeType getNodeType() override { return node_type; }
 	std::string	 getNodeStrVal() override { return var.name; }
-	void appendNumString(std::string s) override {}
 };
 
 struct TreeNode {
