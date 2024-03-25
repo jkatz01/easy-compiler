@@ -146,8 +146,17 @@ public:
 				ast_node_stack.pop_back();
 				break;
 			}
+			case 8: // G_PARAM_OPT      T_null
+			{
+				ast_node_stack.pop_back();
+				break;
+			}
 			case 10: //DECLARATIONS -> DECL ; DECLARATIONS
 			{
+				if (ast_node_stack.back()->node_data->getNodeType() == AST_func_declaration) {
+					TreeNode* decl_list = program_tree->insert(new NodeHeader(AST_list_declarations), ast_node_stack.back());
+					ast_node_stack.push_back(decl_list);
+				}
 				TreeNode* decl = program_tree->insert(new NodeDeclaration(AST_declaration, VT_int), ast_node_stack.back());
 				ast_node_stack.push_back(decl);
 				break;

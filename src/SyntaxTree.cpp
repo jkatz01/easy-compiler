@@ -191,11 +191,11 @@ public:
 		return Variable("", VT_invalid);
 	}
 
-	void addDeclaration(TreeNode* node) {
+	void addDeclaration(TreeNode* node, int scope) {
 		// TODO: add variable offset in stack
 		NodeDeclaration* decl = dynamic_cast<NodeDeclaration*>(node->node_data);
 		VarType decl_type = decl->var_type;
-		for (TreeNode* child : node->children.at(0)->children) { //decl -> list_vars -> ...
+		for (TreeNode* child : node->children.at(scope)->children) { //decl -> list_vars -> ...
 			if (child->node_data->getNodeType() != AST_variable) { // This should only be full of AST_variable
 				std::cout << "ERROR: trying to add variable but found node of type " << child->node_data->getNodeType() << std::endl;
 			}
@@ -226,7 +226,7 @@ public:
 		}
 		else if (my_type == AST_declaration) {
 			// Add declaration variables to symbol table
-			addDeclaration(node);
+			addDeclaration(node, 0);
 			return; // ?????
 		}
 		else if (my_type == AST_assignment) {

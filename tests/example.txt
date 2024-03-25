@@ -1,3 +1,9 @@
+def int myfunction(int first, int second)
+	int x, y;
+	int w, v;
+	x = 60;
+	v = 56;
+fed;
 int x, y;
 x = 5 - y;
 .
