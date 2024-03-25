@@ -142,7 +142,8 @@ enum NodeType {
 	AST_list_func_declarations, // FDECLS
 	AST_list_declarations,		// DECLARATIONS
 	AST_list_statements,		// STATEMENT_SEQ
-	AST_list_variables			// VARLIST
+	AST_list_variables,			// VARLIST
+	AST_list_arguments
 };
 
 enum OpType {
@@ -235,7 +236,7 @@ const std::string operator_names[15] = {
 const std::string type_names[4] = {
 	"int   ","double","default", "invalid"
 };
-const std::string ast_type_names[24] = {
+const std::string ast_type_names[25] = {
 	"AST_func_declaration",
 	"AST_declaration",
 	"AST_NodeHeader",
@@ -259,5 +260,6 @@ const std::string ast_type_names[24] = {
 	"AST_list_func_declarations",
 	"AST_list_declarations",
 	"AST_list_statements",
-	"AST_list_variables"
+	"AST_list_variables",
+	"AST_list_arguments"
 };

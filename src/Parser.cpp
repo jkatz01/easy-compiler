@@ -98,6 +98,7 @@ public:
 
 		static VarType type_buffer = VT_int;
 		static bool	   in_stmt_seq;
+		static bool	   in_expr_seq;
 		//OpType  op_buffer = OP_plus;
 
 		// TODO: write an operator presadence swapper:
@@ -106,8 +107,6 @@ public:
 		// high.second = low.first
 		// parent.second = new expr (high, low.op, low.second)
 		// I think this is just a left rotate??
-
-		// TODO: escape parameter list correctly
 
 
 		TreeNode* root;
@@ -249,10 +248,6 @@ public:
 			}
 			case 41: //G_FACTOR      G_ID G_FUNCOPTS
 			{
-				// Need to figure out if funcopts was called or not
-				// Maybe start as a NodeName(AST_factor_var) in here, and if funcopts was used
-				// Then change its type to AST_fun_call
-				std::cout << "insert factor var" << std::endl;
 				TreeNode* facvar = program_tree->insert(new NodeHeader(AST_factor_var), ast_node_stack.back());
 				ast_node_stack.push_back(facvar);
 				break;
@@ -265,18 +260,39 @@ public:
 			}
 			case 44: //G_FUNCOPTS      T_open_par G_EXPRSEQ T_close_par 
 			{
+				std::string name = ast_node_stack.back()->children.at(0)->node_data->getNodeStrVal();
+				ast_node_stack.back()->children.erase(ast_node_stack.back()->children.begin());
+				
+				NodeExpression* new_expr_data = new NodeExpression(AST_expression);
+				delete ast_node_stack.back()->node_data;
+				ast_node_stack.back()->node_data = new_expr_data;
+				ast_node_stack.back()->node_data->setOpType(OP_mod); // TEMPORARY, need to get actual op
+				
+				TreeNode* fun_call = program_tree->insert(new NodeHeader(AST_func_call), ast_node_stack.back());
+				ast_node_stack.push_back(fun_call);
+				// Instead, replace the node with a nodeExpression
+				ast_node_stack.back()->node_data->setStrVal(name);
 				ast_node_stack.back()->node_data->setNodeType(AST_func_call);
 				break;
 			}
 			case 45: //G_FUNCOPTS      T_null
-				//ast_node_stack.pop_back();
 				break;
+			case 46: //G_EXPRSEQ      G_EXPR G_EXPRSEQ_P
+			{
+				break;
+			}
+			case 47: //G_EXPRSEQ      T_null 
+			{
+				ast_node_stack.pop_back();	
+				break;
+			}
 			case 48: //G_EXPRSEQ_P      T_comma G_EXPRSEQ
 			{
 				ast_node_stack.pop_back();
 				break;
 			}
 			case 49: //G_EXPRSEQ_P      T_null
+				ast_node_stack.pop_back();
 				ast_node_stack.pop_back();
 				break;
 			case 59: //G_VAR_P         T_null

@@ -57,12 +57,20 @@ public:
 
 class NodeExpression : public NodeData {
 public:
+	std::string str_val = "";
 	OpType op_type = OP_single_factor;
+	bool is_funcall = false; // If true, ignore operator
 	NodeExpression(NodeType type) : NodeData(type) {}
 	void print() override {
-		std::cout << ast_type_names[node_type] << "    op: " << operator_names[op_type];
+		if (!is_funcall) std::cout << ast_type_names[node_type] << "    op: " << operator_names[op_type];
+		else if (is_funcall)  std::cout << ast_type_names[node_type] << "    name: " << str_val;
 	}
 	void setOpType(OpType t) override { op_type = t; }
+	void setStrVal(std::string s) override { 
+		str_val = s; 
+		is_funcall = true;
+	}
+	std::string getNodeStrVal() override { return str_val;}
 };
 
 class NodeDeclaration : public NodeData {
