@@ -216,14 +216,15 @@ public:
 			}
 			case 28: //G_EXPR         G_TERM G_EXPR_P
 			{
-				TreeNode* asgn = program_tree->insert(new NodeHeader(AST_expression), ast_node_stack.back());
+				TreeNode* asgn = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
 				break;
 			}
 			case 31: //G_EXPR_P      T_minus G_TERM G_EXPR_P
 			{
-				program_tree->insert(new NodeHeader(AST_operator), ast_node_stack.back());
-				TreeNode* expr = program_tree->insert(new NodeHeader(AST_expression), ast_node_stack.back());
+				//program_tree->insert(new NodeHeader(AST_operator), ast_node_stack.back());
+				ast_node_stack.back()->node_data->setOpType(OP_minus);
+				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
 				break;
 			}
@@ -231,8 +232,9 @@ public:
 				break;
 			case 36: //G_TERM_P      T_star G_FACTOR G_TERM_P
 			{
-				program_tree->insert(new NodeHeader(AST_operator), ast_node_stack.back());
-				TreeNode* expr = program_tree->insert(new NodeHeader(AST_expression), ast_node_stack.back());
+				//program_tree->insert(new NodeHeader(AST_operator), ast_node_stack.back());
+				ast_node_stack.back()->node_data->setOpType(OP_times);
+				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
 				break;
 			}
@@ -241,6 +243,7 @@ public:
 				// Need to figure out if funcopts was called or not
 				// Maybe start as a NodeName(AST_factor_var) in here, and if funcopts was used
 				// Then change its type to AST_fun_call
+				std::cout << "insert factor var" << std::endl;
 				TreeNode* facvar = program_tree->insert(new NodeHeader(AST_factor_var), ast_node_stack.back());
 				ast_node_stack.push_back(facvar);
 				break;

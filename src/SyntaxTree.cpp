@@ -15,9 +15,10 @@ public:
 	virtual void		print() {};
 	virtual void		setVarType(VarType t) {};
 	virtual void		setStrVal(std::string s) {};
+	virtual void		setOpType(OpType t) {std::cout << "set op type called" << std::endl;};
 	virtual void		appendNumString(std::string s) {};
-	virtual std::string	getNodeStrVal() = 0;
-
+	
+	virtual std::string	getNodeStrVal() {return "";};
 	void				setNodeType(NodeType n) { node_type = n; }
 	NodeType			getNodeType() { return node_type; };
 };
@@ -52,6 +53,16 @@ public:
 	void setVarType(VarType t) override { function_type = t; }
 	void setStrVal(std::string s) override { function_name = s; }
 	std::string	 getNodeStrVal() override { return function_name; }
+};
+
+class NodeExpression : public NodeData {
+public:
+	OpType op_type = OP_single_factor;
+	NodeExpression(NodeType type) : NodeData(type) {}
+	void print() override {
+		std::cout << ast_type_names[node_type] << "    op: " << operator_names[op_type];
+	}
+	void setOpType(OpType t) override { op_type = t; }
 };
 
 class NodeDeclaration : public NodeData {
@@ -248,9 +259,9 @@ public:
 			if (node->children.size() == 1) {
 				return typeCheckExpression(node->children.at(0));
 			}
-			else if (node->children.size() == 3) { //TODO: needs to be changed to 2 if we remove AST_operator
+			else if (node->children.size() == 2) {
 				VarType lhs = typeCheckExpression(node->children.at(0));
-				VarType rhs = typeCheckExpression(node->children.at(2));
+				VarType rhs = typeCheckExpression(node->children.at(1));
 				if (lhs == rhs) {
 					std::cout << "Expression Types Matched" << std::endl;
 				}
