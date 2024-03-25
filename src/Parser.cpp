@@ -68,10 +68,7 @@ public:
 			
 		}
 		std::cout << "Finished parsing successfully" << std::endl;
-		std::cout << "\n\n\nAbstract Syntax Tree:" << std::endl;
 		
-		program_tree->print();
-
 		return 0;
 	}
 

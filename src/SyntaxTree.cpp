@@ -112,7 +112,6 @@ private:
 
 	std::ofstream error_file;
 
-
 	void destroy(TreeNode* node) {
 		if (node == nullptr) {
 			return;
@@ -182,9 +181,10 @@ public:
 	}
 
 	void addDeclaration(TreeNode* node) {
+		// TODO: add variable offset in stack
 		NodeDeclaration* decl = dynamic_cast<NodeDeclaration*>(node->node_data);
 		VarType decl_type = decl->var_type;
-		for (TreeNode* child : node->children.at(0)->children) {
+		for (TreeNode* child : node->children.at(0)->children) { //decl -> list_vars -> ...
 			if (child->node_data->getNodeType() != AST_variable) { // This should only be full of AST_variable
 				std::cout << "ERROR: trying to add variable but found node of type " << child->node_data->getNodeType() << std::endl;
 			}

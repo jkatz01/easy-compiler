@@ -21,6 +21,9 @@ int main(int argc, char* argv[]) {
 	
 	Parser *parser = new Parser(lexical->v_tokens, program_tree); // Release fails here, maybe an unclosed file?
 	parser->parse();
+
+	std::cout << "\n\n\nAbstract Syntax Tree:" << std::endl;
+	program_tree->print();
 	
 	delete parser; //TODO: memory leak here, LLTable does not get deleted
 	delete lexical;

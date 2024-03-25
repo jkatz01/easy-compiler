@@ -11,8 +11,6 @@
     <Text Include="tests\bad_file.txt" />
     <Text Include="tests\example.txt" />
     <Text Include="..\cp471\P1\tests\example.txt" />
-    <Text Include="grammar.txt" />
-    <Text Include="grammar2.txt" />
     <Text Include="src\grammar.txt" />
     <Text Include="src\table.txt" />
   </ItemGroup>
