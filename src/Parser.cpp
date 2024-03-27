@@ -41,6 +41,9 @@ public:
 			if ( top_type < NUM_TERMINALS || top_type == T_dollar )  { //top_type is nonterm or dollar
 				if (top_type == found_type) {
 					// Matched symbols
+					if (top_type == T_semicolon && ast_node_stack.back()->node_data->getNodeType() == AST_assignment) {
+						ast_node_stack.pop_back();
+					}
 					parse_stack.pop_back();
 					it++;
 				}
@@ -99,6 +102,8 @@ public:
 		static VarType type_buffer = VT_int;
 		static bool	   in_stmt_seq;
 		static bool	   in_expr_seq;
+		static bool	   in_statement;
+		static int     expr_counter;
 		//OpType  op_buffer = OP_plus;
 
 		// TODO: write an operator presadence swapper:
@@ -111,9 +116,15 @@ public:
 
 		TreeNode* root;
 		if (tokens->at(it).token_type == T_semicolon) {
+			std::cout << "counter: " << expr_counter << std::endl;
+		}
+		if (tokens->at(it).token_type == T_semicolon && expr_counter == 0) {
+			std::cout << "-------------------;;;;;;;;;;;;" << std::endl;
 			ast_node_stack.pop_back();
+			printAstNodeStack();
 			return;
 		}
+		
 		switch (rule.id) {
 			case 1: // PROGRAM -> STATEMENT_SEQ  DECLARATIONS  FDECLS
 				root = program_tree->insert(new NodeHeader(AST_program));
@@ -224,6 +235,7 @@ public:
 			}
 			case 28: //G_EXPR         G_TERM G_EXPR_P
 			{
+				expr_counter = 0;
 				TreeNode* asgn = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
 				break;
@@ -237,6 +249,15 @@ public:
 				break;
 			}
 			case 34: //G_EXPR_P      T_null
+				while (expr_counter > 0) {
+					std::cout << "---------------------> EXPRESSION COUNTER " << expr_counter << std::endl;
+					ast_node_stack.pop_back();
+					expr_counter--;
+				}
+				if (tokens->at(it).token_type == T_semicolon) {
+					ast_node_stack.pop_back();;
+				}
+				// Pop back for every expression encountered
 				break;
 			case 36: //G_TERM_P      T_star G_FACTOR G_TERM_P
 			{
@@ -244,6 +265,11 @@ public:
 				ast_node_stack.back()->node_data->setOpType(OP_times);
 				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
+				break;
+			}
+			case 40: //G_TERM_P      T_null
+			{
+				expr_counter++;
 				break;
 			}
 			case 41: //G_FACTOR      G_ID G_FUNCOPTS
@@ -288,11 +314,10 @@ public:
 			}
 			case 48: //G_EXPRSEQ_P      T_comma G_EXPRSEQ
 			{
-				ast_node_stack.pop_back();
+				//ast_node_stack.pop_back();
 				break;
 			}
 			case 49: //G_EXPRSEQ_P      T_null
-				ast_node_stack.pop_back();
 				ast_node_stack.pop_back();
 				break;
 			case 59: //G_VAR_P         T_null
@@ -341,7 +366,7 @@ public:
 				break;
 			
 		}
-		//printAstNodeStack();
+		printAstNodeStack();
 	}
 
 	void astAddStandardRule(Rule rule) {
