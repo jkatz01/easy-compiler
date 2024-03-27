@@ -11,6 +11,7 @@ public:
 	SyntaxTree *program_tree; // Need to add nodes from a tree in a custom way for rules that need it
 	std::vector<TreeNode*> ast_node_stack; // For returning to the node
 	LLTable *table;
+	int err_count = 0;
 
 
 	Parser(std::vector<Token> const& token_list, SyntaxTree* tree) {
@@ -51,6 +52,7 @@ public:
 					// ERROR
 					std::cout << "Error: expected: " << token_names[top_type] << "\t found: " << token_names[found_type] << std::endl;
 					error_file << "Error: expected: " << token_names[top_type] << "\t found: " << token_names[found_type] << std::endl;
+					err_count++;
 					// Handle errors by deleting
 					parse_stack.pop_back(); 
 					it++; 

@@ -19,8 +19,9 @@ public:
 	virtual void		appendNumString(std::string s) {};
 	
 	virtual std::string	getNodeStrVal() {return "";};
+	virtual VarType		getNodeVarType() {return VT_default;};
 	void				setNodeType(NodeType n) { node_type = n; }
-	NodeType			getNodeType() { return node_type; };
+	NodeType			getNodeType() { return node_type; }
 };
 
 class NodeHeader : public NodeData {
@@ -53,6 +54,7 @@ public:
 	void setVarType(VarType t) override { function_type = t; }
 	void setStrVal(std::string s) override { function_name = s; }
 	std::string	 getNodeStrVal() override { return function_name; }
+	VarType getNodeVarType() override { return function_type; }
 };
 
 class NodeExpression : public NodeData {
@@ -84,6 +86,7 @@ public:
 	}
 	void setVarType(VarType t) override { var_type = t; }
 	std::string	 getNodeStrVal() override { return ""; }
+	VarType getNodeVarType() override { return var_type; }
 	void appendNumString(std::string s) override { std::cout << "Function Should not be called" << std::endl; }
 };
 
@@ -97,6 +100,7 @@ public:
 	}
 	void setVarType(VarType t) override { var_type = t; }
 	std::string	 getNodeStrVal() override { return ""; }
+	VarType getNodeVarType() override { return var_type; }
 	void appendNumString(std::string s) override { num_str.append(s); }
 };
 
@@ -128,7 +132,8 @@ class SyntaxTree {
 private:
 	TreeNode* root;
 	std::vector<std::vector<Variable>> var_table;
-
+	std::vector<Variable> functions_table; // Just use the Variable struct, all we need is name and type.
+											// Implementation of function is just in assembly not here
 	std::ofstream error_file;
 
 	void destroy(TreeNode* node) {
@@ -199,10 +204,9 @@ public:
 		return Variable("", VT_invalid);
 	}
 
-	void addDeclaration(TreeNode* node, int scope) {
+	void addDeclarationToTable(TreeNode* node, int scope) {
 		// TODO: add variable offset in stack
-		NodeDeclaration* decl = dynamic_cast<NodeDeclaration*>(node->node_data);
-		VarType decl_type = decl->var_type;
+		VarType decl_type = node->node_data->getNodeVarType();
 		for (TreeNode* child : node->children.at(scope)->children) { //decl -> list_vars -> ...
 			if (child->node_data->getNodeType() != AST_variable) { // This should only be full of AST_variable
 				std::cout << "ERROR: trying to add variable but found node of type " << child->node_data->getNodeType() << std::endl;
@@ -210,6 +214,12 @@ public:
 			std::cout << "Added " << child->node_data->getNodeStrVal() << "  " << type_names[decl_type] << std::endl;
 			var_table.back().push_back(Variable(child->node_data->getNodeStrVal(), decl_type));
 		}
+	}
+	void addFunctionToTable(TreeNode* node, int scope) {
+		std::string f_name = node->node_data->getNodeStrVal();
+		VarType     f_type = node->node_data->getNodeVarType();
+		functions_table.push_back(Variable(f_name, f_type));
+		std::cout << "Added function: " << type_names[f_type] << "    " << f_name << std::endl; 
 	}
 	void compileTreeMaster() {
 		compileTree(root);
@@ -229,12 +239,12 @@ public:
 
 		NodeType my_type = node->node_data->getNodeType();
 		if (my_type == AST_func_declaration) {
-			std::cout << "Ignoring function: " << node->node_data->getNodeStrVal() << std::endl;
-			return; // skip functions for now
+			addFunctionToTable(node, 0);
+			// TODO: add all declarations inside to a new scope
+			return; 
 		}
 		else if (my_type == AST_declaration) {
-			// Add declaration variables to symbol table
-			addDeclaration(node, 0);
+			addDeclarationToTable(node, 0);
 			return; // ?????
 		}
 		else if (my_type == AST_assignment) {
@@ -282,9 +292,9 @@ public:
 			}
 		}
 		else if (my_type == AST_factor_const) {
-			NodeConstFactor* tempConst = dynamic_cast<NodeConstFactor*>(node->node_data);
-			std::cout << "Found factor const type: " << type_names[tempConst->var_type] << std::endl;
-			return tempConst->var_type;
+			VarType var_type = node->node_data->getNodeVarType();
+			std::cout << "Found factor const type: " << type_names[var_type] << std::endl;
+			return var_type;
 		}
 		else if (my_type == AST_factor_var) {
 			std::string node_var_name = node->node_data->getNodeStrVal();
@@ -340,5 +350,12 @@ public:
 			}
 			// Couldn't find in scope
 		}
+		std::cout << std::endl;
+	}
+	void printFunctionTable() {
+		for (Variable f : functions_table) {
+			std::cout << f.name << "    " << type_names[f.type] << std::endl;
+		}
+		std::cout << std::endl;
 	}
 };

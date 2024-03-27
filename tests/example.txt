@@ -1,11 +1,10 @@
+def int myfunction(int first, int second, double plop)
+	int x, y;
+	x = 60;
+	return(x);
+fed;
 
 int x, y;
-
-while (x == 1) do
-	b = 5;
-	b = 5;
-od;
-x = 5;
-x = 5;
-x = 5;
+x = 5 + 32 + x + y +653;
+return(4);
 .

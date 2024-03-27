@@ -16,13 +16,16 @@ int main(int argc, char* argv[]) {
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
-	;;
+	;;;;
 	SyntaxTree* program_tree = new SyntaxTree();
 	
 	Parser *parser = new Parser(lexical->v_tokens, program_tree); // Release fails here, maybe an unclosed file?
 	parser->parse();
 
 	std::cout << "\n\n\nAbstract Syntax Tree:" << std::endl;
+	if (parser->err_count > 0) {
+		std::cout << "ERROR: PARSING FAILED WITH " << parser->err_count << " ERRORS" << std::endl;
+	}
 	program_tree->print();
 	
 	delete parser; //TODO: memory leak here, LLTable does not get deleted
@@ -31,6 +34,11 @@ int main(int argc, char* argv[]) {
 	std::cout << std::endl;
 	std::cout << "Compiling tree" << std::endl << "---------------------" << std::endl;
 	program_tree->compileTreeMaster();
+	std::cout << std::endl;
+	std::cout << "Variable table" << std::endl << "---------------------" << std::endl;
+	program_tree->printSymbolTable();
+	std::cout << "Function table" << std::endl << "---------------------" << std::endl;
+	program_tree->printFunctionTable();
 
 	return 0;
 }
