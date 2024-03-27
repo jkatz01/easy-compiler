@@ -286,6 +286,27 @@ public:
 				ast_node_stack.push_back(expr);
 				break;
 			}
+			case 37: //G_TERM_P      T_slash G_FACTOR G_TERM_P
+			{
+				ast_node_stack.back()->node_data->setOpType(OP_divide);
+				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
+				ast_node_stack.push_back(expr);
+				break;
+			}
+			case 38: //G_TERM_P      T_mod G_FACTOR G_TERM_P
+			{
+				ast_node_stack.back()->node_data->setOpType(OP_mod);
+				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
+				ast_node_stack.push_back(expr);
+				break;
+			}
+			case 39: //G_TERM_P      T_and G_FACTOR G_TERM_P
+			{
+				ast_node_stack.back()->node_data->setOpType(OP_and);
+				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
+				ast_node_stack.push_back(expr);
+				break;
+			}
 			case 40: //G_TERM_P      T_null
 			{
 				expr_counter++;
