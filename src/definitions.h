@@ -161,7 +161,8 @@ enum OpType {
 	OP_lesser_eq,
 	OP_greater,
 	OP_lesser,
-	OP_single_factor
+	OP_single_factor,
+	OP_default
 };
 
 struct TokenError {
@@ -229,9 +230,9 @@ const std::string token_names_nice[NUM_TOKEN_TYPES + NUM_NONTERIMNALS] = {
 	"FUNCOPTS","EXPRSEQ","EXPRSEQ_P","COMP","COMP_P","COMP_P_P","VAR","VAR_P","ID","NUMBER","DECIMAL","EXOPT","INT"
 };
 
-const std::string operator_names[15] = {
+const std::string operator_names[16] = {
 	"OP_plus","OP_minus","OP_or","OP_times","OP_divide","OP_mod","OP_and","OP_not","OP_equals",
-	"OP_unequals","OP_greater_eq","OP_lesser_eq","OP_greater","OP_lesser","OP_single_factor"
+	"OP_unequals","OP_greater_eq","OP_lesser_eq","OP_greater","OP_lesser","OP_single_factor", "OP_default"
 };
 const std::string type_names[4] = {
 	"int   ","double","default", "invalid"

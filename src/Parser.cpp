@@ -240,10 +240,30 @@ public:
 				ast_node_stack.push_back(asgn);
 				break;
 			}
+			case 30: //G_EXPR_P      T_plus G_TERM G_EXPR_P
+			{
+				ast_node_stack.back()->node_data->setOpType(OP_plus);
+				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
+				ast_node_stack.push_back(expr);
+				break;
+			}
 			case 31: //G_EXPR_P      T_minus G_TERM G_EXPR_P
 			{
-				//program_tree->insert(new NodeHeader(AST_operator), ast_node_stack.back());
 				ast_node_stack.back()->node_data->setOpType(OP_minus);
+				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
+				ast_node_stack.push_back(expr);
+				break;
+			}
+			case 32: //G_EXPR_P      T_or G_TERM G_EXPR_P
+			{
+				ast_node_stack.back()->node_data->setOpType(OP_or);
+				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
+				ast_node_stack.push_back(expr);
+				break;
+			}
+			case 33: //G_EXPR_P      G_COMP G_TERM G_EXPR_P
+			{
+				ast_node_stack.back()->node_data->setOpType(OP_default);
 				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
 				break;
@@ -261,7 +281,6 @@ public:
 				break;
 			case 36: //G_TERM_P      T_star G_FACTOR G_TERM_P
 			{
-				//program_tree->insert(new NodeHeader(AST_operator), ast_node_stack.back());
 				ast_node_stack.back()->node_data->setOpType(OP_times);
 				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
@@ -292,7 +311,7 @@ public:
 				NodeExpression* new_expr_data = new NodeExpression(AST_expression);
 				delete ast_node_stack.back()->node_data;
 				ast_node_stack.back()->node_data = new_expr_data;
-				ast_node_stack.back()->node_data->setOpType(OP_mod); // TEMPORARY, need to get actual op
+				ast_node_stack.back()->node_data->setOpType(OP_default); // TEMPORARY, need to get actual op
 				
 				TreeNode* fun_call = program_tree->insert(new NodeHeader(AST_func_call), ast_node_stack.back());
 				ast_node_stack.push_back(fun_call);
@@ -320,6 +339,11 @@ public:
 			case 49: //G_EXPRSEQ_P      T_null
 				ast_node_stack.pop_back();
 				break;
+			case 52: //G_COMP         T_eq T_eq
+			{
+				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setOpType(OP_equals);
+				break;
+			}
 			case 59: //G_VAR_P         T_null
 				break;
 			case 58: //G_VAR         G_ID G_VAR_P
