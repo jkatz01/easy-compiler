@@ -339,14 +339,39 @@ public:
 			case 49: //G_EXPRSEQ_P      T_null
 				ast_node_stack.pop_back();
 				break;
+			case 50: //G_COMP         T_gt G_COMP_P_P
+			{
+				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setOpType(OP_greater);
+				break;
+			}
+			case 51: //G_COMP         T_lt G_COMP_P
+			{
+				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setOpType(OP_lesser);
+				break;
+			}
 			case 52: //G_COMP         T_eq T_eq
 			{
 				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setOpType(OP_equals);
 				break;
 			}
-			case 59: //G_VAR_P         T_null
+			case 54: //G_COMP_P      T_eq
+			{
+				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setOpType(OP_lesser_eq);
 				break;
+			}
+			case 55: //G_COMP_P      T_gt
+			{
+				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setOpType(OP_unequals);
+				break;
+			}
+			case 57: // G_COMP_P_P      T_eq
+			{
+				ast_node_stack.at(ast_node_stack.size() - 2)->node_data->setOpType(OP_greater_eq);
+				break;
+			}
 			case 58: //G_VAR         G_ID G_VAR_P
+				break;
+			case 59: //G_VAR_P         T_null
 				break;
 			case 61: //G_ID -> T_identifier
 			{
