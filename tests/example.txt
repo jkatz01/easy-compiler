@@ -1,6 +1,11 @@
+def int myfunction(int first, int second)
+	int x, y;
+	x = 60;
+	return(x);
+fed;
+
 int x, y;
-x = 4 * 5;
-x = 4 / 5;
-x = 4 % 5;
-x = 5 and 5;
+x = 8;
+return(4);
+return(4);
 .

@@ -233,6 +233,20 @@ public:
 				ast_node_stack.push_back(asgn);
 				break;
 			}
+			case 23: //G_STATEMENT      T_print T_open_par G_EXPR T_close_par
+			{
+				in_statement = true;
+				TreeNode* asgn = program_tree->insert(new NodeHeader(AST_print), ast_node_stack.back());
+				ast_node_stack.push_back(asgn);
+				break;
+			}
+			case 24: //G_STATEMENT      T_return T_open_par G_EXPR T_close_par 
+			{
+				in_statement = true;
+				TreeNode* asgn = program_tree->insert(new NodeHeader(AST_return), ast_node_stack.back());
+				ast_node_stack.push_back(asgn);
+				break;
+			}
 			case 28: //G_EXPR         G_TERM G_EXPR_P
 			{
 				expr_counter = 0;
@@ -276,6 +290,10 @@ public:
 				}
 				if (tokens->at(it).token_type == T_semicolon) {
 					ast_node_stack.pop_back();;
+				}
+				if (in_statement) {
+					in_statement = false;
+					ast_node_stack.pop_back();
 				}
 				// Pop back for every expression encountered
 				break;
