@@ -1,4 +1,6 @@
+int x;
 
-x =5 + 4 - 23 + 5989 + func(ww, xx) - 2;
+x = 2 + not(4);
+
 return(4);
 .

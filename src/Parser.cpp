@@ -278,7 +278,7 @@ public:
 				TreeNode* asgn = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				asgn->node_data->setOpType(OP_not);
 				ast_node_stack.push_back(asgn);
-				expr_counter ++;
+				expr_counter++;
 				break;
 			}
 			case 30: //G_EXPR_P      T_plus G_TERM G_EXPR_P
