@@ -106,6 +106,7 @@ public:
 		static bool	   in_expr_seq;
 		static bool	   in_statement;
 		static int     expr_counter;
+		static int	   temp_counter;
 		//OpType  op_buffer = OP_plus;
 
 		// TODO: write an operator presadence swapper:
@@ -271,6 +272,15 @@ public:
 				ast_node_stack.push_back(asgn);
 				break;
 			}
+			case 29: //G_EXPR	      T_not T_open_par G_EXPR T_close_par
+			{
+				// Treat this the same as an EXPR P kind of
+				TreeNode* asgn = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
+				asgn->node_data->setOpType(OP_not);
+				ast_node_stack.push_back(asgn);
+				expr_counter ++;
+				break;
+			}
 			case 30: //G_EXPR_P      T_plus G_TERM G_EXPR_P
 			{
 				ast_node_stack.back()->node_data->setOpType(OP_plus);
@@ -380,11 +390,18 @@ public:
 				break;
 			case 46: //G_EXPRSEQ      G_EXPR G_EXPRSEQ_P
 			{
+				// Save counter
+				if (!in_expr_seq) {
+					temp_counter = expr_counter;
+				}
+				in_expr_seq = true;
+				std::cout << "Saved counter: " << expr_counter << std::endl;
 				break;
 			}
 			case 47: //G_EXPRSEQ      T_null 
 			{
 				ast_node_stack.pop_back();	
+				in_expr_seq = false;
 				break;
 			}
 			case 48: //G_EXPRSEQ_P      T_comma G_EXPRSEQ
@@ -393,6 +410,10 @@ public:
 				break;
 			}
 			case 49: //G_EXPRSEQ_P      T_null
+				// retrieve counter
+				expr_counter = temp_counter;
+				std::cout << "Retrieved counter: " << expr_counter << std::endl;
+				in_expr_seq = false;
 				ast_node_stack.pop_back();
 				break;
 			case 50: //G_COMP         T_gt G_COMP_P_P

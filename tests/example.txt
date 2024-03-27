@@ -1,10 +1,4 @@
-def int myfunction(int first, int second, double plop)
-	int x, y;
-	x = 60;
-	return(x);
-fed;
 
-int x, y;
-x = 5 + 32 + x + y +653;
+x =5 + 4 - 23 + 5989 + func(ww, xx) - 2;
 return(4);
 .
