@@ -1,11 +1,11 @@
-def int myfunction(int first, int second)
-	int x, y;
-	x = 60;
-	return(x);
-fed;
 
 int x, y;
-x = 8;
-return(4);
-return(4);
+
+while (x == 1) do
+	b = 5;
+	b = 5;
+od;
+x = 5;
+x = 5;
+x = 5;
 .

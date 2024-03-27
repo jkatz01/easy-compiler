@@ -218,6 +218,11 @@ public:
 					ast_node_stack.push_back(seq);
 					in_stmt_seq = true;
 				}
+				if (in_stmt_seq == false && ast_node_stack.back()->node_data->getNodeType() == AST_while) {
+					TreeNode* seq = program_tree->insert(new NodeHeader(AST_list_statements), ast_node_stack.back());
+					ast_node_stack.push_back(seq);
+					in_stmt_seq = true;
+				}
 				break;
 			}
 			case 19: //G_STATEMENT_SEQ      T_null
@@ -226,10 +231,20 @@ public:
 					ast_node_stack.pop_back();
 					in_stmt_seq = false;
 				}
+				else if (ast_node_stack.back()->node_data->getNodeType() == AST_while) {
+					ast_node_stack.pop_back();
+					in_stmt_seq = false;
+				}
 				break;
 			case 20: //G_STATEMENT      G_VAR T_eq G_EXPR
 			{
 				TreeNode * asgn = program_tree->insert(new NodeHeader(AST_assignment), ast_node_stack.back());
+				ast_node_stack.push_back(asgn);
+				break;
+			}
+			case 22: //G_STATEMENT      T_while T_open_par G_EXPR T_close_par T_do G_STATEMENT_SEQ T_od
+			{
+				TreeNode* asgn = program_tree->insert(new NodeHeader(AST_while), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
 				break;
 			}
