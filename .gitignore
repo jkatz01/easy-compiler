@@ -13,6 +13,8 @@ Parsing-Errors.txt
 Semantic-Errors.txt
 old/
 cpp.hint
+program.asm
+program.exe
 
 
 # User-specific files

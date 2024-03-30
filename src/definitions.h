@@ -13,7 +13,8 @@
 #define TAB_SIZE			8
 #define FIRST_NONLITERAL	G_PROGRAM
 #define NUM_RULES			68
-#define PRINT_CONSOLE		true
+#define PRINT_CONSOLE		false
+#define QWORD_SIZE			8
 
 enum TokenType {
 	T_dot,
@@ -206,8 +207,10 @@ struct Rule {
 struct Variable {
 	std::string name;
 	VarType		type;
-	Variable() : name("def"), type(VT_default) {}
-	Variable(std::string n, VarType t) : name(n), type(t) {}
+	int			offset;
+	Variable() : name("def"), type(VT_default), offset(0) {}
+	Variable(std::string n, VarType t) : name(n), type(t), offset(0) {}
+	Variable(std::string n, VarType t, int of) : name(n), type(t), offset(of) {}
 };
 
 const std::string token_names[NUM_TOKEN_TYPES + NUM_NONTERIMNALS] = {
@@ -238,29 +241,13 @@ const std::string type_names[4] = {
 	"int   ","double","default", "invalid"
 };
 const std::string ast_type_names[25] = {
-	"AST_func_declaration",
-	"AST_declaration",
-	"AST_NodeHeader",
-	"AST_assignment",
-	"AST_if",
-	"AST_if_else",
-	"AST_while",
-	"AST_print",
-	"AST_return",
-	"AST_parameter",
-	"AST_variable",
-	"AST_type",
-	"AST_expression",
-	"AST_operator",
-	"AST_factor_var",
-	"AST_factor_const",
-	"AST_factor_call",
-	"AST_func_call",
-	"AST_head",
-	"AST_program",
-	"AST_list_func_declarations",
-	"AST_list_declarations",
-	"AST_list_statements",
-	"AST_list_variables",
-	"AST_list_arguments"
+	"AST_func_declaration","AST_declaration","AST_NodeHeader","AST_assignment","AST_if",
+	"AST_if_else","AST_while","AST_print","AST_return","AST_parameter","AST_variable",
+	"AST_type","AST_expression","AST_operator","AST_factor_var","AST_factor_const",
+	"AST_factor_call","AST_func_call","AST_head","AST_program","AST_list_func_declarations",
+	"AST_list_declarations","AST_list_statements","AST_list_variables","AST_list_arguments"
 };
+
+// registers: 32 bit: eax, ebx, ecx, edx, esi, edi, [ebp, esp], r8d, r9d, ... r15d
+//			  64 bit: rax, rbx, rcx, rdx, rsi, rdi, [rbp, rsp], r8, r9, ... r15
+// [rbp and rsp are used for stack pointer]

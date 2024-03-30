@@ -11,8 +11,8 @@ public:
 	Rule* table[(NUM_NONTERIMNALS)][34];
 	
 	LLTable() {
-		read_rules("src/grammar.txt");
-		read_table("src/table.txt");
+		read_rules("data/grammar.txt");
+		read_table("data/table.txt");
 	}
 	~LLTable() {
 		std::cout << "blblubublublu";

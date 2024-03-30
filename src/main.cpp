@@ -16,8 +16,9 @@ int main(int argc, char* argv[]) {
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
-	;;;;;;
-	SyntaxTree* program_tree = new SyntaxTree();
+	;;;
+	CodeGen_x86_64_fasm_w *generator = new CodeGen_x86_64_fasm_w();
+	SyntaxTree* program_tree = new SyntaxTree(generator);
 	
 	Parser *parser = new Parser(lexical->v_tokens, program_tree); // Release fails here, maybe an unclosed file?
 	parser->parse();

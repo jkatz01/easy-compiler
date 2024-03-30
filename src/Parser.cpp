@@ -66,10 +66,13 @@ public:
 				parse_stack.pop_back(); 
 				addRule(cur, it);
 			}
-			for (Token i : parse_stack) {
-				std::cout << token_names_nice[i.token_type] << "  ";
+			if (PRINT_CONSOLE) {
+				for (Token i : parse_stack) {
+					std::cout << token_names_nice[i.token_type] << "  ";
+				}
+				if (it < tokens->size()) std::cout << "\t\t\t val: " << token_names_nice[found_type] << std::endl;
 			}
-			if (it < tokens->size()) std::cout << "\t\t\t val: " << token_names_nice[found_type] << std::endl;
+			
 			
 		}
 		std::cout << "Finished parsing successfully" << std::endl;
@@ -119,12 +122,12 @@ public:
 
 		TreeNode* root;
 		if (tokens->at(it).token_type == T_semicolon) {
-			std::cout << "counter: " << expr_counter << std::endl;
+			//std::cout << "counter: " << expr_counter << std::endl;
 		}
 		if (tokens->at(it).token_type == T_semicolon && expr_counter == 0) {
-			std::cout << "-------------------;;;;;;;;;;;;" << std::endl;
+			// std::cout << "-------------------;;;;;;;;;;;;" << std::endl;
 			ast_node_stack.pop_back();
-			printAstNodeStack();
+			//printAstNodeStack();
 			return;
 		}
 		
@@ -311,7 +314,7 @@ public:
 			}
 			case 34: //G_EXPR_P      T_null
 				while (expr_counter > 0) {
-					std::cout << "---------------------> EXPRESSION COUNTER " << expr_counter << std::endl;
+					// std::cout << "---------------------> EXPRESSION COUNTER " << expr_counter << std::endl;
 					ast_node_stack.pop_back();
 					expr_counter--;
 				}
@@ -395,7 +398,7 @@ public:
 					temp_counter = expr_counter;
 				}
 				in_expr_seq = true;
-				std::cout << "Saved counter: " << expr_counter << std::endl;
+				// std::cout << "Saved counter: " << expr_counter << std::endl;
 				break;
 			}
 			case 47: //G_EXPRSEQ      T_null 
@@ -412,7 +415,7 @@ public:
 			case 49: //G_EXPRSEQ_P      T_null
 				// retrieve counter
 				expr_counter = temp_counter;
-				std::cout << "Retrieved counter: " << expr_counter << std::endl;
+				// std::cout << "Retrieved counter: " << expr_counter << std::endl;
 				in_expr_seq = false;
 				ast_node_stack.pop_back();
 				break;
@@ -492,7 +495,7 @@ public:
 				break;
 			
 		}
-		printAstNodeStack();
+		//printAstNodeStack();
 	}
 
 	void astAddStandardRule(Rule rule) {

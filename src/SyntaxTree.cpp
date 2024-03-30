@@ -128,6 +128,99 @@ struct TreeNode {
 	}
 };
 
+class CodeGenerator {
+protected:
+	std::string target_name;
+	std::ofstream asm_file;
+public:
+	CodeGenerator(std::string target) : target_name(target) {
+		asm_file.open("program.asm", std::ios::out | std::ios::trunc);
+	}
+	virtual void initAssembly() = 0;
+	virtual void finalizeAssembly() = 0;
+	virtual void testIntPrint() = 0;
+	virtual void makeDeclaration(int offset) = 0;
+	virtual void makeAssignment(int offset) = 0;
+	virtual void makePrintInt() = 0;
+	virtual void makePushVariable(int offset) = 0;
+};
+
+class CodeGen_x86_64_fasm_w : public CodeGenerator {
+public:
+	std::string include_path = "D:\\Program Files\\flat-assembler\\INCLUDE\\";
+	
+	CodeGen_x86_64_fasm_w() : CodeGenerator("x86_64 flat assembler windows") {}
+	
+	void initAssembly() {
+		asm_file << ";; Target: " << target_name << std::endl;
+		asm_file << ";; Start of assembly" << std::endl;
+
+		asm_file << "format PE64 console 4.0" << std::endl;
+		asm_file << std::endl;
+		asm_file << "include '" << include_path << "win64a.inc'" << std::endl;
+		asm_file << std::endl;
+		asm_file << "entry start" << std::endl;
+		asm_file << std::endl;
+
+		asm_file << "section '.text' code readable executable" << std::endl;
+		asm_file << "start: " << std::endl;
+		asm_file << "        sub rsp, 8*5 ; makes stack dqword aligned??? idk man" << std::endl;
+
+		// Set up stack pointer
+		asm_file << std::endl;
+		asm_file << "        push rbp" << std::endl;
+		asm_file << "        mov rbp, rsp" << std::endl;
+	}
+
+	void finalizeAssembly() {
+		asm_file << std::endl;
+		asm_file << "        invoke Sleep, 4000" << std::endl;
+		asm_file << "        push 0" << std::endl;
+		asm_file << "        call [ExitProcess]" << std::endl;
+
+		asm_file << std::endl;
+		asm_file << "section '.rdata' data readable" << std::endl;
+		asm_file << "        intprint db 'int: %d', 10, 0" << std::endl;
+
+		asm_file << std::endl;
+		asm_file << "section '.idata' data readable import" << std::endl;
+		asm_file << "        library kernel32, 'kernel32.dll', \\" << std::endl;
+		asm_file << "                msvcrt,   'msvcrt.dll'" << std::endl;
+
+		asm_file << "        import kernel32, \\" << std::endl;
+		asm_file << "        ExitProcess, 'ExitProcess', \\" << std::endl;
+		asm_file << "        Sleep, 'Sleep'" << std::endl;
+		asm_file << "        import msvcrt, printf, 'printf'" << std::endl;
+	}
+
+	void testIntPrint() {
+		asm_file << "        push 12345" << std::endl;
+		asm_file << "        pop rax" << std::endl;
+		asm_file << "        invoke printf, intprint, rax" << std::endl; // I dont know why using call doesnt work
+	}
+
+	void makeDeclaration(int offset) {
+		// 0 initialize variable
+		asm_file << "        mov qword [rbp-" << offset << "], 0" << std::endl;
+	}
+
+	void makeAssignment(int offset) {
+		asm_file << "        pop rax" << std::endl;
+		asm_file << "        mov qword [rbp-" << offset << "], rax" << std::endl;
+	}
+
+	void makePrintInt() {
+		asm_file << "        pop rax" << std::endl;
+		asm_file << "        invoke printf, intprint, rax" << std::endl;
+	}
+
+	void makePushVariable(int offset) {
+		asm_file << "        push qword [rbp-" << offset << "]" << std::endl;
+		return;
+	}
+
+};
+
 class SyntaxTree {
 private:
 	TreeNode* root;
@@ -135,6 +228,7 @@ private:
 	std::vector<Variable> functions_table; // Just use the Variable struct, all we need is name and type.
 											// Implementation of function is just in assembly not here
 	std::ofstream error_file;
+	CodeGenerator* assembler;
 
 	void destroy(TreeNode* node) {
 		if (node == nullptr) {
@@ -146,10 +240,11 @@ private:
 		delete node;
 	}
 public:
-	SyntaxTree() : root(nullptr) {
+	SyntaxTree(CodeGenerator* generator) : root(nullptr) {
 		error_file.open("Semantic-Errors.txt", std::ios::out | std::ios::trunc);
 		std::vector<Variable> first_table;
 		var_table.push_back(first_table);
+		assembler = generator;
 	}
 
 	~SyntaxTree() {
@@ -193,26 +288,32 @@ public:
 	}
 
 	// Looks up variables by name in a table
-	Variable variableLookup(Variable var) {
+	Variable variableLookup(std::string var_name) {
 		for (auto& tb : var_table) {
 			for (Variable v : tb) {
-				if (v.name == var.name) { return v; }
+				if (v.name == var_name) { return v; }
 			}
 			// Couldn't find in scope
 		}
 		// Add error message here instead
+		std::cout << "ERROR: Could not find variable " << var_name << std::endl;
 		return Variable("", VT_invalid);
 	}
 
-	void addDeclarationToTable(TreeNode* node, int scope) {
-		// TODO: add variable offset in stack
+	void addDeclaration(TreeNode* node, int scope) {
+		static int offset_counter = QWORD_SIZE;
+		
 		VarType decl_type = node->node_data->getNodeVarType();
 		for (TreeNode* child : node->children.at(scope)->children) { //decl -> list_vars -> ...
 			if (child->node_data->getNodeType() != AST_variable) { // This should only be full of AST_variable
 				std::cout << "ERROR: trying to add variable but found node of type " << child->node_data->getNodeType() << std::endl;
 			}
 			std::cout << "Added " << child->node_data->getNodeStrVal() << "  " << type_names[decl_type] << std::endl;
-			var_table.back().push_back(Variable(child->node_data->getNodeStrVal(), decl_type));
+			var_table.back().push_back(Variable(child->node_data->getNodeStrVal(), decl_type, offset_counter));
+			
+			assembler->makeDeclaration(offset_counter);
+
+			offset_counter += QWORD_SIZE;
 		}
 	}
 	void addFunctionToTable(TreeNode* node, int scope) {
@@ -222,7 +323,10 @@ public:
 		std::cout << "Added function: " << type_names[f_type] << "    " << f_name << std::endl; 
 	}
 	void compileTreeMaster() {
+		assembler->initAssembly();
+		assembler->testIntPrint();
 		compileTree(root);
+		assembler->finalizeAssembly();
 	}
 	/*
 	compiletree()
@@ -244,16 +348,24 @@ public:
 			return; 
 		}
 		else if (my_type == AST_declaration) {
-			addDeclarationToTable(node, 0);
+			addDeclaration(node, 0);
 			return; // ?????
 		}
 		else if (my_type == AST_assignment) {
 			std::cout << "-------- TYPE CHECK: --------" << std::endl;
 			typeCheckNode(node);
 			std::cout << "-------- ended check --------" << std::endl;
+
+
+			std::string my_var = node->children.at(0)->node_data->getNodeStrVal();
+			int my_offset = variableLookup(my_var).offset; 
+			assembler->makeAssignment(my_offset);
+			assembler->makePushVariable(my_offset); // TODO: temporary, dont actually print
+			assembler->makePrintInt(); 
+			return;
 		}
 		else if (my_type == AST_factor_var || my_type == AST_variable) {
-			if (variableLookup(Variable(node->node_data->getNodeStrVal(), VT_default)).type == VT_invalid) {
+			if (variableLookup(node->node_data->getNodeStrVal()).type == VT_invalid) {
 				// BAD!!!!
 				std::cout << "ERROR: Failed to find variable " << node->node_data->getNodeStrVal() << std::endl;
 			}
@@ -299,7 +411,7 @@ public:
 		else if (my_type == AST_factor_var) {
 			std::string node_var_name = node->node_data->getNodeStrVal();
 			// Find symbol in symbol table
-			Variable looked_up = variableLookup(Variable(node_var_name, VT_default));
+			Variable looked_up = variableLookup(node_var_name);
 			std::cout << "Found factor var type: " << type_names[looked_up.type] << std::endl;
 			return looked_up.type;
 		}
@@ -324,7 +436,7 @@ public:
 			if (node->children.at(0)->node_data->getNodeType() != AST_variable) return VT_invalid;
 			NodeVariable* tempVar = dynamic_cast<NodeVariable*>(node->children.at(0)->node_data);
 
-			lhs = variableLookup(tempVar->var).type;
+			lhs = variableLookup(tempVar->var.name).type;
 			std::cout << "Found assignment variable: " << type_names[lhs] << std::endl;
 			rhs = typeCheckExpression(node->children.at(1));
 			if (lhs == rhs) {
@@ -346,7 +458,7 @@ public:
 	void printSymbolTable() {
 		for (auto& tb : var_table) {
 			for (Variable v : tb) {
-				std::cout << v.name << "    " << type_names[v.type] << std::endl;
+				std::cout << v.name << "    " << type_names[v.type] << v.offset << std::endl;
 			}
 			// Couldn't find in scope
 		}
