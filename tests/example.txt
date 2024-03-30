@@ -1,6 +1,6 @@
 int x, y;
 
-x = y + 6;
+x = y;
 
-return(4);
+print(x);
 .

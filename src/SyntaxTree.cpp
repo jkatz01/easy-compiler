@@ -15,7 +15,8 @@ public:
 	virtual void		print() {};
 	virtual void		setVarType(VarType t) {};
 	virtual void		setStrVal(std::string s) {};
-	virtual void		setOpType(OpType t) {std::cout << "set op type called" << std::endl;};
+	virtual void		setOpType(OpType t) {std::cout << "set op type called" << std::endl;}
+	virtual OpType		getOpType() { return OP_default; }
 	virtual void		appendNumString(std::string s) {};
 	
 	virtual std::string	getNodeStrVal() {return "";};
@@ -68,11 +69,13 @@ public:
 		else if (is_funcall)  std::cout << ast_type_names[node_type] << "    name: " << str_val;
 	}
 	void setOpType(OpType t) override { op_type = t; }
+	OpType getOpType() override { return op_type; }
 	void setStrVal(std::string s) override { 
 		str_val = s; 
 		is_funcall = true;
 	}
 	std::string getNodeStrVal() override { return str_val;}
+
 };
 
 class NodeDeclaration : public NodeData {
@@ -194,6 +197,7 @@ public:
 	}
 
 	void testIntPrint() {
+		asm_file << "        ;; test print" << std::endl;
 		asm_file << "        push 12345" << std::endl;
 		asm_file << "        pop rax" << std::endl;
 		asm_file << "        invoke printf, intprint, rax" << std::endl; // I dont know why using call doesnt work
@@ -201,22 +205,25 @@ public:
 
 	void makeDeclaration(int offset) {
 		// 0 initialize variable
+		asm_file << "        ;; make declaration" << std::endl;
 		asm_file << "        mov qword [rbp-" << offset << "], 0" << std::endl;
 	}
 
 	void makeAssignment(int offset) {
+		asm_file << "        ;; make assignment" << std::endl;
 		asm_file << "        pop rax" << std::endl;
 		asm_file << "        mov qword [rbp-" << offset << "], rax" << std::endl;
 	}
 
 	void makePrintInt() {
+		asm_file << "        ;; print integer" << std::endl;
 		asm_file << "        pop rax" << std::endl;
 		asm_file << "        invoke printf, intprint, rax" << std::endl;
 	}
 
 	void makePushVariable(int offset) {
+		asm_file << "        ;; push variable" << std::endl;
 		asm_file << "        push qword [rbp-" << offset << "]" << std::endl;
-		return;
 	}
 
 };
@@ -322,9 +329,26 @@ public:
 		functions_table.push_back(Variable(f_name, f_type));
 		std::cout << "Added function: " << type_names[f_type] << "    " << f_name << std::endl; 
 	}
+
+	void compileExpression(TreeNode* node) {
+		OpType my_optype = node->node_data->getOpType();
+		if (my_optype == OP_default) {
+			std::cout << "ERROR: did not expect to get OP_default from node" << std::endl;
+		}
+		else if (my_optype == OP_single_factor) {
+			// Just push to stack;
+			if (node->children.at(0)->node_data->getNodeType() == AST_factor_var) {
+				std::string my_name = node->children[0]->node_data->getNodeStrVal();
+				int my_offset = variableLookup(my_name).offset;
+				assembler->makePushVariable(my_offset);
+			}
+			
+		}
+
+	}
 	void compileTreeMaster() {
 		assembler->initAssembly();
-		assembler->testIntPrint();
+		//assembler->testIntPrint();
 		compileTree(root);
 		assembler->finalizeAssembly();
 	}
@@ -357,11 +381,12 @@ public:
 			std::cout << "-------- ended check --------" << std::endl;
 
 
-			std::string my_var = node->children.at(0)->node_data->getNodeStrVal();
+			std::string my_var = node->children[0]->node_data->getNodeStrVal();
 			int my_offset = variableLookup(my_var).offset; 
-			assembler->makeAssignment(my_offset);
-			assembler->makePushVariable(my_offset); // TODO: temporary, dont actually print
-			assembler->makePrintInt(); 
+
+			if(node->children.size() > 1)  compileExpression(node->children[1]);
+
+			assembler->makeAssignment(my_offset); // right now nothing is pushed to stack so cant print
 			return;
 		}
 		else if (my_type == AST_factor_var || my_type == AST_variable) {
@@ -373,6 +398,10 @@ public:
 				// good
 				std::cout << "Good variable :)    " << node->node_data->getNodeStrVal() << std::endl;
 			}
+		}
+		else if (my_type == AST_print) {
+			// TODO: push expression inside to stack
+			assembler->makePrintInt();
 		}
 
 		for (TreeNode* child : node->children) {
