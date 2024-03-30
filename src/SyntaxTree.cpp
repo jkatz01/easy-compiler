@@ -371,7 +371,7 @@ public:
 		}
 	}
 
-	TreeNode* compileExpression(TreeNode* node) {
+	TreeNode* compileExpression(TreeNode* node, bool is_subexpr) {
 		OpType my_optype = node->node_data->getOpType();
 		if (my_optype == OP_default) {
 			std::cout << "ERROR: did not expect to get OP_default from node" << std::endl;
@@ -386,17 +386,24 @@ public:
 				return nullptr;
 			}
 			// Compile left side (can it be an expression???)
-			compileFactorToRegister(node->children[0], "rax"); // TODO: compile expression on left side of tree
+			if (is_subexpr) {
+				; // we dont change rax if we are a sub expression
+			}
+			else {
+				compileFactorToRegister(node->children[0], "rax"); // TODO: compile expression on left side of tree
+			}
 
 			// Check priority of right child 
 			if (node->children[0]->node_data->getOpType() == OP_times) { //TODO: add better way to check priority
 				// if next node has higher priority, call expr() recursively then [add first, second]
 			}
 			else {
-				// first do [add first, first_of_child], then call expr()
+				// first do [add rax, first_of_child], then call expr()
 				compileFactorToRegister(node->children[1]->children[0], "rbx"); // Move first of (right) child to rbx 
-				// add rax, rbx  (goes into rax)
-				assembler->addRegisters("rax", "rbx");
+				assembler->addRegisters("rax", "rbx"); // add rax, rbx  (goes into rax)
+				if(node->children[1]->children.size() == 2) {
+					compileExpression(node->children[1], true);
+				}
 			}
 
 		}
@@ -448,7 +455,7 @@ public:
 			std::string my_var = node->children[0]->node_data->getNodeStrVal();
 			int my_offset = variableLookup(my_var).offset; 
 
-			if(node->children.size() > 1)  compileExpression(node->children[1]);
+			if(node->children.size() > 1)  compileExpression(node->children[1], false);
 
 			assembler->makeAssignment(my_offset); // right now nothing is pushed to stack so cant print
 			return;
@@ -465,7 +472,7 @@ public:
 		}
 		else if (my_type == AST_print) {
 			if (node->children.size() >= 1) {
-				compileExpression(node->children[0]);
+				compileExpression(node->children[0], false);
 				assembler->makePrintInt();
 			}
 		}
