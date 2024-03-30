@@ -147,6 +147,8 @@ public:
 	virtual void makePrintInt() = 0;
 	virtual void makePushVariable(int offset) = 0;
 	virtual void makePushIntConstant(int number) = 0;
+	virtual void makeMoveVariableToReg(int offset, std::string reg) = 0;
+	virtual void makeMoveConstIntToReg(int number, std::string reg) = 0;
 };
 
 class CodeGen_x86_64_fasm_w : public CodeGenerator {
@@ -212,13 +214,11 @@ public:
 
 	void makeAssignment(int offset) {
 		asm_file << "        ;; make assignment" << std::endl;
-		asm_file << "        pop rax" << std::endl;
 		asm_file << "        mov qword [rbp-" << offset << "], rax" << std::endl;
 	}
 
 	void makePrintInt() {
 		asm_file << "        ;; print integer" << std::endl;
-		asm_file << "        pop rax" << std::endl;
 		asm_file << "        invoke printf, intprint, rax" << std::endl;
 	}
 
@@ -227,9 +227,17 @@ public:
 		asm_file << "        push qword [rbp-" << offset << "]" << std::endl;
 	}
 
-	void makePushIntConstant(int num) {
+	void makePushIntConstant(int number) {
 		asm_file << "        ;; push int constant" << std::endl;
-		asm_file << "        push " << num << std::endl;
+		asm_file << "        push " << number << std::endl;
+	}
+	void makeMoveVariableToReg(int offset, std::string reg) {
+		asm_file << "        ;; move variable" << std::endl;
+		asm_file << "        mov " << reg << ", qword [rbp-" << offset << "]" << std::endl;
+	}
+	void makeMoveConstIntToReg(int number, std::string reg) {
+		asm_file << "        ;; move constant int" << std::endl;
+		asm_file << "        mov " << reg << ", " << number << std::endl;
 	}
 
 };
@@ -344,26 +352,55 @@ public:
 		return std::stoi(node->node_data->getNodeStrVal());
 	}
 
-	void compileExpression(TreeNode* node) {
+	void compileFactorToRegister(TreeNode* node, std::string reg) {
+		;
+		if (node->node_data->getNodeType() == AST_factor_var) {
+			int my_offset = variableOffsetFromNode(node);
+			assembler->makeMoveVariableToReg(my_offset, reg);
+		}
+		else if (node->node_data->getNodeType() == AST_factor_const) {
+			int my_value = constIntValueFromNode(node);
+			assembler->makeMoveConstIntToReg(my_value, reg);
+		}
+		else if (node->node_data->getNodeType() == AST_factor_call) {
+			std::cout << "Function calls not implemented yet" << std::endl;
+		}
+	}
+
+	TreeNode* compileExpression(TreeNode* node) {
 		OpType my_optype = node->node_data->getOpType();
 		if (my_optype == OP_default) {
 			std::cout << "ERROR: did not expect to get OP_default from node" << std::endl;
 		}
 		else if (my_optype == OP_single_factor) {
-			// Just push to stack;
-			if (node->children[0]->node_data->getNodeType() == AST_factor_var) {
-				int my_offset = variableOffsetFromNode(node->children[0]);
-				assembler->makePushVariable(my_offset);
-			}
-			else if (node->children[0]->node_data->getNodeType() == AST_factor_const) {
-				int my_value = constIntValueFromNode(node->children[0]);
-				assembler->makePushIntConstant(my_value);
-			}
-			else if (node->children[0]->node_data->getNodeType() == AST_factor_call) {
-				std::cout << "Function calls not implemented yet" << std::endl;
-			}
+			compileFactorToRegister(node->children[0], "rax");
 		}
+		// TODO: operation priority check
+		else if (my_optype == OP_plus) {
+			/* if (node->children.size() < 2) {
+				std::cout << "PLUS expression should have two child nodes" << std::endl;
+				return nullptr;
+			}
+			// Compile left side (can it be an expression???)
+			compilePushFactor(node->children[0]); // TODO: compile expression on left side of tree
 
+			// Check priority of right child 
+			if (node->children[0]->node_data->getOpType() == OP_times) { //TODO: add better way to check priority
+				// if next node has higher priority, call expr() recursively then [add first, second]
+			}
+			else {
+				// first do [add first, first_of_child], then call expr()
+			} */
+
+		}
+		// Another idea: maybe if the subexpression op_type has a higher priority, call expr() recursively first then [add first, second]
+		//                  if the next one is the same priority, continue as normal
+		//                  if the next one is of LOWER priority, return that node to continue from
+		//                                and from that node we need to use the SECOND value, not first
+		//                  otherwise, we do [add first, second] first then call expr() recursively
+		//
+		//                  it needs to return a node that we will continue from...
+		return node; // Temporary?
 
 	}
 	void compileTreeMaster() {
