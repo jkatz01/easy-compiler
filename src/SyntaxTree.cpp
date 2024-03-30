@@ -150,6 +150,8 @@ public:
 	virtual void makeMoveVariableToReg(int offset, std::string reg) = 0;
 	virtual void makeMoveConstIntToReg(int number, std::string reg) = 0;
 	virtual void addRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void moveRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void imulRegisters(std::string reg_1, std::string reg_2) = 0;
 };
 
 class CodeGen_x86_64_fasm_w : public CodeGenerator {
@@ -244,7 +246,14 @@ public:
 		asm_file << "        ;; add two registers" << std::endl;
 		asm_file << "        add " << reg_1 << ", " << reg_2 << std::endl;
 	}
-
+	void moveRegisters(std::string reg_1, std::string reg_2) {
+		asm_file << "        ;; moving registers" << std::endl;
+		asm_file << "        mov " << reg_1 << ", " << reg_2 << std::endl;
+	}
+	void imulRegisters(std::string reg_1, std::string reg_2) {
+		asm_file << "        ;; imul two registers" << std::endl;
+		asm_file << "        imul " << reg_1 << ", " << reg_2 << std::endl;
+	}
 };
 
 class SyntaxTree {
@@ -371,39 +380,83 @@ public:
 		}
 	}
 
+	void compileOperationOnRegisters(std::string reg_1, std::string reg_2, OpType operation) {
+		if (operation == OP_plus) {
+			assembler->addRegisters(reg_1, reg_2);
+		}
+		else if (operation == OP_times) {
+			assembler->imulRegisters(reg_1, reg_2);
+		}
+	}
+
+	int operatorPriority(OpType operation) {
+		if (operation == OP_single_factor) {
+			return 1;
+		}
+		else if (operation == OP_plus) {
+			return 1;
+		}
+		else if (operation == OP_times) {
+			return 2;
+		}
+		return -999;
+	}
+
 	TreeNode* compileExpression(TreeNode* node, bool is_subexpr) {
 		OpType my_optype = node->node_data->getOpType();
+		int my_priority = operatorPriority(my_optype);
 		if (my_optype == OP_default) {
 			std::cout << "ERROR: did not expect to get OP_default from node" << std::endl;
 		}
 		else if (my_optype == OP_single_factor) {
 			compileFactorToRegister(node->children[0], "rax");
 		}
-		// TODO: operation priority check
-		else if (my_optype == OP_plus) {
+		else { 
+
 			if (node->children.size() < 2) {
-				std::cout << "PLUS expression should have two child nodes" << std::endl;
+				std::cout << "expression should have two child nodes" << std::endl;
 				return nullptr;
 			}
 			// Compile left side (can it be an expression???)
-			if (is_subexpr) {
-				; // we dont change rax if we are a sub expression
-			}
-			else {
+			if (!is_subexpr) {
 				compileFactorToRegister(node->children[0], "rax"); // TODO: compile expression on left side of tree
 			}
 
-			// Check priority of right child 
-			if (node->children[0]->node_data->getOpType() == OP_times) { //TODO: add better way to check priority
+			// Check priority of right child
+			int right_child_priority = operatorPriority(node->children[1]->node_data->getOpType());
+			std::cout << "Priority: " << my_priority << "    Right child:" << right_child_priority << std::endl;
+			if (right_child_priority > my_priority) { 
 				// if next node has higher priority, call expr() recursively then [add first, second]
+				assembler->moveRegisters("rdx", "rax"); // Temporary to store current rax
+				TreeNode* continue_node = compileExpression(node->children[1], false);
+				compileOperationOnRegisters("rdx", "rax", my_optype);
+				assembler->moveRegisters("rax", "rdx"); // necessary 2 step process to preserve commutativity 
+				// Need to call compileExpression on the return node????
+				if (continue_node != nullptr) {
+					std::cout << "continue " << std::endl;
+					// Something is going wrong here
+					compileExpression(continue_node, true);
+				}
+				return nullptr;
 			}
-			else {
+			else if (right_child_priority == my_priority) {
 				// first do [add rax, first_of_child], then call expr()
 				compileFactorToRegister(node->children[1]->children[0], "rbx"); // Move first of (right) child to rbx 
-				assembler->addRegisters("rax", "rbx"); // add rax, rbx  (goes into rax)
+				compileOperationOnRegisters("rax", "rbx", my_optype);
 				if(node->children[1]->children.size() == 2) {
 					compileExpression(node->children[1], true);
 				}
+				else {
+					return nullptr;
+				}
+			}
+			else if (right_child_priority < my_priority) {
+				// return right child as node to continue
+				compileFactorToRegister(node->children[1]->children[0], "rbx"); // Move first of (right) child to rbx 
+				compileOperationOnRegisters("rax", "rbx", my_optype);
+				return node->children[1];
+				// STILL need to use second value not first
+
 			}
 
 		}
@@ -414,7 +467,7 @@ public:
 		//                  otherwise, we do [add first, second] first then call expr() recursively
 		//
 		//                  it needs to return a node that we will continue from...
-		return node; // Temporary?
+		return nullptr; // Temporary?
 
 	}
 	void compileTreeMaster() {
