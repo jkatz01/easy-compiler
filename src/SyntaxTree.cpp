@@ -102,7 +102,7 @@ public:
 		std::cout << ast_type_names[node_type] << "    type: " << type_names[var_type] << "    val: " << num_str;
 	}
 	void setVarType(VarType t) override { var_type = t; }
-	std::string	 getNodeStrVal() override { return ""; }
+	std::string	 getNodeStrVal() override { return num_str; }
 	VarType getNodeVarType() override { return var_type; }
 	void appendNumString(std::string s) override { num_str.append(s); }
 };
@@ -146,6 +146,7 @@ public:
 	virtual void makeAssignment(int offset) = 0;
 	virtual void makePrintInt() = 0;
 	virtual void makePushVariable(int offset) = 0;
+	virtual void makePushIntConstant(int number) = 0;
 };
 
 class CodeGen_x86_64_fasm_w : public CodeGenerator {
@@ -224,6 +225,11 @@ public:
 	void makePushVariable(int offset) {
 		asm_file << "        ;; push variable" << std::endl;
 		asm_file << "        push qword [rbp-" << offset << "]" << std::endl;
+	}
+
+	void makePushIntConstant(int num) {
+		asm_file << "        ;; push int constant" << std::endl;
+		asm_file << "        push " << num << std::endl;
 	}
 
 };
@@ -342,6 +348,11 @@ public:
 				int my_offset = variableLookup(my_name).offset;
 				assembler->makePushVariable(my_offset);
 			}
+			else if (node->children.at(0)->node_data->getNodeType() == AST_factor_const) {
+				std::string my_str = node->children.at(0)->node_data->getNodeStrVal();
+				int my_value = std::stoi(my_str);
+				assembler->makePushIntConstant(my_value);
+			}
 			
 		}
 
@@ -395,7 +406,7 @@ public:
 				std::cout << "ERROR: Failed to find variable " << node->node_data->getNodeStrVal() << std::endl;
 			}
 			else {
-				// good
+				// good 
 				std::cout << "Good variable :)    " << node->node_data->getNodeStrVal() << std::endl;
 			}
 		}
