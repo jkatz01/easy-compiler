@@ -149,6 +149,7 @@ public:
 	virtual void makePushIntConstant(int number) = 0;
 	virtual void makeMoveVariableToReg(int offset, std::string reg) = 0;
 	virtual void makeMoveConstIntToReg(int number, std::string reg) = 0;
+	virtual void addRegisters(std::string reg_1, std::string reg_2) = 0;
 };
 
 class CodeGen_x86_64_fasm_w : public CodeGenerator {
@@ -238,6 +239,10 @@ public:
 	void makeMoveConstIntToReg(int number, std::string reg) {
 		asm_file << "        ;; move constant int" << std::endl;
 		asm_file << "        mov " << reg << ", " << number << std::endl;
+	}
+	void addRegisters(std::string reg_1, std::string reg_2) {
+		asm_file << "        ;; add two registers" << std::endl;
+		asm_file << "        add " << reg_1 << ", " << reg_2 << std::endl;
 	}
 
 };
@@ -353,7 +358,6 @@ public:
 	}
 
 	void compileFactorToRegister(TreeNode* node, std::string reg) {
-		;
 		if (node->node_data->getNodeType() == AST_factor_var) {
 			int my_offset = variableOffsetFromNode(node);
 			assembler->makeMoveVariableToReg(my_offset, reg);
@@ -377,12 +381,12 @@ public:
 		}
 		// TODO: operation priority check
 		else if (my_optype == OP_plus) {
-			/* if (node->children.size() < 2) {
+			if (node->children.size() < 2) {
 				std::cout << "PLUS expression should have two child nodes" << std::endl;
 				return nullptr;
 			}
 			// Compile left side (can it be an expression???)
-			compilePushFactor(node->children[0]); // TODO: compile expression on left side of tree
+			compileFactorToRegister(node->children[0], "rax"); // TODO: compile expression on left side of tree
 
 			// Check priority of right child 
 			if (node->children[0]->node_data->getOpType() == OP_times) { //TODO: add better way to check priority
@@ -390,7 +394,10 @@ public:
 			}
 			else {
 				// first do [add first, first_of_child], then call expr()
-			} */
+				compileFactorToRegister(node->children[1]->children[0], "rbx"); // Move first of (right) child to rbx 
+				// add rax, rbx  (goes into rax)
+				assembler->addRegisters("rax", "rbx");
+			}
 
 		}
 		// Another idea: maybe if the subexpression op_type has a higher priority, call expr() recursively first then [add first, second]
