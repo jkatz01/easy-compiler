@@ -14,6 +14,7 @@
 #define FIRST_NONLITERAL	G_PROGRAM
 #define NUM_RULES			68
 #define PRINT_CONSOLE		false
+#define PRINT_PROGRAM       true
 #define QWORD_SIZE			8
 
 enum TokenType {

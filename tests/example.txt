@@ -1,6 +1,7 @@
 int x, y;
 
-x = 4;
+y = 4;
+x = y;
 
 print(x);
 .

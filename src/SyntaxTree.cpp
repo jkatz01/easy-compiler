@@ -335,6 +335,14 @@ public:
 		functions_table.push_back(Variable(f_name, f_type));
 		std::cout << "Added function: " << type_names[f_type] << "    " << f_name << std::endl; 
 	}
+	
+	int variableOffsetFromNode(TreeNode* node) {
+		return variableLookup(node->node_data->getNodeStrVal()).offset;
+	}
+
+	int constIntValueFromNode(TreeNode* node) {
+		return std::stoi(node->node_data->getNodeStrVal());
+	}
 
 	void compileExpression(TreeNode* node) {
 		OpType my_optype = node->node_data->getOpType();
@@ -343,18 +351,19 @@ public:
 		}
 		else if (my_optype == OP_single_factor) {
 			// Just push to stack;
-			if (node->children.at(0)->node_data->getNodeType() == AST_factor_var) {
-				std::string my_name = node->children[0]->node_data->getNodeStrVal();
-				int my_offset = variableLookup(my_name).offset;
+			if (node->children[0]->node_data->getNodeType() == AST_factor_var) {
+				int my_offset = variableOffsetFromNode(node->children[0]);
 				assembler->makePushVariable(my_offset);
 			}
-			else if (node->children.at(0)->node_data->getNodeType() == AST_factor_const) {
-				std::string my_str = node->children.at(0)->node_data->getNodeStrVal();
-				int my_value = std::stoi(my_str);
+			else if (node->children[0]->node_data->getNodeType() == AST_factor_const) {
+				int my_value = constIntValueFromNode(node->children[0]);
 				assembler->makePushIntConstant(my_value);
 			}
-			
+			else if (node->children[0]->node_data->getNodeType() == AST_factor_call) {
+				std::cout << "Function calls not implemented yet" << std::endl;
+			}
 		}
+
 
 	}
 	void compileTreeMaster() {
@@ -411,8 +420,10 @@ public:
 			}
 		}
 		else if (my_type == AST_print) {
-			// TODO: push expression inside to stack
-			assembler->makePrintInt();
+			if (node->children.size() >= 1) {
+				compileExpression(node->children[0]);
+				assembler->makePrintInt();
+			}
 		}
 
 		for (TreeNode* child : node->children) {

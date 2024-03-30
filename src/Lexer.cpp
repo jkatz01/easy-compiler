@@ -60,7 +60,7 @@ public:
 		char buffer[PAGE_SIZE];
 		error_log.reserve(PAGE_SIZE);
 
-		if (PRINT_CONSOLE) printSourceProgram();
+		if (PRINT_PROGRAM) printSourceProgram();
 
 		// Time measuring
 		std::cout << "starting: \n";
