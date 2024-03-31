@@ -303,17 +303,37 @@ public:
 		asm_file << "        sete dl" << std::endl;
 		asm_file << "        and dl, 1" << std::endl;
 		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
-		/*
-		cmp rax, rbx
-		sete dl
-		and dl, 1
-		movzx rax, dl*/
 	}
-	void unequalsRegisters(std::string reg_1, std::string reg_2) {}
-	void greaterEqualsRegisters(std::string reg_1, std::string reg_2) {}
-	void lesserEqualsRegisters(std::string reg_1, std::string reg_2) {}
-	void greaterRegisters(std::string reg_1, std::string reg_2) {}
-	void lesserRegisters(std::string reg_1, std::string reg_2) {}
+	void unequalsRegisters(std::string reg_1, std::string reg_2) {
+		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
+		asm_file << "        setne dl" << std::endl;
+		asm_file << "        and dl, 1" << std::endl;
+		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
+	}
+	void greaterEqualsRegisters(std::string reg_1, std::string reg_2) {
+		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
+		asm_file << "        setge dl" << std::endl;
+		asm_file << "        and dl, 1" << std::endl;
+		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
+	}
+	void lesserEqualsRegisters(std::string reg_1, std::string reg_2) {
+		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
+		asm_file << "        setle dl" << std::endl;
+		asm_file << "        and dl, 1" << std::endl;
+		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
+	}
+	void greaterRegisters(std::string reg_1, std::string reg_2) {
+		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
+		asm_file << "        setg dl" << std::endl;
+		asm_file << "        and dl, 1" << std::endl;
+		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
+	}
+	void lesserRegisters(std::string reg_1, std::string reg_2) {
+		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
+		asm_file << "        setl dl" << std::endl;
+		asm_file << "        and dl, 1" << std::endl;
+		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
+	}
 };
 
 class SyntaxTree {
