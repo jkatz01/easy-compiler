@@ -157,7 +157,14 @@ public:
 	virtual void imulRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void idivRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void notRegister(std::string reg_1) = 0;
-
+	virtual void orRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void andRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void equalsRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void unequalsRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void greaterEqualsRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void lesserEqualsRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void greaterRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void lesserRegisters(std::string reg_1, std::string reg_2) = 0;
 };
 
 class CodeGen_x86_64_fasm_w : public CodeGenerator {
@@ -288,6 +295,25 @@ public:
 	void popToRegister(std::string reg_1) {
 		asm_file << "        pop " << reg_1 << std::endl;
 	}
+
+	void orRegisters(std::string reg_1, std::string reg_2) {}
+	void andRegisters(std::string reg_1, std::string reg_2) {}
+	void equalsRegisters(std::string reg_1, std::string reg_2) {
+		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
+		asm_file << "        sete dl" << std::endl;
+		asm_file << "        and dl, 1" << std::endl;
+		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
+		/*
+		cmp rax, rbx
+		sete dl
+		and dl, 1
+		movzx rax, dl*/
+	}
+	void unequalsRegisters(std::string reg_1, std::string reg_2) {}
+	void greaterEqualsRegisters(std::string reg_1, std::string reg_2) {}
+	void lesserEqualsRegisters(std::string reg_1, std::string reg_2) {}
+	void greaterRegisters(std::string reg_1, std::string reg_2) {}
+	void lesserRegisters(std::string reg_1, std::string reg_2) {}
 };
 
 class SyntaxTree {
@@ -413,10 +439,34 @@ public:
 			std::cout << "Function calls not implemented yet" << std::endl;
 		}
 	}
-
+	// TODO: make this smaller 
 	void compileOperationOnRegisters(std::string reg_1, std::string reg_2, OpType operation) {
 		if (operation == OP_not) {
 			assembler->notRegister(reg_1);
+		}
+		if (operation == OP_or) {
+			assembler->orRegisters(reg_1, reg_2);
+		}
+		if (operation == OP_and) {
+			assembler->andRegisters(reg_1, reg_2);
+		}
+		else if (operation == OP_equals) {
+			assembler->equalsRegisters(reg_1, reg_2);
+		}
+		else if (operation == OP_unequals) {
+			assembler->unequalsRegisters(reg_1, reg_2);
+		}
+		else if (operation == OP_greater_eq) {
+			assembler->greaterEqualsRegisters(reg_1, reg_2);
+		}
+		else if (operation == OP_lesser_eq) {
+			assembler->lesserEqualsRegisters(reg_1, reg_2);
+		}
+		else if (operation == OP_greater) {
+			assembler->greaterRegisters(reg_1, reg_2);
+		}
+		else if (operation == OP_lesser) {
+			assembler->lesserRegisters(reg_1, reg_2);
 		}
 		else if (operation == OP_plus) {
 			assembler->addRegisters(reg_1, reg_2);
@@ -436,8 +486,32 @@ public:
 		if (operation == OP_single_factor) {
 			return 1;
 		}
+		else if (operation == OP_equals) {
+			return 50;
+		}
+		else if (operation == OP_unequals) {
+			return 50;
+		}
+		else if (operation == OP_greater_eq) {
+			return 50;
+		}
+		else if (operation == OP_lesser_eq) {
+			return 50;
+		}
+		else if (operation == OP_greater) {
+			return 50;
+		}
+		else if (operation == OP_lesser) {
+			return 50;
+		}
 		else if (operation == OP_not) {
-			return 50; // TODO: not should have the lowest priority possible
+			return 50; // TODO: not should have the lowest priority possible?
+		}
+		else if (operation == OP_or) {
+			return 50;
+		}
+		else if (operation == OP_and) {
+			return 75;
 		}
 		else if (operation == OP_plus) {
 			return 50;
@@ -461,7 +535,7 @@ public:
 			std::cout << "ERROR: did not expect to get OP_default from node" << std::endl;
 		}
 		else if (my_optype == OP_single_factor) {
-			compileFactorToRegister(node->children[0], "rax");
+			if (!is_subexpr) compileFactorToRegister(node->children[0], "rax");
 		}
 		else if (my_optype == OP_not) {
 			compileFactorToRegister(node->children[0]->children[0], "rax");
