@@ -149,22 +149,22 @@ enum NodeType {
 };
 
 enum OpType {
-	OP_plus,
-	OP_minus,
+	OP_plus, // done
+	OP_minus, // done
 	OP_or,
-	OP_times,
-	OP_divide,
+	OP_times, // done
+	OP_divide, // done
 	OP_mod,
 	OP_and,
-	OP_not,
+	OP_not, // done
 	OP_equals,
 	OP_unequals,
 	OP_greater_eq,
 	OP_lesser_eq,
 	OP_greater,
 	OP_lesser,
-	OP_single_factor,
-	OP_default
+	OP_single_factor, // done
+	OP_default // done
 };
 
 struct TokenError {

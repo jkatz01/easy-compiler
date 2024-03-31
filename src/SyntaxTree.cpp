@@ -464,7 +464,12 @@ public:
 		else if (my_optype == OP_not) {
 			compileFactorToRegister(node->children[0]->children[0], "rax");
 			compileOperationOnRegisters("rax", "rbx", my_optype);
-			compileExpression(node->children[0], true);
+			if (node->children[0]->node_data->getOpType() != OP_single_factor) {
+				compileExpression(node->children[0], true);
+			}
+			else {
+				return nullptr;
+			}
 		}
 		else { 
 
