@@ -326,6 +326,9 @@ public:
 					in_statement = false;
 					ast_node_stack.pop_back();
 				}
+				if (in_expr_seq) {
+					ast_node_stack.pop_back();
+				}
 				// Pop back for every expression encountered
 				break;
 			case 36: //G_TERM_P      T_star G_FACTOR G_TERM_P
@@ -362,7 +365,6 @@ public:
 			}
 			case 40: //G_TERM_P      T_null
 			{
-				//expr_counter++;
 				break;
 			}
 			case 41: //G_FACTOR      G_ID G_FUNCOPTS
@@ -401,9 +403,10 @@ public:
 				// Save counter
 				if (!in_expr_seq) {
 					temp_counter = expr_counter;
+					std::cout << "Saved counter: " << expr_counter << std::endl;
 				}
 				in_expr_seq = true;
-				//std::cout << "Saved counter: " << expr_counter << std::endl;
+				
 				break;
 			}
 			case 47: //G_EXPRSEQ      T_null 
@@ -420,7 +423,7 @@ public:
 			case 49: //G_EXPRSEQ_P      T_null
 				// retrieve counter
 				expr_counter = temp_counter;
-				//std::cout << "Retrieved counter: " << expr_counter << std::endl;
+				std::cout << "Retrieved counter: " << expr_counter << std::endl;
 				in_expr_seq = false;
 				ast_node_stack.pop_back();
 				break;
@@ -499,7 +502,7 @@ public:
 				ast_node_stack.back()->node_data->appendNumString(tokens->at(it + 1).token_value);
 				break;
 		}
-		//printAstNodeStack();
+		printAstNodeStack();
 	}
 
 	void astAddStandardRule(Rule rule) {

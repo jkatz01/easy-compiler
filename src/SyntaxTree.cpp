@@ -394,10 +394,10 @@ public:
 			return 1;
 		}
 		else if (operation == OP_plus) {
-			return 1;
+			return 50;
 		}
 		else if (operation == OP_times) {
-			return 2;
+			return 75;
 		}
 		return -999;
 	}
@@ -417,7 +417,7 @@ public:
 				std::cout << "expression should have two child nodes" << std::endl;
 				return nullptr;
 			}
-			// Compile left side (can it be an expression???)
+			// TODO: add support for expressions in left side
 			if (!is_subexpr) {
 				compileFactorToRegister(node->children[0], "rax"); // TODO: compile expression on left side of tree
 			}
@@ -428,6 +428,7 @@ public:
 			if (right_child_priority > my_priority) { 
 				// if next node has higher priority, call expr() recursively then [add first, second]
 				assembler->moveRegisters("rdx", "rax"); // Temporary to store current rax
+				// TODO: might need more than one temp register if we want multiple priorities
 				TreeNode* continue_node = compileExpression(node->children[1], false);
 				compileOperationOnRegisters("rdx", "rax", my_optype);
 				assembler->moveRegisters("rax", "rdx"); // necessary 2 step process to preserve commutativity 
@@ -458,10 +459,10 @@ public:
 				// STILL need to use second value not first
 			}
 		}
-		// Another idea: maybe if the subexpression op_type has a higher priority, call expr() recursively first then [add first, second]
+		// The idea: if the subexpression op_type has a higher priority, call expr() recursively first then [add first, second]
 		//                  if the next one is the same priority, continue as normal
 		//                  if the next one is of LOWER priority, return that node to continue from
-		//                                and from that node we need to use the SECOND value, not first
+		//                                (then use whats in rax already, not the left child)
 		//                  otherwise, we do [add first, second] first then call expr() recursively
 		//
 		//                  it needs to return a node that we will continue from...
@@ -495,7 +496,7 @@ public:
 		}
 		else if (my_type == AST_declaration) {
 			addDeclaration(node, 0);
-			return; // ?????
+			return;
 		}
 		else if (my_type == AST_assignment) {
 			std::cout << "-------- TYPE CHECK: --------" << std::endl;
