@@ -500,7 +500,7 @@ public:
 				break;
 			
 		}
-		printAstNodeStack();
+		//printAstNodeStack();
 	}
 
 	void astAddStandardRule(Rule rule) {

@@ -444,7 +444,8 @@ public:
 				compileFactorToRegister(node->children[1]->children[0], "rbx"); // Move first of (right) child to rbx 
 				compileOperationOnRegisters("rax", "rbx", my_optype);
 				if(node->children[1]->children.size() == 2) {
-					compileExpression(node->children[1], true);
+					TreeNode* continue_node = compileExpression(node->children[1], true);
+					return continue_node;
 				}
 				else {
 					return nullptr;
@@ -456,7 +457,6 @@ public:
 				compileOperationOnRegisters("rax", "rbx", my_optype);
 				return node->children[1];
 				// STILL need to use second value not first
-
 			}
 
 		}
