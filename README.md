@@ -3,6 +3,11 @@
 Documentation can be found in:
 `DOCUMENTATION/html/index.html`
 
+## Quick Start
+This project uses `flat assembler 1.73.32` for assembly/intermediate code. You can get it here: https://flatassembler.net/
+The only major deviation from the original grammar is parsing binary expressions 
+and comparisons as normal expressions like addition and subtraction 
+
 Project structure:
 ------------
 

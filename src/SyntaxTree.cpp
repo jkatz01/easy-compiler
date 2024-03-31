@@ -434,8 +434,7 @@ public:
 				// Need to call compileExpression on the return node????
 				if (continue_node != nullptr) {
 					std::cout << "continue " << std::endl;
-					// Something is going wrong here
-					compileExpression(continue_node, true);
+					if (continue_node->node_data->getOpType() != OP_single_factor) compileExpression(continue_node, true);
 				}
 				return nullptr;
 			}
@@ -458,7 +457,6 @@ public:
 				return node->children[1];
 				// STILL need to use second value not first
 			}
-
 		}
 		// Another idea: maybe if the subexpression op_type has a higher priority, call expr() recursively first then [add first, second]
 		//                  if the next one is the same priority, continue as normal

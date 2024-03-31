@@ -498,7 +498,6 @@ public:
 				ast_node_stack.back()->node_data->appendNumString(tokens->at(it).token_value);
 				ast_node_stack.back()->node_data->appendNumString(tokens->at(it + 1).token_value);
 				break;
-			
 		}
 		//printAstNodeStack();
 	}
