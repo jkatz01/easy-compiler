@@ -409,20 +409,24 @@ public:
 			case 47: //G_EXPRSEQ      T_null 
 			{
 				ast_node_stack.pop_back();	
+				
 				in_expr_seq = false;
 				break;
 			}
 			case 48: //G_EXPRSEQ_P      T_comma G_EXPRSEQ
 			{
-				//ast_node_stack.pop_back();
 				break;
 			}
 			case 49: //G_EXPRSEQ_P      T_null
 				// retrieve counter
 				expr_counter = temp_counter;
 				std::cout << "Retrieved counter: " << expr_counter << std::endl;
+				if (in_expr_seq) {
+					ast_node_stack.pop_back();
+				}
 				in_expr_seq = false;
 				ast_node_stack.pop_back();
+
 				break;
 			case 50: //G_COMP         T_gt G_COMP_P_P
 			{
@@ -485,7 +489,6 @@ public:
 				break;
 			case 64: //G_DECIMAL      T_null
 				//  we can finish the number builder at this point
-				std::cout << "got to case 64" << std::endl;
 				ast_node_stack.pop_back(); // ???
 				break;
 			case 65: //G_EXOPT         T_exp G_NUMBER
