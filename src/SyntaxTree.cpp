@@ -15,7 +15,7 @@ public:
 	virtual void		print() {};
 	virtual void		setVarType(VarType t) {};
 	virtual void		setStrVal(std::string s) {};
-	virtual void		setOpType(OpType t) {std::cout << "set op type called" << std::endl;}
+	virtual void		setOpType(OpType t) {std::cout << "set op type called in wrong class" << std::endl;}
 	virtual OpType		getOpType() { return OP_default; }
 	virtual void		appendNumString(std::string s) {};
 	
@@ -462,8 +462,9 @@ public:
 			compileFactorToRegister(node->children[0], "rax");
 		}
 		else if (my_optype == OP_not) {
-			compileFactorToRegister(node->children[0], "rax");
+			compileFactorToRegister(node->children[0]->children[0], "rax");
 			compileOperationOnRegisters("rax", "rbx", my_optype);
+			compileExpression(node->children[0], true);
 		}
 		else { 
 
@@ -472,7 +473,7 @@ public:
 				return nullptr;
 			}
 			// TODO: add support for expressions in left side
-			if (!is_subexpr) {
+			if (!is_subexpr && my_optype) {
 				compileFactorToRegister(node->children[0], "rax"); // TODO: compile expression on left side of tree
 			}
 

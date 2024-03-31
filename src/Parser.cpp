@@ -118,9 +118,6 @@ public:
 
 
 		TreeNode* root;
-		if (tokens->at(it).token_type == T_semicolon) {
-			//std::cout << "counter: " << expr_counter << std::endl;
-		}
 		if (tokens->at(it).token_type == T_semicolon && expr_counter == 0) {
 			// std::cout << "-------------------;;;;;;;;;;;;" << std::endl;
 			ast_node_stack.pop_back();
@@ -272,12 +269,12 @@ public:
 				ast_node_stack.push_back(asgn);
 				break;
 			}
-			case 29: //G_EXPR	      T_not T_open_par G_EXPR T_close_par
+			case 29: //G_EXPR_P	      T_not G_TERM G_EXPR_P
 			{
-				// Treat this the same as an EXPR P kind of
-				TreeNode* asgn = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
-				asgn->node_data->setOpType(OP_not);
-				ast_node_stack.push_back(asgn);
+				std::cout << "got to case 29" << std::endl;
+				ast_node_stack.back()->node_data->setOpType(OP_not);
+				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
+				ast_node_stack.push_back(expr);
 				expr_counter++;
 				break;
 			}
@@ -488,6 +485,7 @@ public:
 				break;
 			case 64: //G_DECIMAL      T_null
 				//  we can finish the number builder at this point
+				std::cout << "got to case 64" << std::endl;
 				ast_node_stack.pop_back(); // ???
 				break;
 			case 65: //G_EXOPT         T_exp G_NUMBER
