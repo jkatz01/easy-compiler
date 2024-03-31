@@ -152,6 +152,7 @@ public:
 	virtual void addRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void moveRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void imulRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void idivRegisters(std::string reg_1, std::string reg_2) = 0;
 };
 
 class CodeGen_x86_64_fasm_w : public CodeGenerator {
@@ -211,48 +212,58 @@ public:
 
 	void makeDeclaration(int offset) {
 		// 0 initialize variable
-		asm_file << "        ;; make declaration" << std::endl;
+		//asm_file << "        ;; make declaration" << std::endl;
 		asm_file << "        mov qword [rbp-" << offset << "], 0" << std::endl;
 	}
 
 	void makeAssignment(int offset) {
-		asm_file << "        ;; make assignment" << std::endl;
+		//asm_file << "        ;; make assignment" << std::endl;
 		asm_file << "        mov qword [rbp-" << offset << "], rax" << std::endl;
 	}
 
 	void makePrintInt() {
-		asm_file << "        ;; print integer" << std::endl;
+		//asm_file << "        ;; print integer" << std::endl;
 		asm_file << "        invoke printf, intprint, rax" << std::endl;
 	}
 
 	void makePushVariable(int offset) {
-		asm_file << "        ;; push variable" << std::endl;
+		//asm_file << "        ;; push variable" << std::endl;
 		asm_file << "        push qword [rbp-" << offset << "]" << std::endl;
 	}
 
 	void makePushIntConstant(int number) {
-		asm_file << "        ;; push int constant" << std::endl;
+		//asm_file << "        ;; push int constant" << std::endl;
 		asm_file << "        push " << number << std::endl;
 	}
 	void makeMoveVariableToReg(int offset, std::string reg) {
-		asm_file << "        ;; move variable" << std::endl;
+		//asm_file << "        ;; move variable" << std::endl;
 		asm_file << "        mov " << reg << ", qword [rbp-" << offset << "]" << std::endl;
 	}
 	void makeMoveConstIntToReg(int number, std::string reg) {
-		asm_file << "        ;; move constant int" << std::endl;
+		//asm_file << "        ;; move constant int" << std::endl;
 		asm_file << "        mov " << reg << ", " << number << std::endl;
 	}
 	void addRegisters(std::string reg_1, std::string reg_2) {
-		asm_file << "        ;; add two registers" << std::endl;
+		//asm_file << "        ;; add two registers" << std::endl;
 		asm_file << "        add " << reg_1 << ", " << reg_2 << std::endl;
 	}
 	void moveRegisters(std::string reg_1, std::string reg_2) {
-		asm_file << "        ;; moving registers" << std::endl;
+		//asm_file << "        ;; moving registers" << std::endl;
 		asm_file << "        mov " << reg_1 << ", " << reg_2 << std::endl;
 	}
 	void imulRegisters(std::string reg_1, std::string reg_2) {
-		asm_file << "        ;; imul two registers" << std::endl;
+		//asm_file << "        ;; imul two registers" << std::endl;
 		asm_file << "        imul " << reg_1 << ", " << reg_2 << std::endl;
+	}
+	void idivRegisters(std::string reg_1, std::string reg_2) {
+	  //asm_file << "        ;; imul two registers" << std::endl;
+		//asm_file << "        mov rdx, " << reg_2 << std::endl;
+		asm_file << "        mov rcx, " << reg_1 << std::endl;
+		asm_file << "        mov r8, " << reg_2 << std::endl;
+		asm_file << "        xor rdx, rdx" << std::endl;
+		asm_file << "        mov rax, rcx" << std::endl;
+		asm_file << "        idiv r8" << std::endl;
+
 	}
 };
 
@@ -387,6 +398,9 @@ public:
 		else if (operation == OP_times) {
 			assembler->imulRegisters(reg_1, reg_2);
 		}
+		else if (operation == OP_divide) {
+			assembler->idivRegisters(reg_1, reg_2);
+		}
 	}
 
 	int operatorPriority(OpType operation) {
@@ -397,6 +411,9 @@ public:
 			return 50;
 		}
 		else if (operation == OP_times) {
+			return 75;
+		}
+		else if (operation == OP_divide) {
 			return 75;
 		}
 		return -999;
@@ -427,11 +444,11 @@ public:
 			std::cout << "Priority: " << my_priority << "    Right child:" << right_child_priority << std::endl;
 			if (right_child_priority > my_priority) { 
 				// if next node has higher priority, call expr() recursively then [add first, second]
-				assembler->moveRegisters("rdx", "rax"); // Temporary to store current rax
+				assembler->moveRegisters("r14", "rax"); // Temporary to store current rax
 				// TODO: might need more than one temp register if we want multiple priorities
 				TreeNode* continue_node = compileExpression(node->children[1], false);
-				compileOperationOnRegisters("rdx", "rax", my_optype);
-				assembler->moveRegisters("rax", "rdx"); // necessary 2 step process to preserve commutativity 
+				compileOperationOnRegisters("r14", "rax", my_optype);
+				assembler->moveRegisters("rax", "r14"); // necessary 2 step process to preserve commutativity 
 				// Need to call compileExpression on the return node????
 				if (continue_node != nullptr) {
 					std::cout << "continue " << std::endl;
