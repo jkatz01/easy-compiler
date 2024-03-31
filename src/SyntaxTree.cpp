@@ -154,6 +154,7 @@ public:
 	virtual void moveRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void imulRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void idivRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void notRegister(std::string reg_1) = 0;
 
 };
 
@@ -268,6 +269,22 @@ public:
 		asm_file << "        xor rdx, rdx" << std::endl;
 		asm_file << "        mov rax, rcx" << std::endl;
 		asm_file << "        idiv r8" << std::endl;
+	}
+	void notRegister(std::string reg_1) {
+		//asm_file << "        ;; not(expr)" << std::endl;
+		asm_file << "        cmp " << reg_1 << ", " << "0" << std::endl;
+		asm_file << "        setne cl" << std::endl;
+		asm_file << "        xor cl, -1" << std::endl;
+		asm_file << "        and cl, 1" << std::endl;
+		asm_file << "        movzx edx, cl" << std::endl;
+		asm_file << "        movsxd " << reg_1 << ", edx" << std::endl;
+
+		/*cmp     qword ptr[rbp - 16], 0
+		setne   cl
+		xor cl, -1
+		and cl, 1
+		movzx   edx, cl
+		movsxd  rsi, edx*/
 	}
 };
 
@@ -396,7 +413,10 @@ public:
 	}
 
 	void compileOperationOnRegisters(std::string reg_1, std::string reg_2, OpType operation) {
-		if (operation == OP_plus) {
+		if (operation == OP_not) {
+			assembler->notRegister(reg_1);
+		}
+		else if (operation == OP_plus) {
 			assembler->addRegisters(reg_1, reg_2);
 		}
 		else if (operation == OP_minus) {
@@ -413,6 +433,9 @@ public:
 	int operatorPriority(OpType operation) {
 		if (operation == OP_single_factor) {
 			return 1;
+		}
+		else if (operation == OP_not) {
+			return 50; // TODO: lower priority?
 		}
 		else if (operation == OP_plus) {
 			return 50;
@@ -438,10 +461,14 @@ public:
 		else if (my_optype == OP_single_factor) {
 			compileFactorToRegister(node->children[0], "rax");
 		}
+		else if (my_optype == OP_not) {
+			compileFactorToRegister(node->children[0], "rax");
+			compileOperationOnRegisters("rax", "rbx", my_optype);
+		}
 		else { 
 
 			if (node->children.size() < 2) {
-				std::cout << "expression should have two child nodes" << std::endl;
+				std::cout << "ERROR: expression should have two child nodes" << std::endl;
 				return nullptr;
 			}
 			// TODO: add support for expressions in left side
@@ -470,7 +497,7 @@ public:
 				// first do [add rax, first_of_child], then call expr()
 				compileFactorToRegister(node->children[1]->children[0], "rbx"); // Move first of (right) child to rbx 
 				compileOperationOnRegisters("rax", "rbx", my_optype);
-				if(node->children[1]->children.size() == 2) {
+				if(node->children[1]->node_data->getNodeType() != OP_single_factor) {
 					TreeNode* continue_node = compileExpression(node->children[1], true);
 					return continue_node;
 				}
