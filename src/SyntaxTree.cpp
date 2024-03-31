@@ -435,7 +435,7 @@ public:
 			return 1;
 		}
 		else if (operation == OP_not) {
-			return 50; // TODO: lower priority?
+			return 50; // TODO: not should have the lowest priority possible
 		}
 		else if (operation == OP_plus) {
 			return 50;
@@ -478,7 +478,7 @@ public:
 				return nullptr;
 			}
 			// TODO: add support for expressions in left side
-			if (!is_subexpr && my_optype) {
+			if (!is_subexpr) {
 				compileFactorToRegister(node->children[0], "rax"); // TODO: compile expression on left side of tree
 			}
 
@@ -487,12 +487,12 @@ public:
 			std::cout << "Priority: " << my_priority << "    Right child:" << right_child_priority << std::endl;
 			if (right_child_priority > my_priority) { 
 				// if next node has higher priority, call expr() recursively then [add first, second]
-				assembler->moveRegisters("r14", "rax"); // Temporary to store current rax
-				// TODO: might need more than one temp register if we want multiple priorities
+				assembler->moveRegisters("r14", "rax");
+				// TODO: need to move temporaries to stack ------------------------------------
 				TreeNode* continue_node = compileExpression(node->children[1], false);
 				compileOperationOnRegisters("r14", "rax", my_optype);
-				assembler->moveRegisters("rax", "r14"); // necessary 2 step process to preserve commutativity 
-				// Need to call compileExpression on the return node????
+				assembler->moveRegisters("rax", "r14"); 
+				
 				if (continue_node != nullptr) {
 					std::cout << "continue " << std::endl;
 					if (continue_node->node_data->getOpType() != OP_single_factor) compileExpression(continue_node, true);
