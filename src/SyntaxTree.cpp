@@ -150,9 +150,11 @@ public:
 	virtual void makeMoveVariableToReg(int offset, std::string reg) = 0;
 	virtual void makeMoveConstIntToReg(int number, std::string reg) = 0;
 	virtual void addRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void subRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void moveRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void imulRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void idivRegisters(std::string reg_1, std::string reg_2) = 0;
+
 };
 
 class CodeGen_x86_64_fasm_w : public CodeGenerator {
@@ -247,6 +249,10 @@ public:
 		//asm_file << "        ;; add two registers" << std::endl;
 		asm_file << "        add " << reg_1 << ", " << reg_2 << std::endl;
 	}
+	void subRegisters(std::string reg_1, std::string reg_2) {
+		//asm_file << "        ;; sub two registers" << std::endl;
+		asm_file << "        sub " << reg_1 << ", " << reg_2 << std::endl;
+	}
 	void moveRegisters(std::string reg_1, std::string reg_2) {
 		//asm_file << "        ;; moving registers" << std::endl;
 		asm_file << "        mov " << reg_1 << ", " << reg_2 << std::endl;
@@ -256,14 +262,12 @@ public:
 		asm_file << "        imul " << reg_1 << ", " << reg_2 << std::endl;
 	}
 	void idivRegisters(std::string reg_1, std::string reg_2) {
-	  //asm_file << "        ;; imul two registers" << std::endl;
-		//asm_file << "        mov rdx, " << reg_2 << std::endl;
+	  //asm_file << "        ;; idiv two registers" << std::endl;
 		asm_file << "        mov rcx, " << reg_1 << std::endl;
 		asm_file << "        mov r8, " << reg_2 << std::endl;
 		asm_file << "        xor rdx, rdx" << std::endl;
 		asm_file << "        mov rax, rcx" << std::endl;
 		asm_file << "        idiv r8" << std::endl;
-
 	}
 };
 
@@ -395,6 +399,9 @@ public:
 		if (operation == OP_plus) {
 			assembler->addRegisters(reg_1, reg_2);
 		}
+		else if (operation == OP_minus) {
+			assembler->subRegisters(reg_1, reg_2);
+		}
 		else if (operation == OP_times) {
 			assembler->imulRegisters(reg_1, reg_2);
 		}
@@ -408,6 +415,9 @@ public:
 			return 1;
 		}
 		else if (operation == OP_plus) {
+			return 50;
+		}
+		else if (operation == OP_minus) {
 			return 50;
 		}
 		else if (operation == OP_times) {
