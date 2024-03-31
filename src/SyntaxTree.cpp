@@ -147,6 +147,8 @@ public:
 	virtual void makePrintInt() = 0;
 	virtual void makePushVariable(int offset) = 0;
 	virtual void makePushIntConstant(int number) = 0;
+	virtual void pushRegister(std::string reg_1) = 0;
+	virtual void popToRegister(std::string reg_1) = 0;
 	virtual void makeMoveVariableToReg(int offset, std::string reg) = 0;
 	virtual void makeMoveConstIntToReg(int number, std::string reg) = 0;
 	virtual void addRegisters(std::string reg_1, std::string reg_2) = 0;
@@ -225,7 +227,7 @@ public:
 	}
 
 	void makePrintInt() {
-		//asm_file << "        ;; print integer" << std::endl;
+		asm_file << "        ;; print integer" << std::endl;
 		asm_file << "        invoke printf, intprint, rax" << std::endl;
 	}
 
@@ -278,13 +280,13 @@ public:
 		asm_file << "        and cl, 1" << std::endl;
 		asm_file << "        movzx edx, cl" << std::endl;
 		asm_file << "        movsxd " << reg_1 << ", edx" << std::endl;
+	}
 
-		/*cmp     qword ptr[rbp - 16], 0
-		setne   cl
-		xor cl, -1
-		and cl, 1
-		movzx   edx, cl
-		movsxd  rsi, edx*/
+	void pushRegister(std::string reg_1) {
+		asm_file << "        push " << reg_1 << std::endl;
+	}
+	void popToRegister(std::string reg_1) {
+		asm_file << "        pop " << reg_1 << std::endl;
 	}
 };
 
@@ -487,9 +489,11 @@ public:
 			std::cout << "Priority: " << my_priority << "    Right child:" << right_child_priority << std::endl;
 			if (right_child_priority > my_priority) { 
 				// if next node has higher priority, call expr() recursively then [add first, second]
-				assembler->moveRegisters("r14", "rax");
+				//////assembler->moveRegisters("r14", "rax");
+				assembler->pushRegister("rax");
 				// TODO: need to move temporaries to stack ------------------------------------
 				TreeNode* continue_node = compileExpression(node->children[1], false);
+				assembler->popToRegister("r14");
 				compileOperationOnRegisters("r14", "rax", my_optype);
 				assembler->moveRegisters("rax", "r14"); 
 				
@@ -515,7 +519,14 @@ public:
 				// return right child as node to continue
 				compileFactorToRegister(node->children[1]->children[0], "rbx"); // Move first of (right) child to rbx 
 				compileOperationOnRegisters("rax", "rbx", my_optype);
-				return node->children[1];
+				if (is_subexpr) {
+					return node->children[1];
+				}
+				else {
+					TreeNode* continue_node = compileExpression(node->children[1], true);
+					return continue_node;
+				}
+				
 				// STILL need to use second value not first
 			}
 		}
