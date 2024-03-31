@@ -72,11 +72,8 @@ public:
 				}
 				if (it < tokens->size()) std::cout << "\t\t\t val: " << token_names_nice[found_type] << std::endl;
 			}
-			
-			
 		}
 		std::cout << "Finished parsing successfully" << std::endl;
-		
 		return 0;
 	}
 
@@ -289,6 +286,7 @@ public:
 				ast_node_stack.back()->node_data->setOpType(OP_plus);
 				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
+				expr_counter++;
 				break;
 			}
 			case 31: //G_EXPR_P      T_minus G_TERM G_EXPR_P
@@ -296,6 +294,7 @@ public:
 				ast_node_stack.back()->node_data->setOpType(OP_minus);
 				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
+				expr_counter++;
 				break;
 			}
 			case 32: //G_EXPR_P      T_or G_TERM G_EXPR_P
@@ -303,6 +302,7 @@ public:
 				ast_node_stack.back()->node_data->setOpType(OP_or);
 				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
+				expr_counter++;
 				break;
 			}
 			case 33: //G_EXPR_P      G_COMP G_TERM G_EXPR_P
@@ -310,11 +310,12 @@ public:
 				ast_node_stack.back()->node_data->setOpType(OP_default);
 				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
+				expr_counter++;
 				break;
 			}
 			case 34: //G_EXPR_P      T_null
 				while (expr_counter > 0) {
-					// std::cout << "---------------------> EXPRESSION COUNTER " << expr_counter << std::endl;
+					std::cout << "---------------------> EXPRESSION COUNTER " << expr_counter << std::endl;
 					ast_node_stack.pop_back();
 					expr_counter--;
 				}
@@ -332,6 +333,7 @@ public:
 				ast_node_stack.back()->node_data->setOpType(OP_times);
 				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
+				expr_counter++;
 				break;
 			}
 			case 37: //G_TERM_P      T_slash G_FACTOR G_TERM_P
@@ -339,6 +341,7 @@ public:
 				ast_node_stack.back()->node_data->setOpType(OP_divide);
 				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
+				expr_counter++;
 				break;
 			}
 			case 38: //G_TERM_P      T_mod G_FACTOR G_TERM_P
@@ -346,6 +349,7 @@ public:
 				ast_node_stack.back()->node_data->setOpType(OP_mod);
 				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
+				expr_counter++;
 				break;
 			}
 			case 39: //G_TERM_P      T_and G_FACTOR G_TERM_P
@@ -353,11 +357,12 @@ public:
 				ast_node_stack.back()->node_data->setOpType(OP_and);
 				TreeNode* expr = program_tree->insert(new NodeExpression(AST_expression), ast_node_stack.back());
 				ast_node_stack.push_back(expr);
+				expr_counter++;
 				break;
 			}
 			case 40: //G_TERM_P      T_null
 			{
-				expr_counter++;
+				//expr_counter++;
 				break;
 			}
 			case 41: //G_FACTOR      G_ID G_FUNCOPTS
@@ -398,7 +403,7 @@ public:
 					temp_counter = expr_counter;
 				}
 				in_expr_seq = true;
-				// std::cout << "Saved counter: " << expr_counter << std::endl;
+				//std::cout << "Saved counter: " << expr_counter << std::endl;
 				break;
 			}
 			case 47: //G_EXPRSEQ      T_null 
@@ -415,7 +420,7 @@ public:
 			case 49: //G_EXPRSEQ_P      T_null
 				// retrieve counter
 				expr_counter = temp_counter;
-				// std::cout << "Retrieved counter: " << expr_counter << std::endl;
+				//std::cout << "Retrieved counter: " << expr_counter << std::endl;
 				in_expr_seq = false;
 				ast_node_stack.pop_back();
 				break;
@@ -495,7 +500,7 @@ public:
 				break;
 			
 		}
-		//printAstNodeStack();
+		printAstNodeStack();
 	}
 
 	void astAddStandardRule(Rule rule) {
