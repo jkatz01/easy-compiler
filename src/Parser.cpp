@@ -244,6 +244,7 @@ public:
 			}
 			case 22: //G_STATEMENT      T_while T_open_par G_EXPR T_close_par T_do G_STATEMENT_SEQ T_od
 			{
+				in_statement = true;
 				TreeNode* asgn = program_tree->insert(new NodeHeader(AST_while), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
 				break;
@@ -311,6 +312,8 @@ public:
 				break;
 			}
 			case 34: //G_EXPR_P      T_null
+				std::cout << "---------------------> EXPRESSION COUNTER  ==== " << expr_counter << std::endl;
+				std::cout << "reached case 34" << std::endl;
 				while (expr_counter > 0) {
 					std::cout << "---------------------> EXPRESSION COUNTER " << expr_counter << std::endl;
 					ast_node_stack.pop_back();

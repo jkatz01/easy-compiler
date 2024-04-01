@@ -135,6 +135,7 @@ class CodeGenerator {
 protected:
 	std::string target_name;
 	std::ofstream asm_file;
+	int label_counter = 0;
 public:
 	CodeGenerator(std::string target) : target_name(target) {
 		asm_file.open("program.asm", std::ios::out | std::ios::trunc);
@@ -165,6 +166,8 @@ public:
 	virtual void lesserEqualsRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void greaterRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void lesserRegisters(std::string reg_1, std::string reg_2) = 0;
+	virtual void makeWhileStart(std::string reg_1) = 0;
+	virtual void makeWhileEnd(std::string reg_1) = 0;
 };
 
 class CodeGen_x86_64_fasm_w : public CodeGenerator {
@@ -296,8 +299,12 @@ public:
 		asm_file << "        pop " << reg_1 << std::endl;
 	}
 
-	void orRegisters(std::string reg_1, std::string reg_2) {}
-	void andRegisters(std::string reg_1, std::string reg_2) {}
+	void orRegisters(std::string reg_1, std::string reg_2) {
+		// Maybe just compare these two to 0 ???
+	}
+	void andRegisters(std::string reg_1, std::string reg_2) {
+		// Maybe just compare these two to 0 ???
+	}
 	void equalsRegisters(std::string reg_1, std::string reg_2) {
 		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
 		asm_file << "        sete dl" << std::endl;
@@ -333,6 +340,19 @@ public:
 		asm_file << "        setl dl" << std::endl;
 		asm_file << "        and dl, 1" << std::endl;
 		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
+	}
+
+	void makeWhileStart(std::string reg_1) {
+		asm_file << "LABEL_WH_" << label_counter << ":" << std::endl;
+		label_counter++;
+		asm_file << "        cmp " << reg_1 << ", 1" << std::endl;
+		asm_file << "        jne LABEL_WH_" << label_counter << std::endl;
+		// Should call the statement sequence after while here
+	}
+
+	void makeWhileEnd(std::string reg_1) {
+		asm_file << "        jmp LABEL_WH_" << (label_counter - 1) << std::endl; 
+		asm_file << "LABEL_WH_" << label_counter << ":" << std::endl;
 	}
 };
 

@@ -1,4 +1,8 @@
 int x;
-x = 1 < 2;
+while(x<10) do
+	x = x + 1;
+	x = x + 1;
+	x = x + 1;
+od;
 print(x);
 .
