@@ -212,7 +212,13 @@ public:
 		std::cout << "ERROR: Could not find variable " << var_name << std::endl;
 		return Variable("", VT_invalid);
 	}
+	void addSingleDeclaration(TreeNode* node) {
+		VarType my_vartype = node->node_data->getNodeVarType();
+		int my_offset = (int)((var_table.back().size() + 1) * QWORD_SIZE);
+		var_table.back().push_back(Variable(node->node_data->getNodeStrVal(), my_vartype, my_offset));
 
+		assembler->makeDeclaration(my_offset);
+	}
 	void addDeclaration(TreeNode* node) {
 		
 		VarType decl_type = node->node_data->getNodeVarType();
@@ -457,15 +463,31 @@ public:
 				// note: need to keep rax in some temporary place
 				addFunctionToTable(node, 0);
 				assembler->functionStart(function->node_data->getNodeStrVal());
+
+				std::vector<Variable> second_table;
+				var_table.push_back(second_table);
+
+				int end_of_parameters = (int)function->children.size();
+
 				for (int i = (int)function->children.size() - 1; i >= 0; i--) {
 					if (function->children[i]->node_data->getNodeType() == AST_parameter) {
 						std::cout << "Found parameter " << function->children[i]->node_data->getNodeStrVal() << std::endl;
-						
+						addSingleDeclaration(function->children[i]);
+					}
+					else {
+						end_of_parameters--;
 					}
 				}
+
 				// Handle list declarations
+				std::cout << "Thing after last parameter: " << ast_type_names[function->children[end_of_parameters]->node_data->getNodeType()] << std::endl;
+				for (TreeNode* decl : function->children[end_of_parameters]->children) {
+					addDeclaration(decl);
+				}
+
 				// Hande list statements
 				assembler->functionEnd();
+				var_table.pop_back();
 			}
 			assembler->startMainAssembly();
 			return; 

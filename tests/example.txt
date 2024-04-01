@@ -1,4 +1,7 @@
-
+def int func(int x, int y)
+    int a, b, c;
+    a = 2;
+fed;
 int x, y, z;
 int a;
 x = 1 or 1;
