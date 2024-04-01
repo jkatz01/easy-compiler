@@ -72,12 +72,15 @@ public:
 
 	void startMainAssembly() {
 		asm_file << "start: " << std::endl;
-		asm_file << "        sub rsp, 8*5 ; makes stack dqword aligned??? idk man" << std::endl;
+		
 
 		// Set up stack pointer
 		asm_file << std::endl;
 		asm_file << "        push rbp" << std::endl;
 		asm_file << "        mov rbp, rsp" << std::endl;
+
+		asm_file << "        sub rsp, 8*4 ; reserve space on stack i think?" << std::endl;
+		// This needs to know the number of variables we will have in the var_table
 	}
 
 	void finalizeAssembly() {
