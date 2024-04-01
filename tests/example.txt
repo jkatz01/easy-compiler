@@ -1,8 +1,6 @@
 int x;
 while(x<10) do
 	x = x + 1;
-	x = x + 1;
-	x = x + 1;
 od;
 print(x);
 .

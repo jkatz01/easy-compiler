@@ -166,8 +166,9 @@ public:
 	virtual void lesserEqualsRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void greaterRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void lesserRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void makeWhileStart(std::string reg_1) = 0;
-	virtual void makeWhileEnd(std::string reg_1) = 0;
+	virtual void makeWhileStart() = 0;
+	virtual void makeWhileMiddle(std::string reg_1) = 0;
+	virtual void makeWhileEnd() = 0;
 };
 
 class CodeGen_x86_64_fasm_w : public CodeGenerator {
@@ -342,15 +343,18 @@ public:
 		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
 	}
 
-	void makeWhileStart(std::string reg_1) {
+	void makeWhileStart() {
 		asm_file << "LABEL_WH_" << label_counter << ":" << std::endl;
 		label_counter++;
+		// Expression needs to be evaluated here
+	}
+	void makeWhileMiddle(std::string reg_1) {
 		asm_file << "        cmp " << reg_1 << ", 1" << std::endl;
 		asm_file << "        jne LABEL_WH_" << label_counter << std::endl;
 		// Should call the statement sequence after while here
 	}
 
-	void makeWhileEnd(std::string reg_1) {
+	void makeWhileEnd() {
 		asm_file << "        jmp LABEL_WH_" << (label_counter - 1) << std::endl; 
 		asm_file << "LABEL_WH_" << label_counter << ":" << std::endl;
 	}
@@ -459,7 +463,12 @@ public:
 	}
 	
 	int variableOffsetFromNode(TreeNode* node) {
-		return variableLookup(node->node_data->getNodeStrVal()).offset;
+		// TODO: add fail state
+		Variable my_var = variableLookup(node->node_data->getNodeStrVal());
+		if (my_var.type == VT_invalid) {
+			std::cout << "ERROR: could not find variable " << node->node_data->getNodeStrVal() << std::endl;
+		}
+		return my_var.offset;
 	}
 
 	int constIntValueFromNode(TreeNode* node) {
@@ -689,23 +698,26 @@ public:
 			std::cout << "-------- ended check --------" << std::endl;
 
 
-			std::string my_var = node->children[0]->node_data->getNodeStrVal();
-			int my_offset = variableLookup(my_var).offset; 
+			std::string my_var_name = node->children[0]->node_data->getNodeStrVal();
+			Variable my_var = variableLookup(my_var_name);
+			int my_offset = my_var.offset; 
 
 			if(node->children.size() > 1)  compileExpression(node->children[1], false);
 
 			assembler->makeAssignment(my_offset); // right now nothing is pushed to stack so cant print
 			return;
 		}
-		else if (my_type == AST_factor_var || my_type == AST_variable) {
-			if (variableLookup(node->node_data->getNodeStrVal()).type == VT_invalid) {
-				// BAD!!!!
-				std::cout << "ERROR: Failed to find variable " << node->node_data->getNodeStrVal() << std::endl;
-			}
-			else {
-				// good 
-				std::cout << "Good variable :)    " << node->node_data->getNodeStrVal() << std::endl;
-			}
+		else if (my_type == AST_while) {
+			// node->children[0] ---- expression
+			// node->children[1] ---- list statements (Might not exist)
+			
+			assembler->makeWhileStart();
+			compileExpression(node->children[0], false);
+			assembler->makeWhileMiddle("rax");
+			if (node->children.size() > 1) compileTree(node->children[1]);
+			//assembler->testIntPrint();
+			assembler->makeWhileEnd();
+			return;
 		}
 		else if (my_type == AST_print) {
 			if (node->children.size() >= 1) {
