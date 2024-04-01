@@ -1,6 +1,7 @@
 #include "definitions.h"
 #include <iostream>
 #include <fstream>
+#include "CodeGenerator.cpp"
 
 class NodeData {
 protected:
@@ -120,6 +121,7 @@ public:
 	void setVarType(VarType t) override { var.type = t; }
 	void setStrVal(std::string s) override { var.name = s; }
 	std::string	 getNodeStrVal() override { return var.name; }
+	VarType getNodeVarType() override {return var.type;}
 };
 
 struct TreeNode {
@@ -131,257 +133,6 @@ struct TreeNode {
 	}
 };
 
-class CodeGenerator {
-protected:
-	std::string target_name;
-	std::ofstream asm_file;
-	int label_counter = 0;
-public:
-	CodeGenerator(std::string target) : target_name(target) {
-		asm_file.open("program.asm", std::ios::out | std::ios::trunc);
-	}
-	virtual void initAssembly() = 0;
-	virtual void finalizeAssembly() = 0;
-	virtual void testIntPrint() = 0;
-	virtual void printComment(std::string comment) = 0;
-	virtual void makeDeclaration(int offset) = 0;
-	virtual void makeAssignment(int offset) = 0;
-	virtual void makePrintInt() = 0;
-	virtual void makePushVariable(int offset) = 0;
-	virtual void makePushIntConstant(int number) = 0;
-	virtual void pushRegister(std::string reg_1) = 0;
-	virtual void popToRegister(std::string reg_1) = 0;
-	virtual void makeMoveVariableToReg(int offset, std::string reg) = 0;
-	virtual void makeMoveConstIntToReg(int number, std::string reg) = 0;
-	virtual void addRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void subRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void moveRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void imulRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void idivRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void notRegister(std::string reg_1) = 0;
-	virtual void orRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void andRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void equalsRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void unequalsRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void greaterEqualsRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void lesserEqualsRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void greaterRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void lesserRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void makeWhileStart() = 0;
-	virtual void makeWhileMiddle(std::string reg_1) = 0;
-	virtual void makeWhileEnd() = 0;
-};
-
-class CodeGen_x86_64_fasm_w : public CodeGenerator {
-public:
-	std::string include_path = "D:\\Program Files\\flat-assembler\\INCLUDE\\";
-	
-	CodeGen_x86_64_fasm_w() : CodeGenerator("x86_64 flat assembler windows") {}
-	
-	void initAssembly() {
-		asm_file << ";; Target: " << target_name << std::endl;
-		asm_file << ";; Start of assembly" << std::endl;
-
-		asm_file << "format PE64 console 4.0" << std::endl;
-		asm_file << std::endl;
-		asm_file << "include '" << include_path << "win64a.inc'" << std::endl;
-		asm_file << std::endl;
-		asm_file << "entry start" << std::endl;
-		asm_file << std::endl;
-
-		asm_file << "section '.text' code readable executable" << std::endl;
-		asm_file << "start: " << std::endl;
-		asm_file << "        sub rsp, 8*5 ; makes stack dqword aligned??? idk man" << std::endl;
-
-		// Set up stack pointer
-		asm_file << std::endl;
-		asm_file << "        push rbp" << std::endl;
-		asm_file << "        mov rbp, rsp" << std::endl;
-	}
-
-	void finalizeAssembly() {
-		asm_file << std::endl;
-		asm_file << "        invoke Sleep, 4000" << std::endl;
-		asm_file << "        push 0" << std::endl;
-		asm_file << "        call [ExitProcess]" << std::endl;
-
-		asm_file << std::endl;
-		asm_file << "section '.rdata' data readable" << std::endl;
-		asm_file << "        intprint db 'int: %d', 10, 0" << std::endl;
-
-		asm_file << std::endl;
-		asm_file << "section '.idata' data readable import" << std::endl;
-		asm_file << "        library kernel32, 'kernel32.dll', \\" << std::endl;
-		asm_file << "                msvcrt,   'msvcrt.dll'" << std::endl;
-
-		asm_file << "        import kernel32, \\" << std::endl;
-		asm_file << "        ExitProcess, 'ExitProcess', \\" << std::endl;
-		asm_file << "        Sleep, 'Sleep'" << std::endl;
-		asm_file << "        import msvcrt, printf, 'printf'" << std::endl;
-	}
-
-	void testIntPrint() {
-		asm_file << "        ;; test print" << std::endl;
-		asm_file << "        push 12345" << std::endl;
-		asm_file << "        pop rax" << std::endl;
-		asm_file << "        invoke printf, intprint, rax" << std::endl; // I dont know why using call doesnt work
-	}
-
-	void printComment(std::string comment) {
-		asm_file << "        ;; " << comment << std::endl;
-	}
-
-	void makeDeclaration(int offset) {
-		// 0 initialize variable
-		//asm_file << "        ;; make declaration" << std::endl;
-		asm_file << "        mov qword [rbp-" << offset << "], 0" << std::endl;
-	}
-
-	void makeAssignment(int offset) {
-		//asm_file << "        ;; make assignment" << std::endl;
-		asm_file << "        mov qword [rbp-" << offset << "], rax" << std::endl;
-	}
-
-	void makePrintInt() {
-		//asm_file << "        ;; print integer" << std::endl;
-		asm_file << "        invoke printf, intprint, rax" << std::endl;
-	}
-
-	void makePushVariable(int offset) {
-		//asm_file << "        ;; push variable" << std::endl;
-		asm_file << "        push qword [rbp-" << offset << "]" << std::endl;
-	}
-
-	void makePushIntConstant(int number) {
-		//asm_file << "        ;; push int constant" << std::endl;
-		asm_file << "        push " << number << std::endl;
-	}
-	void makeMoveVariableToReg(int offset, std::string reg) {
-		//asm_file << "        ;; move variable" << std::endl;
-		asm_file << "        mov " << reg << ", qword [rbp-" << offset << "]" << std::endl;
-	}
-	void makeMoveConstIntToReg(int number, std::string reg) {
-		//asm_file << "        ;; move constant int" << std::endl;
-		asm_file << "        mov " << reg << ", " << number << std::endl;
-	}
-	void addRegisters(std::string reg_1, std::string reg_2) {
-		//asm_file << "        ;; add two registers" << std::endl;
-		asm_file << "        add " << reg_1 << ", " << reg_2 << std::endl;
-	}
-	void subRegisters(std::string reg_1, std::string reg_2) {
-		//asm_file << "        ;; sub two registers" << std::endl;
-		asm_file << "        sub " << reg_1 << ", " << reg_2 << std::endl;
-	}
-	void moveRegisters(std::string reg_1, std::string reg_2) {
-		//asm_file << "        ;; moving registers" << std::endl;
-		asm_file << "        mov " << reg_1 << ", " << reg_2 << std::endl;
-	}
-	void imulRegisters(std::string reg_1, std::string reg_2) {
-		//asm_file << "        ;; imul two registers" << std::endl;
-		asm_file << "        imul " << reg_1 << ", " << reg_2 << std::endl;
-	}
-	void idivRegisters(std::string reg_1, std::string reg_2) {
-	  //asm_file << "        ;; idiv two registers" << std::endl;
-		asm_file << "        mov rcx, " << reg_1 << std::endl;
-		asm_file << "        mov r8, " << reg_2 << std::endl;
-		asm_file << "        xor rdx, rdx" << std::endl;
-		asm_file << "        mov rax, rcx" << std::endl;
-		asm_file << "        idiv r8" << std::endl;
-	}
-	void notRegister(std::string reg_1) {
-		//asm_file << "        ;; not(expr)" << std::endl;
-		asm_file << "        cmp " << reg_1 << ", " << "0" << std::endl;
-		asm_file << "        setne cl" << std::endl;
-		asm_file << "        xor cl, -1" << std::endl;
-		asm_file << "        and cl, 1" << std::endl;
-		asm_file << "        movzx edx, cl" << std::endl;
-		asm_file << "        movsxd " << reg_1 << ", edx" << std::endl;
-	}
-
-	void pushRegister(std::string reg_1) {
-		asm_file << "        push " << reg_1 << std::endl;
-	}
-	void popToRegister(std::string reg_1) {
-		asm_file << "        pop " << reg_1 << std::endl;
-	}
-
-	void orRegisters(std::string reg_1, std::string reg_2) {
-		// Maybe just compare these two to 0 ???
-		asm_file << "        cmp " << reg_1 << ", 0" << std::endl;
-		asm_file << "        jne LABEL_AND_" << label_counter << std::endl;
-		asm_file << "        cmp " << reg_2 << ", 0" << std::endl;
-		asm_file << "        setne al" << std::endl;
-		asm_file << "LABEL_AND_" << label_counter << ":" << std::endl;
-		label_counter++;
-
-		asm_file << "        and al, 1" << std::endl;
-		asm_file << "        movzx " << reg_1 << ", al" << std::endl;
-	}
-	void andRegisters(std::string reg_1, std::string reg_2) {
-		// Maybe just compare these two to 0 ???
-		asm_file << "        cmp " << reg_1 << ", 0" << std::endl;
-		asm_file << "        je LABEL_AND_" << label_counter << std::endl;
-		asm_file << "        cmp " << reg_2 << ", 0" << std::endl;
-		asm_file << "        setne al" << std::endl;
-		asm_file << "LABEL_AND_" << label_counter << ":" << std::endl;
-		label_counter++;
-
-		asm_file << "        and al, 1" << std::endl;
-		asm_file << "        movzx " << reg_1 << ", al" <<std::endl;
-	}
-	void equalsRegisters(std::string reg_1, std::string reg_2) {
-		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
-		asm_file << "        sete dl" << std::endl;
-		asm_file << "        and dl, 1" << std::endl;
-		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
-	}
-	void unequalsRegisters(std::string reg_1, std::string reg_2) {
-		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
-		asm_file << "        setne dl" << std::endl;
-		asm_file << "        and dl, 1" << std::endl;
-		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
-	}
-	void greaterEqualsRegisters(std::string reg_1, std::string reg_2) {
-		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
-		asm_file << "        setge dl" << std::endl;
-		asm_file << "        and dl, 1" << std::endl;
-		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
-	}
-	void lesserEqualsRegisters(std::string reg_1, std::string reg_2) {
-		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
-		asm_file << "        setle dl" << std::endl;
-		asm_file << "        and dl, 1" << std::endl;
-		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
-	}
-	void greaterRegisters(std::string reg_1, std::string reg_2) {
-		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
-		asm_file << "        setg dl" << std::endl;
-		asm_file << "        and dl, 1" << std::endl;
-		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
-	}
-	void lesserRegisters(std::string reg_1, std::string reg_2) {
-		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
-		asm_file << "        setl dl" << std::endl;
-		asm_file << "        and dl, 1" << std::endl;
-		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
-	}
-
-	void makeWhileStart() {
-		asm_file << "LABEL_WH_" << label_counter << ":" << std::endl;
-		label_counter++;
-		// Expression needs to be evaluated here
-	}
-	void makeWhileMiddle(std::string reg_1) {
-		asm_file << "        cmp " << reg_1 << ", 1" << std::endl;
-		asm_file << "        jne LABEL_WH_" << label_counter << std::endl;
-		// Should call the statement sequence after while here
-	}
-
-	void makeWhileEnd() {
-		asm_file << "        jmp LABEL_WH_" << (label_counter - 1) << std::endl; 
-		asm_file << "LABEL_WH_" << label_counter << ":" << std::endl;
-	}
-};
 
 class SyntaxTree {
 private:
@@ -462,20 +213,17 @@ public:
 		return Variable("", VT_invalid);
 	}
 
-	void addDeclaration(TreeNode* node, int scope) {
-		static int offset_counter = QWORD_SIZE;
+	void addDeclaration(TreeNode* node) {
 		
 		VarType decl_type = node->node_data->getNodeVarType();
-		for (TreeNode* child : node->children.at(scope)->children) { //decl -> list_vars -> ...
+		for (TreeNode* child : node->children[0]->children) { //decl -> list_vars -> ...
 			if (child->node_data->getNodeType() != AST_variable) { // This should only be full of AST_variable
 				std::cout << "ERROR: trying to add variable but found node of type " << child->node_data->getNodeType() << std::endl;
 			}
 			std::cout << "Added " << child->node_data->getNodeStrVal() << "  " << type_names[decl_type] << std::endl;
-			var_table.back().push_back(Variable(child->node_data->getNodeStrVal(), decl_type, offset_counter));
+			var_table.back().push_back(Variable(child->node_data->getNodeStrVal(), decl_type, (var_table.back().size() * QWORD_SIZE) ));
 			
-			assembler->makeDeclaration(offset_counter);
-
-			offset_counter += QWORD_SIZE;
+			assembler->makeDeclaration((var_table.back().size() * QWORD_SIZE));
 		}
 	}
 	void addFunctionToTable(TreeNode* node, int scope) {
@@ -672,7 +420,6 @@ public:
 					TreeNode* continue_node = compileExpression(node->children[1], true);
 					return continue_node;
 				}
-				
 				// STILL need to use second value not first
 			}
 		}
@@ -689,16 +436,13 @@ public:
 	void compileTreeMaster() {
 		assembler->initAssembly();
 		//assembler->testIntPrint();
+		std::vector<Variable> first_table;
+		var_table.push_back(first_table);
 		compileTree(root);
 		assembler->finalizeAssembly();
 	}
-	/*
-	compiletree()
-		if decl -> add to symbol table
-		if stmt -> type check
-		if func_decl -> add to symbol table (when to pop?)
-		think about returning after doing an operation for some type of node
-	*/
+
+
 	// Returning from this function finishes compilation of a node and its children
 	void compileTree(TreeNode* node) {
 		if (node == nullptr) {
@@ -706,13 +450,27 @@ public:
 		}
 
 		NodeType my_type = node->node_data->getNodeType();
-		if (my_type == AST_func_declaration) {
-			addFunctionToTable(node, 0);
-			// TODO: add all declarations inside to a new scope
+		if (my_type == AST_list_func_declarations) {
+			// Compile all functions
+			for (TreeNode* function : node->children) {
+				// note: need to keep rax in some temporary place
+				addFunctionToTable(node, 0);
+				assembler->functionStart(function->node_data->getNodeStrVal());
+				for (int i = function->children.size() - 1; i >= 0; i--) {
+					if (function->children[i]->node_data->getNodeType() == AST_parameter) {
+						std::cout << "Found parameter " << function->children[i]->node_data->getNodeStrVal() << std::endl;
+						
+					}
+				}
+				// Handle list declarations
+				// Hande list statements
+				assembler->functionEnd();
+			}
+			assembler->startMainAssembly();
 			return; 
 		}
 		else if (my_type == AST_declaration) {
-			addDeclaration(node, 0);
+			addDeclaration(node);
 			return;
 		}
 		else if (my_type == AST_assignment) {
@@ -731,14 +489,10 @@ public:
 			return;
 		}
 		else if (my_type == AST_while) {
-			// node->children[0] ---- expression
-			// node->children[1] ---- list statements (Might not exist)
-			
 			assembler->makeWhileStart();
 			compileExpression(node->children[0], false);
 			assembler->makeWhileMiddle("rax");
 			if (node->children.size() > 1) compileTree(node->children[1]);
-			//assembler->testIntPrint();
 			assembler->makeWhileEnd();
 			return;
 		}

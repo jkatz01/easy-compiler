@@ -6,6 +6,7 @@
     <ClCompile Include="src\Parser.cpp" />
     <ClCompile Include="src\LLTable.cpp" />
     <ClCompile Include="src\SyntaxTree.cpp" />
+    <ClCompile Include="src\CodeGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="tests\bad_file.txt" />

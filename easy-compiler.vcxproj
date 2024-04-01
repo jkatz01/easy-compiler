@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\CodeGenerator.cpp" />
     <ClCompile Include="src\Lexer.cpp" />
     <ClCompile Include="src\LLTable.cpp" />
     <ClCompile Include="src\main.cpp" />
