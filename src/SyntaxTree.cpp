@@ -143,6 +143,7 @@ public:
 	virtual void initAssembly() = 0;
 	virtual void finalizeAssembly() = 0;
 	virtual void testIntPrint() = 0;
+	virtual void printComment(std::string comment) = 0;
 	virtual void makeDeclaration(int offset) = 0;
 	virtual void makeAssignment(int offset) = 0;
 	virtual void makePrintInt() = 0;
@@ -226,6 +227,10 @@ public:
 		asm_file << "        invoke printf, intprint, rax" << std::endl; // I dont know why using call doesnt work
 	}
 
+	void printComment(std::string comment) {
+		asm_file << "        ;; " << comment << std::endl;
+	}
+
 	void makeDeclaration(int offset) {
 		// 0 initialize variable
 		//asm_file << "        ;; make declaration" << std::endl;
@@ -238,7 +243,7 @@ public:
 	}
 
 	void makePrintInt() {
-		asm_file << "        ;; print integer" << std::endl;
+		//asm_file << "        ;; print integer" << std::endl;
 		asm_file << "        invoke printf, intprint, rax" << std::endl;
 	}
 
@@ -302,9 +307,27 @@ public:
 
 	void orRegisters(std::string reg_1, std::string reg_2) {
 		// Maybe just compare these two to 0 ???
+		asm_file << "        cmp " << reg_1 << ", 0" << std::endl;
+		asm_file << "        jne LABEL_AND_" << label_counter << std::endl;
+		asm_file << "        cmp " << reg_2 << ", 0" << std::endl;
+		asm_file << "        setne al" << std::endl;
+		asm_file << "LABEL_AND_" << label_counter << ":" << std::endl;
+		label_counter++;
+
+		asm_file << "        and al, 1" << std::endl;
+		asm_file << "        movzx " << reg_1 << ", al" << std::endl;
 	}
 	void andRegisters(std::string reg_1, std::string reg_2) {
 		// Maybe just compare these two to 0 ???
+		asm_file << "        cmp " << reg_1 << ", 0" << std::endl;
+		asm_file << "        je LABEL_AND_" << label_counter << std::endl;
+		asm_file << "        cmp " << reg_2 << ", 0" << std::endl;
+		asm_file << "        setne al" << std::endl;
+		asm_file << "LABEL_AND_" << label_counter << ":" << std::endl;
+		label_counter++;
+
+		asm_file << "        and al, 1" << std::endl;
+		asm_file << "        movzx " << reg_1 << ", al" <<std::endl;
 	}
 	void equalsRegisters(std::string reg_1, std::string reg_2) {
 		asm_file << "        cmp " << reg_1 << ", " << reg_2 << std::endl;
