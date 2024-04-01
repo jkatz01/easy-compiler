@@ -1,26 +1,16 @@
 int x;
 
 x = 0 and 0;
-print(x);
+print(x + x + x);
 
-x = 1 and 0;
-print(x);
-
-x = 0 and 1;
-print(x);
-
-x = 1 and 1;
-print(x);
-
-x = 0 or 0;
-print(x);
-
-x = 1 or 0;
-print(x);
-
-x = 0 or 1;
-print(x);
+while (x<10) do
+	x = x + 1;
+od;
 
 x = 1 or 1;
 print(x);
+
+return(x);
+return(x);
+return(x);
 .

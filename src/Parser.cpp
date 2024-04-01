@@ -105,6 +105,7 @@ public:
 		static bool	   in_stmt_seq;
 		static bool	   in_expr_seq;
 		static bool	   in_statement;
+		static bool	   in_while_statement;
 		static int     expr_counter;
 		static int	   temp_counter;
 		//OpType  op_buffer = OP_plus;
@@ -244,7 +245,7 @@ public:
 			}
 			case 22: //G_STATEMENT      T_while T_open_par G_EXPR T_close_par T_do G_STATEMENT_SEQ T_od
 			{
-				in_statement = true;
+				in_while_statement = true;
 				TreeNode* asgn = program_tree->insert(new NodeHeader(AST_while), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
 				break;
@@ -322,8 +323,13 @@ public:
 				if (tokens->at(it).token_type == T_semicolon) {
 					ast_node_stack.pop_back();;
 				}
-				if (in_statement) {
+				if (in_while_statement) {
+					in_while_statement = false;
+					ast_node_stack.pop_back();
+				}
+				else if (in_statement) {
 					in_statement = false;
+					ast_node_stack.pop_back();
 					ast_node_stack.pop_back();
 				}
 				if (in_expr_seq) {
