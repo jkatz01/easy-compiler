@@ -221,9 +221,10 @@ public:
 				std::cout << "ERROR: trying to add variable but found node of type " << child->node_data->getNodeType() << std::endl;
 			}
 			std::cout << "Added " << child->node_data->getNodeStrVal() << "  " << type_names[decl_type] << std::endl;
-			var_table.back().push_back(Variable(child->node_data->getNodeStrVal(), decl_type, (var_table.back().size() * QWORD_SIZE) ));
+			int my_offset = (int)((var_table.back().size() + 1) * QWORD_SIZE);
+			var_table.back().push_back(Variable(child->node_data->getNodeStrVal(), decl_type, my_offset));
 			
-			assembler->makeDeclaration((var_table.back().size() * QWORD_SIZE));
+			assembler->makeDeclaration(my_offset);
 		}
 	}
 	void addFunctionToTable(TreeNode* node, int scope) {
@@ -456,7 +457,7 @@ public:
 				// note: need to keep rax in some temporary place
 				addFunctionToTable(node, 0);
 				assembler->functionStart(function->node_data->getNodeStrVal());
-				for (int i = function->children.size() - 1; i >= 0; i--) {
+				for (int i = (int)function->children.size() - 1; i >= 0; i--) {
 					if (function->children[i]->node_data->getNodeType() == AST_parameter) {
 						std::cout << "Found parameter " << function->children[i]->node_data->getNodeStrVal() << std::endl;
 						
