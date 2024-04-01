@@ -16,11 +16,11 @@ int main(int argc, char* argv[]) {
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
-	;;;;;
+	;;
 	CodeGen_x86_64_fasm_w *generator = new CodeGen_x86_64_fasm_w();
 	SyntaxTree* program_tree = new SyntaxTree(generator);
 	
-	Parser *parser = new Parser(lexical->v_tokens, program_tree); // Release fails here, maybe an unclosed file?
+	Parser *parser = new Parser(lexical->v_tokens, program_tree); 
 	parser->parse();
 
 	if (parser->err_count > 0) {
@@ -31,6 +31,8 @@ int main(int argc, char* argv[]) {
 	
 	delete parser; //TODO: memory leak here, LLTable does not get deleted
 	delete lexical;
+
+	// TODO: fix empty functions without declarations/statements
 	
 	std::cout << std::endl;
 	std::cout << "Compiling tree" << std::endl << "---------------------" << std::endl;

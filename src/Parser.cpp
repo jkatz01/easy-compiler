@@ -119,10 +119,15 @@ public:
 
 
 		TreeNode* root;
+		if (tokens->at(it).token_type == T_semicolon) {
+			//std::cout << "counter: " << expr_counter << std::endl;
+		}
 		if (tokens->at(it).token_type == T_semicolon && expr_counter == 0) {
 			// std::cout << "-------------------;;;;;;;;;;;;" << std::endl;
-			ast_node_stack.pop_back();
-			//printAstNodeStack();
+			if (ast_node_stack.back()->node_data->getNodeType() != AST_list_statements) {
+				ast_node_stack.pop_back();
+			}
+			printAstNodeStack();
 			return;
 		}
 		
@@ -321,7 +326,7 @@ public:
 					expr_counter--;
 				}
 				if (tokens->at(it).token_type == T_semicolon) {
-					ast_node_stack.pop_back();;
+					ast_node_stack.pop_back();
 				}
 				if (in_while_statement) {
 					in_while_statement = false;

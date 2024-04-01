@@ -481,10 +481,12 @@ public:
 
 				// Handle list declarations
 				std::cout << "Thing after last parameter: " << ast_type_names[function->children[end_of_parameters]->node_data->getNodeType()] << std::endl;
-				for (TreeNode* decl : function->children[end_of_parameters]->children) {
-					addDeclaration(decl);
+				if (end_of_parameters >= function->children.size()) {
+					std::cout << "ERROR: function is missing declaration sequence or statement sequence" << std::endl;
+					return;
 				}
-
+				compileTree(function->children[end_of_parameters]);
+				compileTree(function->children[end_of_parameters + 1]);
 				// Hande list statements
 				assembler->functionEnd();
 				var_table.pop_back();
