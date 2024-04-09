@@ -15,7 +15,7 @@ public:
 	virtual void startMainAssembly() = 0;
 	virtual void finalizeAssembly() = 0;
 	virtual void functionStart(std::string function_name) = 0;
-	virtual void functionAddParameter(int param_offset) = 0;
+	virtual void functionAddParameter(int param_offset, std::string reg_1) = 0;
 	virtual void functionEnd() = 0;
 	virtual void returnRegister(std::string reg_1) = 0;
 	virtual void testIntPrint() = 0;
@@ -46,7 +46,8 @@ public:
 	virtual void makeWhileStart() = 0;
 	virtual void makeWhileMiddle(std::string reg_1) = 0;
 	virtual void makeWhileEnd() = 0;
-	virtual void makeReturn() = 0;
+	virtual void makeReturn(std::string reg_1, std::string reg_2) = 0;
+	virtual void callFunction(std::string func_name) = 0;
 	
 };
 
@@ -108,16 +109,15 @@ public:
 
 	void functionStart(std::string function_name) {
 		asm_file << function_name << ":" << std::endl;
-		asm_file << "        push rbp" << std::endl;
-		asm_file << "        mov rbp, rsp" << std::endl;
+		asm_file << "        sub rsp, 8*64" << std::endl;
 	}
-	void functionAddParameter(int param_offset) {
+	void functionAddParameter(int param_offset, std::string reg_1) {
 		// NOTE: order is the reverse of what you pushed to stack
 		// so it should be called in reverse order
-		asm_file << "        pop qword [rbp-" << param_offset << "]" << std::endl;
+		asm_file << "        mov qword [rbp-" << param_offset << "], " << reg_1 << std::endl;
 	}
 	void functionEnd() {
-		asm_file << "        pop rbp" << std::endl;
+		asm_file << "        sub rsp, 8*64" << std::endl;
 		asm_file << "        ret" << std::endl;
 	}
 
@@ -288,8 +288,16 @@ public:
 		label_counter++;
 	}
 
-	void makeReturn() {
+	// puts return value in register reg_1
+	void makeReturn(std::string reg_1, std::string reg_2) {
 		asm_file << "        ;; Return from function" << std::endl;
+		asm_file << "        add rsp, 8*64" << std::endl;
+		asm_file << "        mov " << reg_1 << ", " << reg_2 << std::endl;
+		asm_file << "        ret" << std::endl;
+	}
+
+	void callFunction(std::string func_name) {
+		asm_file << "        call " << func_name << std::endl;
 	}
 
 

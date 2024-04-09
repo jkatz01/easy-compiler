@@ -399,7 +399,7 @@ public:
 				NodeExpression* new_expr_data = new NodeExpression(AST_expression);
 				delete ast_node_stack.back()->node_data;
 				ast_node_stack.back()->node_data = new_expr_data;
-				ast_node_stack.back()->node_data->setOpType(OP_default); // TEMPORARY, need to get actual op
+				ast_node_stack.back()->node_data->setOpType(OP_single_factor); // TEMPORARY, need to get actual op
 				
 				TreeNode* fun_call = program_tree->insert(new NodeHeader(AST_func_call), ast_node_stack.back());
 				ast_node_stack.push_back(fun_call);

@@ -137,7 +137,7 @@ enum NodeType {
 	AST_operator,
 	AST_factor_var,
 	AST_factor_const,
-	AST_factor_call,
+	AST_factor_call, // not used??
 	AST_func_call,
 	AST_head,
 	AST_program,

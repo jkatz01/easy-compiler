@@ -219,12 +219,15 @@ public:
 
 		assembler->makeDeclaration(my_offset);
 	}
+
+	const std::string parameter_registers[7] = {"r8", "r9", "r10", "r11", "r12", "r13", "r15"};
+
 	void addParameter(TreeNode* node) {
 		VarType my_vartype = node->node_data->getNodeVarType();
 		int my_offset = (int)((var_table.back().size() + 1) * QWORD_SIZE);
 		var_table.back().push_back(Variable(node->node_data->getNodeStrVal(), my_vartype, my_offset));
 
-		assembler->functionAddParameter(my_offset);
+		assembler->functionAddParameter(my_offset, parameter_registers[var_table.back().size() - 1]);
 	}
 	void addDeclaration(TreeNode* node) {
 		
@@ -269,15 +272,29 @@ public:
 			int my_value = constIntValueFromNode(node);
 			assembler->makeMoveConstIntToReg(my_value, reg);
 		}
-		else if (node->node_data->getNodeType() == AST_factor_call) {
-			// Function call:
-			// call function
-			
-			
-			//assembler->pushRegister("rax"); // Save rax
+		else if (node->node_data->getNodeType() == AST_func_call) {
+			// Save all registers?
+			assembler->pushRegister("rax"); 
+			assembler->pushRegister("rbx");
+			assembler->pushRegister("r14");
 			// push all parameters
-			//assembler->popToRegister("rbx"); // Pop function return value to rbx 
-			//assembler->popToRegister("rax"); // Pop back rax
+			int i = 0;
+			for (TreeNode* child : node->children) { // TODO: should be in reverse order
+				compileExpression(child, false);
+				assembler->moveRegisters(parameter_registers[i], "rax");
+				i++;
+			}
+			// call function
+			assembler->callFunction(node->node_data->getNodeStrVal());
+
+			// restore all registers
+			assembler->popToRegister("r14");
+			assembler->popToRegister("rbx");
+			assembler->popToRegister("rax");
+			
+			
+			// Move return value from temp to desired
+			assembler->moveRegisters(reg, "r11");
 
 		}
 	}
@@ -286,11 +303,14 @@ public:
 		if (operation == OP_not) {
 			assembler->notRegister(reg_1);
 		}
-		if (operation == OP_or) {
+		else if (operation == OP_or) {
 			assembler->orRegisters(reg_1, reg_2);
 		}
-		if (operation == OP_and) {
+		else if (operation == OP_and) {
 			assembler->andRegisters(reg_1, reg_2);
+		}
+		else if (operation == OP_default) {
+			assembler->printComment(";; operation OP default");
 		}
 		else if (operation == OP_equals) {
 			assembler->equalsRegisters(reg_1, reg_2);
@@ -325,7 +345,10 @@ public:
 	}
 
 	int operatorPriority(OpType operation) {
-		if (operation == OP_single_factor) {
+		if (operation == OP_default) {
+			return 1;
+		}
+		else if (operation == OP_single_factor) {
 			return 1;
 		}
 		else if (operation == OP_equals) {
@@ -487,7 +510,6 @@ public:
 				for (int i = (int)function->children.size() - 1; i >= 0; i--) {
 					if (function->children[i]->node_data->getNodeType() == AST_parameter) {
 						std::cout << "Found parameter " << function->children[i]->node_data->getNodeStrVal() << std::endl;
-						//addSingleDeclaration(function->children[i]);
 						addParameter(function->children[i]);
 					}
 					else {
@@ -546,14 +568,10 @@ public:
 		else if (my_type == AST_return) {
 			if (node->children.size() >= 1) {
 				compileExpression(node->children[0], false);
-				assembler->pushRegister("rax");
+				assembler->makeReturn("r11", "rax");
 			}
+			return;
 		}
-		// Function call:
-		// Save rax
-		// call function
-		// Pop function return value to rbx 
-		// Pop back rax
 		for (TreeNode* child : node->children) {
 			compileTree(child);
 		}
