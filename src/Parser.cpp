@@ -106,6 +106,7 @@ public:
 		static bool	   in_expr_seq;
 		static bool	   in_statement;
 		static bool	   in_while_statement;
+		static bool    in_func_call;
 		static int     expr_counter;
 		static int	   temp_counter;
 		//OpType  op_buffer = OP_plus;
@@ -405,6 +406,7 @@ public:
 				// Instead, replace the node with a nodeExpression
 				ast_node_stack.back()->node_data->setStrVal(name);
 				ast_node_stack.back()->node_data->setNodeType(AST_func_call);
+				in_func_call = true;
 				break;
 			}
 			case 45: //G_FUNCOPTS      T_null
@@ -436,7 +438,13 @@ public:
 				expr_counter = temp_counter;
 				std::cout << "Retrieved counter: " << expr_counter << std::endl;
 				if (in_expr_seq) {
-					ast_node_stack.pop_back();
+					std::cout << "in expr seq" << std::endl;
+					if (in_func_call) {
+						in_func_call = false;
+					}
+					else {
+						ast_node_stack.pop_back();
+					}
 				}
 				in_expr_seq = false;
 				ast_node_stack.pop_back();

@@ -46,6 +46,7 @@ public:
 	virtual void makeWhileStart() = 0;
 	virtual void makeWhileMiddle(std::string reg_1) = 0;
 	virtual void makeWhileEnd() = 0;
+	virtual void makeReturn() = 0;
 	
 };
 
@@ -79,8 +80,9 @@ public:
 		asm_file << "        push rbp" << std::endl;
 		asm_file << "        mov rbp, rsp" << std::endl;
 
-		asm_file << "        sub rsp, 8*4 ; reserve space on stack i think?" << std::endl;
+		asm_file << "        sub rsp, 8*400 ; reserve space on stack i think?" << std::endl;
 		// This needs to know the number of variables we will have in the var_table
+		// or maybe we should just reserve a lot
 	}
 
 	void finalizeAssembly() {
@@ -284,6 +286,10 @@ public:
 		asm_file << "        jmp LABEL_WH_" << (label_counter - 1) << std::endl;
 		asm_file << "LABEL_WH_" << label_counter << ":" << std::endl;
 		label_counter++;
+	}
+
+	void makeReturn() {
+		asm_file << "        ;; Return from function" << std::endl;
 	}
 
 

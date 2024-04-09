@@ -1,9 +1,12 @@
-int x, y, z;
-int a;
+def int my_func(int a, int b)
+	int something;
+	something = 5 + 4 * 3 - 2;
+	return(something);
+fed;
 
-y = 1 + 2 * 2 * 2 + 3;
-x = y;
-a = 2;
+int x, y;
+x = my_func(23, 22) + 2 + 3 + 4;
+x = 5 + 5 + 5;
+
 print(x);
-print(a);
 .

@@ -408,7 +408,7 @@ public:
 				// first do [add rax, first_of_child], then call expr()
 				compileFactorToRegister(node->children[1]->children[0], "rbx"); // Move first of (right) child to rbx 
 				compileOperationOnRegisters("rax", "rbx", my_optype);
-				if(node->children[1]->node_data->getNodeType() != OP_single_factor) {
+				if(node->children[1]->node_data->getOpType() != OP_single_factor) {
 					TreeNode* continue_node = compileExpression(node->children[1], true);
 					return continue_node;
 				}
@@ -527,12 +527,22 @@ public:
 				assembler->makePrintInt();
 			}
 		}
-
+		else if (my_type == AST_return) {
+			if (node->children.size() >= 1) {
+				compileExpression(node->children[0], false);
+				assembler->pushRegister("rax");
+			}
+		}
+		// Function call:
+		// Save rax
+		// call function
+		// Pop function return value to rbx 
+		// Pop back rax
 		for (TreeNode* child : node->children) {
 			compileTree(child);
 		}
 	}
-
+	// TODO: type promotion from int to float
 	VarType typeCheckExpression(TreeNode* node) {
 		if (node == nullptr) {
 			return VT_default;
