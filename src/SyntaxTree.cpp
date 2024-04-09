@@ -219,6 +219,13 @@ public:
 
 		assembler->makeDeclaration(my_offset);
 	}
+	void addParameter(TreeNode* node) {
+		VarType my_vartype = node->node_data->getNodeVarType();
+		int my_offset = (int)((var_table.back().size() + 1) * QWORD_SIZE);
+		var_table.back().push_back(Variable(node->node_data->getNodeStrVal(), my_vartype, my_offset));
+
+		assembler->functionAddParameter(my_offset);
+	}
 	void addDeclaration(TreeNode* node) {
 		
 		VarType decl_type = node->node_data->getNodeVarType();
@@ -263,7 +270,15 @@ public:
 			assembler->makeMoveConstIntToReg(my_value, reg);
 		}
 		else if (node->node_data->getNodeType() == AST_factor_call) {
-			std::cout << "Function calls not implemented yet" << std::endl;
+			// Function call:
+			// call function
+			
+			
+			//assembler->pushRegister("rax"); // Save rax
+			// push all parameters
+			//assembler->popToRegister("rbx"); // Pop function return value to rbx 
+			//assembler->popToRegister("rax"); // Pop back rax
+
 		}
 	}
 	// TODO: make this smaller 
@@ -472,7 +487,8 @@ public:
 				for (int i = (int)function->children.size() - 1; i >= 0; i--) {
 					if (function->children[i]->node_data->getNodeType() == AST_parameter) {
 						std::cout << "Found parameter " << function->children[i]->node_data->getNodeStrVal() << std::endl;
-						addSingleDeclaration(function->children[i]);
+						//addSingleDeclaration(function->children[i]);
+						addParameter(function->children[i]);
 					}
 					else {
 						end_of_parameters--;

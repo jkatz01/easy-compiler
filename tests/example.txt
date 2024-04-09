@@ -1,6 +1,6 @@
 def int my_func(int a, int b)
 	int something;
-	something = 5 + 4 * 3 - 2;
+	something = a + b;
 	return(something);
 fed;
 
