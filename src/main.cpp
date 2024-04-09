@@ -33,8 +33,6 @@ int main(int argc, char* argv[]) {
 	delete lexical;
 
 	// TODO: fix empty functions without declarations/statements
-	// TODO: calling printf destroys the stack somehow
-	//         
 	
 	std::cout << std::endl;
 	std::cout << "Compiling tree" << std::endl << "---------------------" << std::endl;

@@ -109,6 +109,8 @@ public:
 
 	void functionStart(std::string function_name) {
 		asm_file << function_name << ":" << std::endl;
+		asm_file << "        push rbp" << std::endl;
+		asm_file << "        mov rbp, rsp" << std::endl;
 		asm_file << "        sub rsp, 8*64" << std::endl;
 	}
 	void functionAddParameter(int param_offset, std::string reg_1) {
@@ -117,7 +119,8 @@ public:
 		asm_file << "        mov qword [rbp-" << param_offset << "], " << reg_1 << std::endl;
 	}
 	void functionEnd() {
-		asm_file << "        sub rsp, 8*64" << std::endl;
+		asm_file << "        add rsp, 8*64" << std::endl;
+		asm_file << "        pop rbp" << std::endl;
 		asm_file << "        ret" << std::endl;
 	}
 
@@ -293,6 +296,7 @@ public:
 		asm_file << "        ;; Return from function" << std::endl;
 		asm_file << "        add rsp, 8*64" << std::endl;
 		asm_file << "        mov " << reg_1 << ", " << reg_2 << std::endl;
+		asm_file << "        pop rbp" << std::endl;
 		asm_file << "        ret" << std::endl;
 	}
 

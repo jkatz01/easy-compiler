@@ -5,7 +5,9 @@ def int my_add(int a, int b)
 fed;
 
 int x, y;
-x = my_add(23, 22) + 2 + 2 + 3 + 4;
+y = 35;
+x = 2 + my_add(23, 22);
 
 print(x);
+print(y);
 .
