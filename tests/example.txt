@@ -1,13 +1,14 @@
-def int my_add(int a, int b)
-	int something;
-	something = a + b;
-	return(something);
-fed;
+int x;
 
-int x, y;
-y = 35;
-x = 2 + my_add(23, 22);
+while (x < 10) do
+	x = x + 1;
+	while (x < 10) do
+		x = x + 1;
+		while (x < 10) do
+			x = x + 1;
+		od;
+	od;
+od;
 
 print(x);
-print(y);
 .

@@ -370,19 +370,19 @@ public:
 			return 50;
 		}
 		else if (operation == OP_not) {
-			return 50; // TODO: not should have the lowest priority possible?
+			return 50; 
 		}
 		else if (operation == OP_or) {
 			return 50;
-		}
-		else if (operation == OP_and) {
-			return 75;
 		}
 		else if (operation == OP_plus) {
 			return 50;
 		}
 		else if (operation == OP_minus) {
 			return 50;
+		}
+		else if (operation == OP_and) {
+			return 75;
 		}
 		else if (operation == OP_times) {
 			return 75;

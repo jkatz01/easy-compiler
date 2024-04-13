@@ -225,7 +225,7 @@ public:
 					ast_node_stack.push_back(seq);
 					in_stmt_seq = true;
 				}
-				if (in_stmt_seq == false && ast_node_stack.back()->node_data->getNodeType() == AST_while) {
+				if (/*in_stmt_seq == false && */ast_node_stack.back()->node_data->getNodeType() == AST_while) {
 					TreeNode* seq = program_tree->insert(new NodeHeader(AST_list_statements), ast_node_stack.back());
 					ast_node_stack.push_back(seq);
 					in_stmt_seq = true;

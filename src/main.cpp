@@ -33,7 +33,9 @@ int main(int argc, char* argv[]) {
 	delete lexical;
 
 	// TODO: fix empty functions without declarations/statements
-	
+	// TODO: fix nested while/if
+	// TODO: fix function type checking
+
 	std::cout << std::endl;
 	std::cout << "Compiling tree" << std::endl << "---------------------" << std::endl;
 	program_tree->compileTreeMaster();

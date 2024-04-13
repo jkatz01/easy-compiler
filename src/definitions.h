@@ -151,18 +151,18 @@ enum NodeType {
 enum OpType {
 	OP_plus, // done
 	OP_minus, // done
-	OP_or,
+	OP_or, // done
 	OP_times, // done
 	OP_divide, // done
-	OP_mod,
-	OP_and,
+	OP_mod, // done
+	OP_and, // done
 	OP_not, // done
-	OP_equals,
-	OP_unequals,
-	OP_greater_eq,
-	OP_lesser_eq,
-	OP_greater,
-	OP_lesser,
+	OP_equals, // done
+	OP_unequals, // done 
+	OP_greater_eq, // done
+	OP_lesser_eq, // done
+	OP_greater, // done
+	OP_lesser, // done
 	OP_single_factor, // done
 	OP_default // done
 };
