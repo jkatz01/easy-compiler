@@ -106,6 +106,9 @@ public:
 		static bool	   in_expr_seq;
 		static bool	   in_statement;
 		static bool	   in_while_statement;
+		static bool	   in_if_statement;
+		static bool    in_else_statement;
+		static bool	   has_else;
 		static bool    in_func_call;
 		static int     expr_counter;
 		static int	   temp_counter;
@@ -122,6 +125,9 @@ public:
 		TreeNode* root;
 		if (tokens->at(it).token_type == T_semicolon) {
 			//std::cout << "counter: " << expr_counter << std::endl;
+		}
+		if (tokens->at(it).token_type == T_else) {
+			has_else = true;
 		}
 		if (tokens->at(it).token_type == T_semicolon && expr_counter == 0) {
 			// std::cout << "-------------------;;;;;;;;;;;;" << std::endl;
@@ -230,6 +236,16 @@ public:
 					ast_node_stack.push_back(seq);
 					in_stmt_seq = true;
 				}
+				if (/*in_stmt_seq == false && */ast_node_stack.back()->node_data->getNodeType() == AST_if) {
+					TreeNode* seq = program_tree->insert(new NodeHeader(AST_list_statements), ast_node_stack.back());
+					ast_node_stack.push_back(seq);
+					in_stmt_seq = true;
+				}
+				if (/*in_stmt_seq == false && */ast_node_stack.back()->node_data->getNodeType() == AST_else) {
+					TreeNode* seq = program_tree->insert(new NodeHeader(AST_list_statements), ast_node_stack.back());
+					ast_node_stack.push_back(seq);
+					in_stmt_seq = true;
+				}
 				break;
 			}
 			case 19: //G_STATEMENT_SEQ      T_null
@@ -242,10 +258,25 @@ public:
 					ast_node_stack.pop_back();
 					in_stmt_seq = false;
 				}
+				else if (ast_node_stack.back()->node_data->getNodeType() == AST_if) {
+					ast_node_stack.pop_back();
+					in_stmt_seq = false;
+				}
+				else if (ast_node_stack.back()->node_data->getNodeType() == AST_else) {
+					ast_node_stack.pop_back();
+					in_stmt_seq = false;
+				}
 				break;
 			case 20: //G_STATEMENT      G_VAR T_eq G_EXPR
 			{
 				TreeNode * asgn = program_tree->insert(new NodeHeader(AST_assignment), ast_node_stack.back());
+				ast_node_stack.push_back(asgn);
+				break;
+			}
+			case 21: //G_STATEMENT      T_if T_open_par G_EXPR T_close_par T_then G_STATEMENT_SEQ G_STREPLC_P T_fi
+			{
+				in_if_statement = true;
+				TreeNode* asgn = program_tree->insert(new NodeHeader(AST_if), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
 				break;
 			}
@@ -268,6 +299,17 @@ public:
 				in_statement = true;
 				TreeNode* asgn = program_tree->insert(new NodeHeader(AST_return), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
+				break;
+			}
+			case 26: //G_STREPLC_P      T_else G_STATEMENT_SEQ
+			{
+				in_else_statement = true;
+				TreeNode* els = program_tree->insert(new NodeHeader(AST_else), ast_node_stack.back());
+				ast_node_stack.push_back(els);
+				break;
+			}
+			case 27: //G_STREPLC_P      T_null
+			{
 				break;
 			}
 			case 28: //G_EXPR         G_TERM G_EXPR_P
@@ -331,6 +373,14 @@ public:
 				}
 				if (in_while_statement) {
 					in_while_statement = false;
+					ast_node_stack.pop_back();
+				}
+				if (in_if_statement) {
+					in_if_statement = false;
+					ast_node_stack.pop_back();
+				}
+				if (in_else_statement) {
+					in_else_statement = false;
 					ast_node_stack.pop_back();
 				}
 				else if (in_statement) {
