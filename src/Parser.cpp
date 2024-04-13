@@ -259,7 +259,11 @@ public:
 					in_stmt_seq = false;
 				}
 				else if (ast_node_stack.back()->node_data->getNodeType() == AST_if) {
-					ast_node_stack.pop_back();
+					if (!has_else) {
+						std::cout << "<<<<<<<<<<<<<<< HAS ELSE >>>>>>>>>>>>>>>" << std::endl;
+						ast_node_stack.pop_back();
+					}
+					
 					in_stmt_seq = false;
 				}
 				else if (ast_node_stack.back()->node_data->getNodeType() == AST_else) {
