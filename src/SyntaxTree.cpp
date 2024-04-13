@@ -483,17 +483,16 @@ public:
 		//assembler->testIntPrint();
 		std::vector<Variable> first_table;
 		var_table.push_back(first_table);
-		compileTree(root);
+		compileTree(root, 0);
 		assembler->finalizeAssembly();
 	}
 
 
 	// Returning from this function finishes compilation of a node and its children
-	void compileTree(TreeNode* node) {
+	void compileTree(TreeNode* node, int label_counter) {
 		if (node == nullptr) {
 			return;
 		}
-
 		NodeType my_type = node->node_data->getNodeType();
 		if (my_type == AST_list_func_declarations) {
 			// Compile all functions
@@ -523,8 +522,8 @@ public:
 					std::cout << "ERROR: function is missing declaration sequence or statement sequence" << std::endl;
 					return;
 				}
-				compileTree(function->children[end_of_parameters]);
-				compileTree(function->children[end_of_parameters + 1]);
+				compileTree(function->children[end_of_parameters], label_counter);
+				compileTree(function->children[end_of_parameters + 1], label_counter);
 				// Hande list statements
 				assembler->functionEnd();
 				var_table.pop_back();
@@ -552,11 +551,12 @@ public:
 			return;
 		}
 		else if (my_type == AST_while) {
-			assembler->makeWhileStart();
+			assembler->makeWhileStart(label_counter);
+			label_counter++;
 			compileExpression(node->children[0], false);
-			assembler->makeWhileMiddle("rax");
-			if (node->children.size() > 1) compileTree(node->children[1]);
-			assembler->makeWhileEnd();
+			assembler->makeWhileMiddle("rax", label_counter);
+			if (node->children.size() > 1) compileTree(node->children[1], label_counter + 1);
+			assembler->makeWhileEnd(label_counter);
 			return;
 		}
 		else if (my_type == AST_print) {
@@ -573,7 +573,7 @@ public:
 			return;
 		}
 		for (TreeNode* child : node->children) {
-			compileTree(child);
+			compileTree(child, label_counter);
 		}
 	}
 	// TODO: type promotion from int to float

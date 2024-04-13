@@ -43,9 +43,9 @@ public:
 	virtual void lesserEqualsRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void greaterRegisters(std::string reg_1, std::string reg_2) = 0;
 	virtual void lesserRegisters(std::string reg_1, std::string reg_2) = 0;
-	virtual void makeWhileStart() = 0;
-	virtual void makeWhileMiddle(std::string reg_1) = 0;
-	virtual void makeWhileEnd() = 0;
+	virtual void makeWhileStart(int wh_label_count) = 0;
+	virtual void makeWhileMiddle(std::string reg_1, int wh_label_count) = 0;
+	virtual void makeWhileEnd(int wh_label_count) = 0;
 	virtual void makeReturn(std::string reg_1, std::string reg_2) = 0;
 	virtual void callFunction(std::string func_name) = 0;
 	
@@ -88,6 +88,7 @@ public:
 
 	void finalizeAssembly() {
 		asm_file << std::endl;
+		asm_file << "        invoke printf, endprint" << std::endl;
 		asm_file << "        invoke Sleep, 4000" << std::endl;
 		asm_file << "        push 0" << std::endl;
 		asm_file << "        call [ExitProcess]" << std::endl;
@@ -95,6 +96,7 @@ public:
 		asm_file << std::endl;
 		asm_file << "section '.rdata' data readable" << std::endl;
 		asm_file << "        intprint db 'int: %d', 10, 0" << std::endl;
+		asm_file << "        endprint db 'END OF PROGRAM', 10, 0" << std::endl;
 
 		asm_file << std::endl;
 		asm_file << "section '.idata' data readable import" << std::endl;
@@ -274,21 +276,20 @@ public:
 		asm_file << "        movzx " << reg_1 << ", dl" << std::endl;
 	}
 
-	void makeWhileStart() {
-		asm_file << "LABEL_WH_" << label_counter << ":" << std::endl;
-		label_counter++;
+	void makeWhileStart(int wh_label_count) {
+		asm_file << "LABEL_WH_" << wh_label_count << ":" << std::endl;
 		// Expression needs to be evaluated here
 	}
-	void makeWhileMiddle(std::string reg_1) {
+	void makeWhileMiddle(std::string reg_1, int wh_label_count) {
 		asm_file << "        cmp " << reg_1 << ", 1" << std::endl;
-		asm_file << "        jne LABEL_WH_" << label_counter << std::endl;
+		asm_file << "        jne LABEL_WH_" << wh_label_count << std::endl;
 		// Should call the statement sequence after while here
 	}
 
-	void makeWhileEnd() {
-		asm_file << "        jmp LABEL_WH_" << (label_counter - 1) << std::endl;
-		asm_file << "LABEL_WH_" << label_counter << ":" << std::endl;
-		label_counter++;
+	void makeWhileEnd(int wh_label_count) {
+		asm_file << "        ;; while end" << std::endl;
+		asm_file << "        jmp LABEL_WH_" << (wh_label_count - 1) << std::endl;
+		asm_file << "LABEL_WH_" << wh_label_count << ":" << std::endl;
 	}
 
 	// puts return value in register reg_1
