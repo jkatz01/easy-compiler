@@ -46,6 +46,8 @@ public:
 	virtual void makeWhileStart(int wh_label_count) = 0;
 	virtual void makeWhileMiddle(std::string reg_1, int wh_label_count) = 0;
 	virtual void makeWhileEnd(int wh_label_count) = 0;
+	virtual void makeIfStart(std::string reg_1, int label_count) = 0;
+	virtual void makeIfEnd(int label_count) = 0;
 	virtual void makeReturn(std::string reg_1, std::string reg_2) = 0;
 	virtual void callFunction(std::string func_name) = 0;
 	
@@ -290,6 +292,15 @@ public:
 		asm_file << "        ;; while end" << std::endl;
 		asm_file << "        jmp LABEL_WH_" << (wh_label_count - 1) << std::endl;
 		asm_file << "LABEL_WH_" << wh_label_count << ":" << std::endl;
+	}
+
+	void makeIfStart(std::string reg_1, int label_count) {
+		asm_file << "        cmp " << reg_1 << ", 1" << std::endl;
+		asm_file << "        jne LABEL_IF_" << label_count << std::endl;
+	}
+
+	void makeIfEnd(int label_count) {
+		asm_file << "LABEL_IF_" << label_count << ":" << std::endl;
 	}
 
 	// puts return value in register reg_1

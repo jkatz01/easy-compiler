@@ -1,12 +1,17 @@
 int x;
 x = 5;
 
-if (x == 5) then
-	x = 78;
-	x = 79;
-else 
-	x = 46;
-fi;
+while (x < 10) do
+	x = x + 1;
+od;
+
+while (x < 10) do
+	x = x + 1;
+od;
+
+while (x < 10) do
+	x = x + 1;
+od;
 
 print(x);
 .

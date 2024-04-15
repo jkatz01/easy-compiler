@@ -428,9 +428,7 @@ public:
 			std::cout << "Priority: " << my_priority << "    Right child:" << right_child_priority << std::endl;
 			if (right_child_priority > my_priority) { 
 				// if next node has higher priority, call expr() recursively then [add first, second]
-				//////assembler->moveRegisters("r14", "rax");
 				assembler->pushRegister("rax");
-				// TODO: need to move temporaries to stack ------------------------------------
 				TreeNode* continue_node = compileExpression(node->children[1], false);
 				assembler->popToRegister("r14");
 				compileOperationOnRegisters("r14", "rax", my_optype);
@@ -489,9 +487,9 @@ public:
 
 
 	// Returning from this function finishes compilation of a node and its children
-	void compileTree(TreeNode* node, int label_counter) {
+	int compileTree(TreeNode* node, int label_counter) {
 		if (node == nullptr) {
-			return;
+			return label_counter;
 		}
 		NodeType my_type = node->node_data->getNodeType();
 		if (my_type == AST_list_func_declarations) {
@@ -520,7 +518,7 @@ public:
 				std::cout << "Thing after last parameter: " << ast_type_names[function->children[end_of_parameters]->node_data->getNodeType()] << std::endl;
 				if (end_of_parameters >= function->children.size()) {
 					std::cout << "ERROR: function is missing declaration sequence or statement sequence" << std::endl;
-					return;
+					return label_counter;
 				}
 				compileTree(function->children[end_of_parameters], label_counter);
 				compileTree(function->children[end_of_parameters + 1], label_counter);
@@ -529,11 +527,11 @@ public:
 				var_table.pop_back();
 			}
 			assembler->startMainAssembly();
-			return; 
+			return label_counter;
 		}
 		else if (my_type == AST_declaration) {
 			addDeclaration(node);
-			return;
+			return label_counter;
 		}
 		else if (my_type == AST_assignment) {
 			std::cout << "-------- TYPE CHECK: --------" << std::endl;
@@ -548,7 +546,7 @@ public:
 			if(node->children.size() > 1)  compileExpression(node->children[1], false);
 
 			assembler->makeAssignment(my_offset); // right now nothing is pushed to stack so cant print
-			return;
+			return label_counter;
 		}
 		else if (my_type == AST_while) {
 			assembler->makeWhileStart(label_counter);
@@ -557,7 +555,16 @@ public:
 			assembler->makeWhileMiddle("rax", label_counter);
 			if (node->children.size() > 1) compileTree(node->children[1], label_counter + 1);
 			assembler->makeWhileEnd(label_counter);
-			return;
+			label_counter++;
+			return label_counter;
+		}
+		else if (my_type == AST_if) {
+			compileExpression(node->children[0], false);
+			assembler->makeIfStart("rax", label_counter);
+			if (node->children.size() > 1) compileTree(node->children[1], label_counter + 1);
+			assembler->makeIfEnd(label_counter);
+			label_counter++;
+			return label_counter;
 		}
 		else if (my_type == AST_print) {
 			if (node->children.size() >= 1) {
@@ -570,11 +577,13 @@ public:
 				compileExpression(node->children[0], false);
 				assembler->makeReturn("r11", "rax");
 			}
-			return;
+			return label_counter;
 		}
 		for (TreeNode* child : node->children) {
-			compileTree(child, label_counter);
+			int lc = compileTree(child, label_counter);
+			label_counter = lc;
 		}
+		return label_counter;
 	}
 	// TODO: type promotion from int to float
 	VarType typeCheckExpression(TreeNode* node) {
