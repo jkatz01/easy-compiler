@@ -1,12 +1,25 @@
-int x;
+def int my_add(int a, int b)
+	int x;
+	x = a + b;
+	return(x);
+fed;
+
+int x, y, z;
 x = 5;
 
-if (x == 5) then
-	x = 78;
-	x = 79;
-else
-	x = 44;
-fi;
+while (x < 10) do
+	if (x < 5) then
+		x = x + 1;
+	else
+		x = x + 2;
+	fi;
+od;
 
 print(x);
+
+y = 1 + 2 * 2 * 2 + 3;
+print(y);
+
+z = my_add(2, 2);
+print(z);
 .

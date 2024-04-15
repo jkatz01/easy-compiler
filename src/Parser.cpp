@@ -18,9 +18,11 @@ public:
 		tokens = &token_list;
 		parse_stack.reserve(32);
 		ast_node_stack.reserve(32);
-		table = new LLTable();
+		
+		table = new LLTable(); // TODO: problem with allocating this !!
+		std::cout << "constructed parser" << std::endl;
 		program_tree = tree;
-
+		
 	}
 	~Parser() {
 		// TODO: deleting table causes heap corruption

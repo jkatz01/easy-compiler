@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
 	if (lex_err_count > 0) {
 		std::cout << "Lexical analysis failed with " << lex_err_count << " errors" << std::endl;
 	}
-	;;;;
+	;;;
 	CodeGen_x86_64_fasm_w *generator = new CodeGen_x86_64_fasm_w();
 	SyntaxTree* program_tree = new SyntaxTree(generator);
 	
@@ -32,7 +32,8 @@ int main(int argc, char* argv[]) {
 	delete parser; //TODO: memory leak here, LLTable does not get deleted
 	delete lexical;
 
-	// TODO: fix function type checking
+	// TODO: fix function type checking, function with empty declaration list / statement list
+	//       add double type to assembly
 
 	std::cout << std::endl;
 	std::cout << "Compiling tree" << std::endl << "---------------------" << std::endl;
