@@ -112,6 +112,7 @@ public:
 		static bool    in_func_call;
 		static int     expr_counter;
 		static int	   temp_counter;
+		static TreeNode* last_if;
 		//OpType  op_buffer = OP_plus;
 
 		// TODO: write an operator presadence swapper:
@@ -259,11 +260,7 @@ public:
 					in_stmt_seq = false;
 				}
 				else if (ast_node_stack.back()->node_data->getNodeType() == AST_if) {
-					if (!has_else) {
-						std::cout << "<<<<<<<<<<<<<<< HAS ELSE >>>>>>>>>>>>>>>" << std::endl;
-						ast_node_stack.pop_back();
-					}
-					
+					ast_node_stack.pop_back();
 					in_stmt_seq = false;
 				}
 				else if (ast_node_stack.back()->node_data->getNodeType() == AST_else) {
@@ -282,6 +279,7 @@ public:
 				in_if_statement = true;
 				TreeNode* asgn = program_tree->insert(new NodeHeader(AST_if), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
+				//last_if = asgn;
 				break;
 			}
 			case 22: //G_STATEMENT      T_while T_open_par G_EXPR T_close_par T_do G_STATEMENT_SEQ T_od
@@ -310,6 +308,7 @@ public:
 				in_else_statement = true;
 				TreeNode* els = program_tree->insert(new NodeHeader(AST_else), ast_node_stack.back());
 				ast_node_stack.push_back(els);
+				//last_if->node_data->setNodeType(AST_if_with_else);
 				break;
 			}
 			case 27: //G_STREPLC_P      T_null
@@ -384,8 +383,8 @@ public:
 					ast_node_stack.pop_back();
 				}
 				if (in_else_statement) {
-					in_else_statement = false;
-					ast_node_stack.pop_back();
+					//in_else_statement = false;
+					//ast_node_stack.pop_back();
 				}
 				else if (in_statement) {
 					in_statement = false;

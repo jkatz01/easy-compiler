@@ -47,6 +47,7 @@ public:
 	virtual void makeWhileMiddle(std::string reg_1, int wh_label_count) = 0;
 	virtual void makeWhileEnd(int wh_label_count) = 0;
 	virtual void makeIfStart(std::string reg_1, int label_count) = 0;
+	virtual void makeIfMiddle(int label_count) = 0;
 	virtual void makeIfEnd(int label_count) = 0;
 	virtual void makeReturn(std::string reg_1, std::string reg_2) = 0;
 	virtual void callFunction(std::string func_name) = 0;
@@ -298,7 +299,10 @@ public:
 		asm_file << "        cmp " << reg_1 << ", 1" << std::endl;
 		asm_file << "        jne LABEL_IF_" << label_count << std::endl;
 	}
-
+	// only use if there is an else clause
+	void makeIfMiddle(int label_count) {
+		asm_file << "        jmp LABEL_IF_" << label_count << std::endl;
+	}
 	void makeIfEnd(int label_count) {
 		asm_file << "LABEL_IF_" << label_count << ":" << std::endl;
 	}

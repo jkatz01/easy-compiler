@@ -126,6 +126,7 @@ enum NodeType {
 	AST_NodeHeader,
 	AST_assignment,
 	AST_if,
+	AST_if_with_else,
 	AST_else,
 	AST_while,
 	AST_print,
@@ -241,8 +242,8 @@ const std::string operator_names[16] = {
 const std::string type_names[4] = {
 	"int   ","double","default", "invalid"
 };
-const std::string ast_type_names[25] = {
-	"AST_func_declaration","AST_declaration","AST_NodeHeader","AST_assignment","AST_if",
+const std::string ast_type_names[26] = {
+	"AST_func_declaration","AST_declaration","AST_NodeHeader","AST_assignment","AST_if", "AST_if_with_else",
 	"AST_else","AST_while","AST_print","AST_return","AST_parameter","AST_variable",
 	"AST_type","AST_expression","AST_operator","AST_factor_var","AST_factor_const",
 	"AST_factor_call","AST_func_call","AST_head","AST_program","AST_list_func_declarations",
