@@ -566,6 +566,21 @@ public:
 			label_counter++;
 			return label_counter;
 		}
+		else if (my_type == AST_if_with_else) {
+			compileExpression(node->children[0], false);
+			assembler->makeIfStart("rax", label_counter);
+			if (node->children.size() > 1) compileTree(node->children[1], label_counter + 1);
+			assembler->makeIfMiddle(label_counter + 1);
+			assembler->makeIfEnd(label_counter);
+			label_counter++;
+			return label_counter;
+		}
+		else if (my_type == AST_else) {
+			if (node->children.size() >= 1) compileTree(node->children[0], label_counter + 1);
+			assembler->makeElseLabel(label_counter);
+			label_counter++;
+			return label_counter;
+		}
 		else if (my_type == AST_print) {
 			if (node->children.size() >= 1) {
 				compileExpression(node->children[0], false);

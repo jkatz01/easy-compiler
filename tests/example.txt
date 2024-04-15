@@ -8,10 +8,5 @@ else
 	x = 44;
 fi;
 
-if (x == 5) then
-	x = 78;
-	x = 79;
-fi;
-
 print(x);
 .

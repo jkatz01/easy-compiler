@@ -279,7 +279,7 @@ public:
 				in_if_statement = true;
 				TreeNode* asgn = program_tree->insert(new NodeHeader(AST_if), ast_node_stack.back());
 				ast_node_stack.push_back(asgn);
-				//last_if = asgn;
+				last_if = asgn;
 				break;
 			}
 			case 22: //G_STATEMENT      T_while T_open_par G_EXPR T_close_par T_do G_STATEMENT_SEQ T_od
@@ -308,7 +308,7 @@ public:
 				in_else_statement = true;
 				TreeNode* els = program_tree->insert(new NodeHeader(AST_else), ast_node_stack.back());
 				ast_node_stack.push_back(els);
-				//last_if->node_data->setNodeType(AST_if_with_else);
+				last_if->node_data->setNodeType(AST_if_with_else);
 				break;
 			}
 			case 27: //G_STREPLC_P      T_null
