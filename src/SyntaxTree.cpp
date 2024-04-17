@@ -212,6 +212,13 @@ public:
 		std::cout << "ERROR: Could not find variable " << var_name << std::endl;
 		return Variable("", VT_invalid);
 	}
+	Variable functionLookup(std::string func_name) {
+		for (auto& func : functions_table) {
+			if (func.name == func_name) { return func;}
+		}
+		std::cout << "ERROR: Could not find function " << func_name << std::endl;
+		return Variable("", VT_invalid);
+	}
 	void addSingleDeclaration(TreeNode* node) {
 		VarType my_vartype = node->node_data->getNodeVarType();
 		int my_offset = (int)((var_table.back().size() + 1) * QWORD_SIZE);
@@ -247,6 +254,7 @@ public:
 		std::string f_name = node->node_data->getNodeStrVal();
 		VarType     f_type = node->node_data->getNodeVarType();
 		functions_table.push_back(Variable(f_name, f_type));
+		std::cout << "Node type: " << ast_type_names[node->node_data->getNodeType()] << std::endl;
 		std::cout << "Added function: " << type_names[f_type] << "    " << f_name << std::endl; 
 	}
 	
@@ -496,7 +504,7 @@ public:
 			// Compile all functions
 			for (TreeNode* function : node->children) {
 				// note: need to keep rax in some temporary place
-				addFunctionToTable(node, 0);
+				addFunctionToTable(function, 0);
 				assembler->functionStart(function->node_data->getNodeStrVal());
 
 				std::vector<Variable> second_table;
@@ -637,8 +645,10 @@ public:
 			return looked_up.type;
 		}
 		else if (my_type == AST_func_call) {
-			// ignore for now, should return the (return type) of the func
-			return VT_invalid;
+			std::string node_func_name = node->node_data->getNodeStrVal();
+			Variable looked_up = functionLookup(node_func_name);
+			std::cout << "Found factor function call type: " << type_names[looked_up.type] << std::endl;
+			return looked_up.type;
 		}
 		else {
 			return VT_invalid;

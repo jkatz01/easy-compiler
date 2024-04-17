@@ -15,11 +15,13 @@ while (x < 10) do
 	fi;
 od;
 
-print(x);
+
 
 y = 1 + 2 * 2 * 2 + 3;
-print(y);
+
 
 z = my_add(2, 2);
+print(x);
+print(y);
 print(z);
 .
