@@ -15,19 +15,19 @@ The compiler uses flat assembler to generate Windows executable files.
 Compiling a program is split into 4 (somewhat) separate stages:
 
 **Lexing**
-	- Tokenizing all keywords, names, and symbols in the input file.
- 
+- Tokenizing all keywords, names, and symbols in the input file.
+
 **Parsing** 
-	- Grammar and LL1 table are read from files in /data.
-	- Using an LL1 parser to check for syntax errors in the code.
-	- Constructing an AST (Abstract Syntax Tree) for compilation.
+- Grammar and LL1 table are read from files in /data.
+- Using an LL1 parser to check for syntax errors in the code.
+- Constructing an AST (Abstract Syntax Tree) for compilation.
  
 **Semantic checking** 
-	- After the syntax tree is built, it is analyzed for scopes of variables, type checking, etc.
-	- Construct symbol tables for variables and functions.
+- After the syntax tree is built, it is analyzed for scopes of variables, type checking, etc.
+- Construct symbol tables for variables and functions.
  
 **Code Generating**
-	- Using the AST, appropriate assembly code is generated.
-	- A recursive method is used to correctly perform order of operations.
+- Using the AST, appropriate assembly code is generated.
+- A recursive method is used to correctly perform order of operations.
 	
 After compilation, flat-assembler can run the generated .asm file, or generate an executable.
