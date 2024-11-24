@@ -1,57 +1,33 @@
-﻿# Compiler and stuff
+# Easy Compiler
 
-Documentation can be found in:
-`DOCUMENTATION/html/index.html`
+This is a compiler for a basic programming language. 
+It supports scopes, order of operations and type checking.
+The compiler uses flat assembler to generate Windows executable files.
 
-## Quick Start
-This project uses `flat assembler 1.73.32` for assembly/intermediate code. You can get it here: https://flatassembler.net/
-The only major deviation from the original grammar is parsing binary expressions 
-and comparisons as normal expressions like addition and subtraction 
+## How to run
+- Compile all files in /src or use the Visual Studio solution.
+- Use `./easy-compiler.exe program_name.txt`
+- install flat assembler for Windows https://flatassembler.net/download.php
+- Use flat assembler generate a .exe file from program.asm or run it there directly
 
-Project structure:
-------------
+## How it works
 
-    ├── README.md           <- The readme
-    ├── tests               <- various tests to run
-    │
-    ├── src                 <- Source code.
-        ├── main.cpp        <- The main program to run the entire compiler
-        ├── definitions.h   <- Structs, enums, macros, includes
-        ├── Lexer.cpp       <- Lexical analysis class, stores tokens
-        ├── Parser.cpp      <- Parsing class, generates syntax tree
-        ├── LLTable.cpp     <- Helper class that stores grammar rules and LL1 table
-        └── SyntaxTree.cpp  <- Abstract Syntax Tree class to use for compiling
-------------
+Compiling a program is split into 4 (somewhat) separate stages:
 
-Grammar:
-```
-PROGRAM ->          FDECLS DECLARATIONS STATEMENT_SEQ.
-FDECLS ->           FDEC; | FDECLS FDEC; | ϵ
-FDEC ->             def TYPE FNAME ( PARAMS ) DECLARATIONS STATEMENT_SEQ fed
-PARAMS ->           TYPE VAR | TYPE VAR , PARAMS | ϵ
-FNAME ->            ID
-DECLARATIONS ->     DECL; | DECLARATIONS DECL; | ϵ
-DECL ->             TYPE VARLIST
-TYPE ->             int | double
-VARLIST ->          VAR, VARLIST | VAR
-STATEMENT_SEQ ->    STATEMENT | STATEMENT; STATEMENT_SEQ
-STATEMENT ->        VAR = EXPR |
-                        if BEXPR then STATEMENT_SEQ fi |
-                        if BEXPR then STATEMENT_SEQ else STATEMENT_SEQ fi |
-                        while BEXPR do STATEMENT_SEQ od |
-                        print EXPR |
-                        return EXPR | ϵ
-
-EXPR ->				EXPR + TERM | EXPR - TERM | TERM
-TERM ->     		TERM * FACTOR | TERM / FACTOR | TERM % FACTOR | FACTOR
-FACTOR ->     		VAR | NUMBER | (EXPR) | FNAME(EXPRSEQ)
-EXPRSEQ -> 	  		EXPR, EXPRSEQ | EXPR | ϵ
-BEXPR ->    		BEXPR or BTERM | BTERM
-BTERM ->   		 	BTERM and BFACTOR | BFACTOR
-BFACTOR ->  	    (BEXPR) | not BFACTOR | (EXPR COMP EXPR)
-COMP ->     		< | > | == | <= | >= | <>
-VAR ->        	 	ID | ID[EXPR]
-LETTER ->     		a | b | c | ... | Z
-DIGIT ->     		1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 0
-ID ->         		<LETTER> | <ID><LETTER> | <ID><DIGIT>
-NUMBER ->     		INTEGER | DOUBLE```
+**Lexing**
+	- Tokenizing all keywords, names, and symbols in the input file.
+ 
+**Parsing** 
+	- Grammar and LL1 table are read from files in /data.
+	- Using an LL1 parser to check for syntax errors in the code.
+	- Constructing an AST (Abstract Syntax Tree) for compilation.
+ 
+**Semantic checking** 
+	- After the syntax tree is built, it is analyzed for scopes of variables, type checking, etc.
+	- Construct symbol tables for variables and functions.
+ 
+**Code Generating**
+	- Using the AST, appropriate assembly code is generated.
+	- A recursive method is used to correctly perform order of operations.
+	
+After compilation, flat-assembler can run the generated .asm file, or generate an executable.
